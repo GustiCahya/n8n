@@ -1,0 +1,1794 @@
+{
+  "name": "Reliable webhook to Google Sheets ingest with retries and a dead-letter queue",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Reliable webhook → Google Sheets ingest (retries, dead-letter queue, replay)\nA drop-in ingest endpoint where every request is logged, retried on failure and never silently disappears. Use it for orders, payments, sign-ups or any event you keep in Sheets.\n\n### How it works\n1. A **Webhook** (Header Auth) validates the payload and assigns a `request_id` (your `X-Request-ID`, or a generated one).\n2. Rows are **upserted** by Request ID, so resends never create duplicates.\n3. A failed Sheets write is retried in-request (3 attempts, 2 s / 4 s backoff).\n4. If it still fails, the request goes to a **dead-letter Data Table** and the caller gets `202`. A schedule replays the queue every 15 minutes.\n5. If even the queue fails, the caller gets `503` + `Retry-After`, so it knows to resend.\n6. Every request is logged (`STORED` / `REJECTED` / `QUEUED`), and the **built-in error handler** (bottom) emails you about every degraded path.\n\n### Setup steps (~15 min)\n1. Add **Header Auth**, **Google Sheets** and **Gmail** credentials.\n2. Create a sheet tab `Events` with headers: Request ID, Received At, Event, Reference, Customer Email, Amount, Currency, Notes, Stored Via.\n3. Create two Data Tables, all columns of type *String*:\n   • `ingest_request_log`: request_id, received_at, status, http_status, detail\n   • `ingest_dead_letters`: request_id, received_at, payload_json, last_error, attempts, status, resolved_at\n4. Select the spreadsheet in both Sheets nodes and set your email in **Alert Settings**.\n5. Activate. This also starts the replay schedule.\n\n**Responses:** `200` stored · `202` queued · `400` invalid (don't retry) · `503` retry later · `403` wrong API key.\n",
+        "height": 1000,
+        "width": 760
+      },
+      "id": "ac45cac9-553b-4aa4-8a64-92ca08bb0bd9",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ① Envelope & validation\n**Build Request Envelope** assigns the `request_id` (caller's `X-Request-ID`, else generated), timestamps the request, keeps the raw payload as JSON for the DLQ, and validates the schema in one expression.\n\nInvalid → logged as `REJECTED` → **400** with per-field details.\n\n**Test** (required: `event`, `reference`, `customer_email`, `amount` ≥ 0):\n```\ncurl -i -X POST https://<your-n8n>/webhook/ingest \\\n -H \"X-API-Key: <secret>\" -H \"X-Request-ID: test-001\" \\\n -H \"Content-Type: application/json\" \\\n -d '{\"event\":\"order.created\",\"reference\":\"INV-1001\",\"customer_email\":\"a@b.co\",\"amount\":150000,\"currency\":\"IDR\"}'\n```",
+        "height": 800,
+        "width": 960,
+        "color": 7
+      },
+      "id": "5ac5cb58-ae0a-413f-b56c-94965e519ac1",
+      "name": "Sticky Note 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ② Write with in-request retry\n**Upsert Row in Sheet** has its error output enabled, so n8n's node-level *Retry On Fail* would be skipped (Google Sheets captures the error internally). The explicit loop does the retrying:\n`error → Count Attempt → Attempts Left? → Backoff → try again`\n\nSuccess → logged `STORED` → **200**.",
+        "height": 800,
+        "width": 1080,
+        "color": 7
+      },
+      "id": "da8503c6-47a5-4100-91e2-19ecd7dd5932",
+      "name": "Sticky Note 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        920,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ③ Dead-letter queue: nothing is lost\nAfter the last attempt the request goes to Data Table `ingest_dead_letters` (status `PENDING`). It lives in n8n's own database, so a Google outage cannot block it.\n→ logged `QUEUED` → **202** → `[WARNING]` alert.\n\nIf even the DLQ write fails → **503 + Retry-After** tells the caller to resend, and a `[CRITICAL]` alert includes the payload.",
+        "height": 800,
+        "width": 1120,
+        "color": 7
+      },
+      "id": "dd156f17-844b-45e1-ac33-343f70587cd2",
+      "name": "Sticky Note 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2040,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ④ Automatic replay (every 15 min)\nReads up to 50 `PENDING` dead letters (oldest first), rebuilds the rows, and upserts them into the sheet in one batch (Retry On Fail 3× works here because no error output is set).\nThen marks each one `RESOLVED`.\n\nIf Sheets is still down, the run fails → alert, and the rows stay `PENDING` for the next run. Because writes are upserts keyed by `Request ID`, a crash between *write* and *mark resolved* can never create duplicates.",
+        "height": 520,
+        "width": 1700,
+        "color": 7
+      },
+      "id": "45383d0a-aaa8-499e-8f27-7f347bff0237",
+      "name": "Sticky Note 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ingest",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "18bd6604-bb6a-4917-bf81-ef5e2d794daa",
+      "name": "Ingest Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "5bd2def0-5d7c-47d7-8f70-5af696ef2fda",
+      "notes": "Header Auth protected. Wrong/missing key → n8n answers 403 before this workflow runs."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ea0b7f4-6acd-4ecf-bdaa-d6f39cd1e922",
+              "name": "request_id",
+              "value": "={{ String($json.headers['x-request-id'] ?? '').trim().slice(0, 100) || ('REQ-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + $execution.id) }}",
+              "type": "string"
+            },
+            {
+              "id": "c9c70b20-8116-468f-a5dd-cab456577b94",
+              "name": "received_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "5eb345e8-653a-4278-bed4-08259433bd75",
+              "name": "payload_json",
+              "value": "={{ JSON.stringify($json.body ?? null) }}",
+              "type": "string"
+            },
+            {
+              "id": "75089782-e59e-4949-b2d2-fa153811b590",
+              "name": "validation",
+              "value": "={{ (() => {\n  const b = $json.body;\n  const errors = {};\n  if (!b || typeof b !== 'object' || Array.isArray(b)) {\n    return { valid: false, errors: { body: 'Expected a JSON object' }, record: null };\n  }\n  const str = v => (v === undefined || v === null) ? '' : String(v).trim();\n  const event = str(b.event);\n  const reference = str(b.reference);\n  const email = str(b.customer_email).toLowerCase();\n  const amount = typeof b.amount === 'string' && b.amount.trim() !== '' ? Number(b.amount) : b.amount;\n\n  if (!event) errors.event = 'Required string, e.g. \"order.created\"';\n  if (!reference) errors.reference = 'Required string (your unique reference)';\n  if (!email) errors.customer_email = 'Required';\n  else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email)) errors.customer_email = 'Not a valid email address';\n  if (amount === undefined || amount === null || amount === '') errors.amount = 'Required number';\n  else if (typeof amount !== 'number' || !Number.isFinite(amount)) errors.amount = 'Must be a number';\n  else if (amount < 0) errors.amount = 'Must be >= 0';\n\n  return {\n    valid: Object.keys(errors).length === 0,\n    errors,\n    record: {\n      event, reference, customer_email: email,\n      amount: typeof amount === 'number' ? amount : null,\n      currency: (str(b.currency) || 'IDR').toUpperCase().slice(0, 3),\n      notes: str(b.notes).slice(0, 1000)\n    }\n  };\n})() }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bf6b3e81-125e-4772-88d9-6f4107b13bc4",
+      "name": "Build Request Envelope",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "One node = identity + audit copy + schema check. Every later node reads from here by name."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e5786f43-ed4d-495d-b21b-6555f3df2308",
+              "leftValue": "={{ $json.validation?.valid === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a4fcb91f-78cc-4c37-b46e-ef0dda0d38fe",
+      "name": "Payload Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_request_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $('Build Request Envelope').first().json.request_id }}",
+            "received_at": "={{ $('Build Request Envelope').first().json.received_at }}",
+            "status": "REJECTED",
+            "http_status": "400",
+            "detail": "={{ JSON.stringify($('Build Request Envelope').first().json.validation?.errors ?? {}).slice(0, 1000) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "http_status",
+              "displayName": "http_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        }
+      },
+      "id": "d1972912-aae5-41d8-9f3b-80d79368a9bd",
+      "name": "Log · REJECTED",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        480
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Audit trail even for bad requests. On Error = continue: a logging hiccup must not block the 400 response."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'validation_error', message: 'Payload rejected. Fix the fields in details and resend.', request_id: $('Build Request Envelope').first().json.request_id, details: $('Build Request Envelope').first().json.validation?.errors ?? {} } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "7a2a7d5e-a2b5-4fc2-bb85-b82557757854",
+      "name": "Respond 400 · Validation Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        820,
+        480
+      ],
+      "notes": "4xx: the caller must fix the payload; retrying unchanged will fail again."
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Events",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Request ID": "={{ $('Build Request Envelope').first().json.request_id }}",
+            "Received At": "={{ $('Build Request Envelope').first().json.received_at }}",
+            "Event": "={{ $('Build Request Envelope').first().json.validation.record.event }}",
+            "Reference": "={{ $('Build Request Envelope').first().json.validation.record.reference }}",
+            "Customer Email": "={{ $('Build Request Envelope').first().json.validation.record.customer_email }}",
+            "Amount": "={{ $('Build Request Envelope').first().json.validation.record.amount }}",
+            "Currency": "={{ $('Build Request Envelope').first().json.validation.record.currency }}",
+            "Notes": "={{ $('Build Request Envelope').first().json.validation.record.notes }}",
+            "Stored Via": "DIRECT"
+          },
+          "matchingColumns": [
+            "Request ID"
+          ],
+          "schema": [
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Received At",
+              "displayName": "Received At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Event",
+              "displayName": "Event",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reference",
+              "displayName": "Reference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer Email",
+              "displayName": "Customer Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Stored Via",
+              "displayName": "Stored Via",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2f6796e-35ca-4216-b6e1-7f8e166755ca",
+      "name": "Upsert Row in Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        200
+      ],
+      "onError": "continueErrorOutput",
+      "notes": "appendOrUpdate keyed on 'Request ID' = idempotent: resends and replays update the same row instead of duplicating it. Error output → retry loop."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b917f2b-ec00-407d-961b-5436d2ead45c",
+              "name": "_attempt",
+              "value": "={{ ($json._attempt ?? 1) + 1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {},
+        "includeOtherFields": true
+      },
+      "id": "6ec40672-0868-4e98-b588-12853132cd7d",
+      "name": "Retry · Count Attempt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1220,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "78b3c285-681d-4cb4-bd64-a8310da22534",
+              "leftValue": "={{ $json._attempt <= 3 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1d2e2394-a776-42b4-a4ca-20db33339e44",
+      "name": "Retry · Attempts Left?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        440
+      ],
+      "notes": "3 total attempts. Raise carefully: the caller is waiting during the backoff."
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.pow(2, $json._attempt - 1) }}",
+        "unit": "seconds"
+      },
+      "id": "1fd01880-9217-46f4-9016-c32a6d148681",
+      "name": "Retry · Backoff",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        620
+      ],
+      "webhookId": "6c90c27f-0188-439f-99aa-37597d816246",
+      "notes": "2 s, then 4 s."
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_request_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $('Build Request Envelope').first().json.request_id }}",
+            "received_at": "={{ $('Build Request Envelope').first().json.received_at }}",
+            "status": "STORED",
+            "http_status": "200",
+            "detail": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "http_status",
+              "displayName": "http_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        }
+      },
+      "id": "7a38715c-c29f-43d7-ad72-40e1096eea7d",
+      "name": "Log · STORED",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1220,
+        200
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Best-effort audit log. The data itself is already safe in the sheet."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'stored', request_id: $('Build Request Envelope').first().json.request_id } }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f7e3891f-053f-49cc-ba46-3b1ca3aa4466",
+      "name": "Respond 200 · Stored",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_dead_letters",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $('Build Request Envelope').first().json.request_id }}",
+            "received_at": "={{ $('Build Request Envelope').first().json.received_at }}",
+            "payload_json": "={{ $('Build Request Envelope').first().json.payload_json }}",
+            "last_error": "Google Sheets write failed after 3 attempts",
+            "attempts": "3",
+            "status": "PENDING",
+            "resolved_at": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "payload_json",
+              "displayName": "payload_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_error",
+              "displayName": "last_error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "attempts",
+              "displayName": "attempts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "resolved_at",
+              "displayName": "resolved_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        }
+      },
+      "id": "576bc279-d0c2-4109-aaec-fcafa2ea8bcf",
+      "name": "Queue in Dead-Letter Table",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2100,
+        400
+      ],
+      "onError": "continueErrorOutput",
+      "notes": "Durable fallback inside n8n's own DB. Error output → 503 path."
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_request_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $('Build Request Envelope').first().json.request_id }}",
+            "received_at": "={{ $('Build Request Envelope').first().json.received_at }}",
+            "status": "QUEUED",
+            "http_status": "202",
+            "detail": "Sheets unavailable; stored in ingest_dead_letters"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "http_status",
+              "displayName": "http_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        }
+      },
+      "id": "319fec01-4702-46d8-9781-501b7e307684",
+      "name": "Log · QUEUED",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2320,
+        280
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'queued', request_id: $('Build Request Envelope').first().json.request_id, message: 'Accepted. It will be written to the sheet automatically.' } }}",
+        "options": {
+          "responseCode": 202,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f26071af-0af4-4210-be50-9bedd6ee8960",
+      "name": "Respond 202 · Queued for Retry",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2540,
+        280
+      ],
+      "notes": "Honest status: received and safe, but not in the sheet yet. Callers must NOT resend (202 ≠ failure)."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=[WARNING] Google Sheets write failed 3 times for request {{ $('Build Request Envelope').first().json.request_id }}. The request is safe in Data Table 'ingest_dead_letters' and will be replayed every 15 minutes. Check the Sheets credential / quota / tab name."
+      },
+      "id": "a4f148f5-24b6-47d7-bd13-90f579a933d1",
+      "name": "Escalate · Sheets Unavailable",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2760,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'service_unavailable', message: 'Temporarily unable to store the request. Retry after 60 seconds with the same X-Request-ID.', request_id: $('Build Request Envelope').first().json.request_id, retry_after: 60 } }}",
+        "options": {
+          "responseCode": 503,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Retry-After",
+                "value": "60"
+              }
+            ]
+          }
+        }
+      },
+      "id": "793385a6-42be-433c-8052-a8faf2af5954",
+      "name": "Respond 503 · Storage Unavailable",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2320,
+        520
+      ],
+      "notes": "Both the sheet and the DLQ failed. Telling the caller to retry is the only safe answer. Same X-Request-ID → no duplicate thanks to the upsert."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=[CRITICAL] Request {{ $('Build Request Envelope').first().json.request_id }} could not be stored in Google Sheets NOR in the dead-letter table. Caller received 503 (retry). Payload: {{ $('Build Request Envelope').first().json.payload_json.slice(0, 1500) }}"
+      },
+      "id": "9216ccc9-0f07-42fd-a983-1b6cf76130c0",
+      "name": "Escalate · Request Not Stored",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2540,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "e94a3c42-3f25-4d7b-8249-3bed3cccd14a",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        1000
+      ],
+      "notes": "Replays dead letters. Runs only while the workflow is active."
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_dead_letters",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "PENDING"
+            }
+          ]
+        },
+        "limit": 50,
+        "orderBy": true,
+        "orderByColumn": "createdAt",
+        "orderByDirection": "ASC"
+      },
+      "id": "90986d1b-a326-4828-91c8-4dd33c0e0081",
+      "name": "Get Pending Dead Letters",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        1000
+      ],
+      "notes": "Oldest 50 first. Zero rows → zero items → the run ends quietly (normal case)."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1881141-0b90-4788-b405-1df008dd2572",
+              "name": "row",
+              "value": "={{ (() => {\n  let p = {};\n  try { p = JSON.parse($json.payload_json || '{}') ?? {}; } catch (e) { p = {}; }\n  const amount = typeof p.amount === 'string' && p.amount.trim() !== '' ? Number(p.amount) : p.amount;\n  return {\n    request_id: $json.request_id,\n    received_at: $json.received_at,\n    event: String(p.event ?? '').trim(),\n    reference: String(p.reference ?? '').trim(),\n    customer_email: String(p.customer_email ?? '').trim().toLowerCase(),\n    amount: typeof amount === 'number' && Number.isFinite(amount) ? amount : null,\n    currency: (String(p.currency ?? '').trim() || 'IDR').toUpperCase().slice(0, 3),\n    notes: String(p.notes ?? '').trim().slice(0, 1000)\n  };\n})() }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "789ca992-81a1-42a1-838f-e5bdc30b9771",
+      "name": "Rebuild Sheet Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        1000
+      ],
+      "notes": "Re-derives the sheet row from the stored raw payload (same normalisation as the live path)."
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Events",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Request ID": "={{ $json.row.request_id }}",
+            "Received At": "={{ $json.row.received_at }}",
+            "Event": "={{ $json.row.event }}",
+            "Reference": "={{ $json.row.reference }}",
+            "Customer Email": "={{ $json.row.customer_email }}",
+            "Amount": "={{ $json.row.amount }}",
+            "Currency": "={{ $json.row.currency }}",
+            "Notes": "={{ $json.row.notes }}",
+            "Stored Via": "REPLAY"
+          },
+          "matchingColumns": [
+            "Request ID"
+          ],
+          "schema": [
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Received At",
+              "displayName": "Received At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Event",
+              "displayName": "Event",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reference",
+              "displayName": "Reference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer Email",
+              "displayName": "Customer Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Stored Via",
+              "displayName": "Stored Via",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "51d56fc8-2bfc-487e-a2ac-e4aac62d8f09",
+      "name": "Replay · Upsert Rows in Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        1000
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "No error output here on purpose, so Retry On Fail (3× / 5 s) really retries. Final failure fails the run → alert; rows stay PENDING."
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_dead_letters",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "request_id",
+              "condition": "eq",
+              "keyValue": "={{ $json['Request ID'] }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "PENDING"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "RESOLVED",
+            "resolved_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "resolved_at",
+              "displayName": "resolved_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "547684de-f039-4589-b178-291bc17c1f12",
+      "name": "Mark Dead Letter Resolved",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        1000
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Matched by Request ID taken from the sheet node's output row, so no item pairing is involved."
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_request_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $json.request_id }}",
+            "received_at": "={{ $json.received_at }}",
+            "status": "STORED",
+            "http_status": "202",
+            "detail": "Replayed from dead-letter queue"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "http_status",
+              "displayName": "http_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        }
+      },
+      "id": "edf1db2b-d94a-444e-aa38-8a07ac67ec1b",
+      "name": "Log · STORED (replay)",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        1000
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "### ⚠️ Built-in error handler\nThis section runs **automatically** whenever a production execution of this workflow fails: an unexpected crash, an exhausted retry, or a deliberate `[CRITICAL]` / `[WARNING]` escalation from one of the *Escalate ·* nodes above.\n\n- No extra setup is needed. Leave *Settings → Error workflow* empty, and n8n uses this Error Trigger.\n- **Email Alert** (Gmail, 3 retries) sends an incident email with links to the failed execution and the editor. Swap it for Outlook or SMTP if you prefer.\n- If the email fails → **Fallback · Log Incident** writes an `INCIDENT` row to the `ingest_request_log` Data Table, which lives in n8n's own database and survives third-party outages.\n- Severity comes from the message tag: `[CRITICAL]` = act now, `[WARNING]` = auto-recovered, no tag = unexpected `ERROR`.\n- Manual test runs do not trigger it. To preview the alert, run **On Workflow Error** on its own; it emits sample data.",
+        "height": 620,
+        "width": 1300,
+        "color": 7
+      },
+      "id": "37c2e969-5e55-4170-a4d5-ec47252d19b2",
+      "name": "Sticky Note 6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        1380
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "50b3acad-e61d-404b-8eff-3841040411d3",
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1720
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c89d76fb-5cf2-4e16-a2d5-ebe8868eacf9",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f27393f5-a179-47ad-b62f-59d54f6238f1",
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        1720
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ec35a4a-237a-496e-bc6c-448485c7b650",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "af5c71e8-fc81-48e7-8425-afa1741fc94e",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "58e738f9-bc86-48fa-bba6-c728d4708a0c",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "d47cb6ff-9800-4570-9bd5-b8d8750a1164",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "307cd73f-2e45-4553-9608-47fd26bd660e",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "3f80d684-2a52-481e-b316-4fa8d633a736",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "7cde8c78-e361-459a-a0be-e5c36d340de7",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "60612961-d53b-4196-9455-706d7c28d100",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "295b1058-bd7c-4b99-bd2b-f6b8c528c048",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "b4ab57e2-0b1a-422a-9a55-659978775466",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "5caa1ef4-6d25-4f11-a954-2ca6854df1d5",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "b92bd763-fda8-454c-9779-24f829e501c4",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "433e1a3c-7f74-4468-843c-9ab7540075bf",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8c88853a-4962-476c-8f7c-f7367136a5e5",
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        1720
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d79b93ed-c0f5-4c1b-b4f3-53814b840527",
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        1720
+      ],
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Primary alert. Email is independent of every service this workflow monitors, so an outage of those services cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "ingest_request_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $('Build Incident Report').first().json.incident_id }}",
+            "received_at": "={{ $('Build Incident Report').first().json.occurred_at }}",
+            "status": "INCIDENT",
+            "http_status": "",
+            "detail": "={{ ($('Build Incident Report').first().json.severity + ' · ' + $('Build Incident Report').first().json.failed_node + ' · ' + $('Build Incident Report').first().json.error_message + ' · ' + $('Build Incident Report').first().json.execution_url).slice(0, 1000) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "http_status",
+              "displayName": "http_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "detail",
+              "displayName": "detail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        }
+      },
+      "id": "d4c3bdb5-691b-46c6-8588-c6a04a89ed39",
+      "name": "Fallback · Log Incident",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        1880
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Reuses the existing 'ingest_request_log' Data Table (status = INCIDENT), so no extra table or credential is needed."
+    }
+  ],
+  "connections": {
+    "Ingest Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Request Envelope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Request Envelope": {
+      "main": [
+        [
+          {
+            "node": "Payload Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Payload Valid?": {
+      "main": [
+        [
+          {
+            "node": "Upsert Row in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log · REJECTED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log · REJECTED": {
+      "main": [
+        [
+          {
+            "node": "Respond 400 · Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Row in Sheet": {
+      "main": [
+        [
+          {
+            "node": "Log · STORED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retry · Count Attempt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log · STORED": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 · Stored",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry · Count Attempt": {
+      "main": [
+        [
+          {
+            "node": "Retry · Attempts Left?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry · Attempts Left?": {
+      "main": [
+        [
+          {
+            "node": "Retry · Backoff",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Queue in Dead-Letter Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry · Backoff": {
+      "main": [
+        [
+          {
+            "node": "Upsert Row in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Queue in Dead-Letter Table": {
+      "main": [
+        [
+          {
+            "node": "Log · QUEUED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 503 · Storage Unavailable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log · QUEUED": {
+      "main": [
+        [
+          {
+            "node": "Respond 202 · Queued for Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond 202 · Queued for Retry": {
+      "main": [
+        [
+          {
+            "node": "Escalate · Sheets Unavailable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond 503 · Storage Unavailable": {
+      "main": [
+        [
+          {
+            "node": "Escalate · Request Not Stored",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Dead Letters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Dead Letters": {
+      "main": [
+        [
+          {
+            "node": "Rebuild Sheet Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rebuild Sheet Row": {
+      "main": [
+        [
+          {
+            "node": "Replay · Upsert Rows in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replay · Upsert Rows in Sheet": {
+      "main": [
+        [
+          {
+            "node": "Mark Dead Letter Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Dead Letter Resolved": {
+      "main": [
+        [
+          {
+            "node": "Log · STORED (replay)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Fallback · Log Incident",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

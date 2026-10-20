@@ -1,0 +1,998 @@
+{
+  "name": "Route Typeform submissions to Airtable and notify the right owner in Slack",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Route Typeform submissions → Airtable → the right owner on Slack\nA multi-step intake form ends with a clean Airtable record and the right person @-mentioned in the right Slack channel within seconds.\n\n### How it works\n1. **Typeform Trigger** receives each submission as the raw payload.\n2. **Map Typeform Answers** maps answers by *question reference*, so renaming a question never breaks the mapping.\n3. **Pick Route & Priority** chooses Sales / Support / Partnership / General and flags large sales leads as 🔥 HOT.\n4. The record is **upserted** in Airtable by Response ID, so there are no duplicates.\n5. A Block Kit message @-mentions the owner, with a button to the record.\n6. If Airtable fails, Slack still receives every answer. If Slack fails, you get an alert. The **built-in error handler** (bottom) emails you, with a Slack fallback.\n\n### Setup steps (~15 min)\n1. In Typeform, set these question references: `full_name`, `email`, `company`, `inquiry_type`, `team_size`, `budget`, `details` (plus optional hidden field `utm_source`).\n2. Create an Airtable table with fields: Response ID, Submitted At, Full Name, Email, Company, Inquiry Type, Team Size, Budget, Details, Routed To, Priority, Status, UTM Source.\n3. Add **Typeform**, **Airtable**, **Slack** and **Gmail** credentials. Set the form ID and the base/table IDs.\n4. Edit **Config · Routing Rules** (channels and owner Slack member IDs) and **Alert Settings**.\n5. Invite the Slack bot to every routed channel, then activate.\n",
+        "height": 940,
+        "width": 760
+      },
+      "id": "281fdb24-47a9-4d6e-bb73-df5dbc8f75da",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ① Map & route\nAnswers are matched by Typeform **ref**. Value extraction handles every answer type (text, email, choice, choices, number, boolean, date, phone, url, file).\n\nRouting is plain data in **Config** (`routing.sales`, `.support`, `.partnership`, `.default`). To add a team, add a key there and a keyword rule in *Map Typeform Answers*.\n\n**Guard:** if the mapped submission has no email or no response ID (usually a renamed ref), the run is escalated `[CRITICAL]` instead of creating an empty record. The raw payload stays in the execution log.",
+        "height": 860,
+        "width": 1040,
+        "color": 7
+      },
+      "id": "eb8c9c1b-6190-4ee3-9d7c-27c09894e4ef",
+      "name": "Sticky Note 2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ② Save to Airtable\nUpsert on `Response ID`. *Retry On Fail* (3× / 5 s) works on this node even with the error output enabled, because Airtable reports item errors in `json.error`, which n8n re-runs.\n\nIf Airtable still fails, the lead is **not** lost: the Slack message is sent anyway, says *\"NOT saved to Airtable\"* and carries every answer. Then a `[CRITICAL]` alert asks ops to add it manually.",
+        "height": 860,
+        "width": 500,
+        "color": 7
+      },
+      "id": "3a5dc96c-1f07-4eca-94d3-c263b965e8d6",
+      "name": "Sticky Note 3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ③ Notify the right person\nBlock Kit message in the routed channel, @-mentioning the owner, with a priority badge (🔥 HOT = sales and team size ≥ 50) and a button to the Airtable record.\n\nSlack failure (3× retry first) → `[WARNING]` (or `[CRITICAL]` if Airtable also failed) alert by **email** from the built-in error handler. The message includes the submission, so nobody is left unnotified.",
+        "height": 860,
+        "width": 960,
+        "color": 7
+      },
+      "id": "8dd0ff21-b658-45e8-bc08-b6ff53f4a4bc",
+      "name": "Sticky Note 4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "formId": "REPLACE_WITH_TYPEFORM_FORM_ID",
+        "simplifyAnswers": false,
+        "onlyAnswers": false
+      },
+      "id": "0dce6725-123c-45c9-a472-17c78179479a",
+      "name": "Typeform Trigger",
+      "type": "n8n-nodes-base.typeformTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "Raw payload on purpose (simplify OFF) so answers can be mapped by question ref, and form_response.token / submitted_at are kept."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed31e756-0a9c-4dcb-a967-0052cd411d49",
+              "name": "airtable_base_id",
+              "value": "REPLACE_WITH_AIRTABLE_BASE_ID",
+              "type": "string"
+            },
+            {
+              "id": "8a5bffd6-9e73-46c7-9a24-d31eff729fc2",
+              "name": "airtable_table_id",
+              "value": "REPLACE_WITH_AIRTABLE_TABLE_ID",
+              "type": "string"
+            },
+            {
+              "id": "528f6d5a-0b08-452b-abbc-26bbb002ad6f",
+              "name": "routing",
+              "value": "={{ {\n  \"sales\":       { \"label\": \"Sales\",       \"channel\": \"#sales-leads\",  \"owner_slack_id\": \"U00000SALES\" },\n  \"support\":     { \"label\": \"Support\",     \"channel\": \"#support-intake\", \"owner_slack_id\": \"U0000SUPPORT\" },\n  \"partnership\": { \"label\": \"Partnership\", \"channel\": \"#partnerships\", \"owner_slack_id\": \"U0000PARTNER\" },\n  \"default\":     { \"label\": \"General\",     \"channel\": \"#inbound\",      \"owner_slack_id\": \"U00000INBOUND\" }\n} }}",
+              "type": "object"
+            },
+            {
+              "id": "437e4a85-c8b2-4982-8703-53abe29ae76a",
+              "name": "hot_team_size",
+              "value": 50,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "85acb5ea-3ca5-4e6b-bca4-564fbc4ec336",
+      "name": "Config · Routing Rules",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "EDIT ME. Airtable IDs (for record links; keep in sync with the Airtable node) and the routing table. owner_slack_id = Slack member ID (profile → ⋮ → Copy member ID)."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4705f4da-728c-432b-9690-675c677700ce",
+              "name": "submission",
+              "value": "={{ (() => {\n  const fr = $('Typeform Trigger').first().json.form_response || {};\n  const byRef = {};\n  for (const a of (fr.answers || [])) {\n    const raw = a[a.type];\n    let v = raw;\n    if (a.type === 'choice') v = raw?.label ?? raw?.other ?? '';\n    else if (a.type === 'choices') v = [...(raw?.labels || []), ...(raw?.other ? [raw.other] : [])].join(', ');\n    else if (a.type === 'payment') v = raw?.amount ?? '';\n    else if (raw !== null && typeof raw === 'object') v = JSON.stringify(raw);\n    byRef[a.field?.ref || a.field?.id] = v;\n  }\n  const s = v => (v === undefined || v === null) ? '' : String(v).trim();\n  const hidden = fr.hidden || {};\n  return {\n    response_id: s(fr.token),\n    submitted_at: s(fr.submitted_at) || $now.toISO(),\n    form_id: s(fr.form_id),\n    full_name: s(byRef.full_name),\n    email: s(byRef.email).toLowerCase(),\n    company: s(byRef.company),\n    inquiry_type: s(byRef.inquiry_type),\n    team_size: s(byRef.team_size),\n    budget: s(byRef.budget),\n    details: s(byRef.details).slice(0, 5000),\n    utm_source: s(hidden.utm_source),\n    unmapped_refs: Object.keys(byRef).filter(k => !['full_name', 'email', 'company', 'inquiry_type', 'team_size', 'budget', 'details'].includes(k))\n  };\n})() }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "958554a1-8667-445b-b94d-ab9c02b24f2a",
+      "name": "Map Typeform Answers",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "Contract: submission{response_id, submitted_at, full_name, email, company, inquiry_type, team_size, budget, details, utm_source, unmapped_refs[]}."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "98b491f6-70d4-4e14-85c2-532d3971b552",
+              "name": "route_key",
+              "value": "={{ (() => {\n  const t = String($json.submission?.inquiry_type ?? '').toLowerCase();\n  if (/sales|demo|pricing|quote|buy|purchase/.test(t)) return 'sales';\n  if (/support|help|bug|issue|problem|technical/.test(t)) return 'support';\n  if (/partner|reseller|affiliate|agency/.test(t)) return 'partnership';\n  return 'default';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "cf1c50a1-1f05-444d-b656-010b3f8b8d00",
+              "name": "priority",
+              "value": "={{ (() => {\n  const t = String($json.submission?.inquiry_type ?? '').toLowerCase();\n  const nums = String($json.submission?.team_size ?? '').match(/\\d+/g) || [];\n  const size = nums.length ? Number(nums[nums.length - 1]) : 0;\n  return /sales|demo|pricing|quote|buy|purchase/.test(t) && size >= $('Config · Routing Rules').first().json.hot_team_size ? 'HOT' : 'NORMAL';\n})() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {},
+        "includeOtherFields": true
+      },
+      "id": "198a2691-9b02-46eb-9f7b-6431edd69cea",
+      "name": "Pick Route & Priority",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "Keyword rules on the inquiry_type answer → a key in Config.routing. Team size '11-50' / '200+' uses the largest number."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "493fc273-966b-4c9b-b46c-81683b9fbc95",
+              "leftValue": "={{ !!$json.submission?.response_id && !!$json.submission?.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f20af542-4fe1-4425-b460-e6d3d0aa414e",
+      "name": "Has Required Answers?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        300
+      ],
+      "notes": "Data guard: an expression error or a renamed ref would otherwise create an empty Airtable record with a green execution."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=[CRITICAL] Typeform submission {{ $json.submission?.response_id || '(no token)' }} has no email after mapping. Check that the question refs match full_name/email/company/inquiry_type/team_size/budget/details. Unmapped refs: {{ ($json.submission?.unmapped_refs ?? []).join(', ') || 'none' }}. Raw answers are in this execution."
+      },
+      "id": "5ffc4304-4ff1-4b85-8c3c-eaf10b24b80e",
+      "name": "Escalate · Unmappable Submission",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        860,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "REPLACE_WITH_AIRTABLE_BASE_ID",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "REPLACE_WITH_AIRTABLE_TABLE_ID",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Response ID": "={{ $('Map Typeform Answers').first().json.submission.response_id }}",
+            "Submitted At": "={{ $('Map Typeform Answers').first().json.submission.submitted_at }}",
+            "Full Name": "={{ $('Map Typeform Answers').first().json.submission.full_name }}",
+            "Email": "={{ $('Map Typeform Answers').first().json.submission.email }}",
+            "Company": "={{ $('Map Typeform Answers').first().json.submission.company }}",
+            "Inquiry Type": "={{ $('Map Typeform Answers').first().json.submission.inquiry_type }}",
+            "Team Size": "={{ $('Map Typeform Answers').first().json.submission.team_size }}",
+            "Budget": "={{ $('Map Typeform Answers').first().json.submission.budget }}",
+            "Details": "={{ $('Map Typeform Answers').first().json.submission.details }}",
+            "Routed To": "={{ $('Pick Route & Priority').first().json.route_key }}",
+            "Priority": "={{ $('Pick Route & Priority').first().json.priority }}",
+            "Status": "New",
+            "UTM Source": "={{ $('Map Typeform Answers').first().json.submission.utm_source }}"
+          },
+          "matchingColumns": [
+            "Response ID"
+          ],
+          "schema": [
+            {
+              "id": "Response ID",
+              "displayName": "Response ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inquiry Type",
+              "displayName": "Inquiry Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Team Size",
+              "displayName": "Team Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Details",
+              "displayName": "Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Routed To",
+              "displayName": "Routed To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "UTM Source",
+              "displayName": "UTM Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "ab4354b4-88ea-4aee-8946-4f07493a614e",
+      "name": "Upsert Record in Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        220
+      ],
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Upsert on 'Response ID' = idempotent. Retry 3× / 5 s, then the error output keeps the lead moving to Slack."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07d5f1e3-1849-402a-8a3d-4400735bc53c",
+              "name": "airtable_saved",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "ed2cfe08-9c56-4269-932f-f8c5c74d2fb5",
+              "name": "airtable_error",
+              "value": "={{ String($json.message ?? $json.error?.message ?? $json.error ?? 'Airtable write failed').slice(0, 300) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5fddd751-f912-46d1-9a91-6b5beea8328b",
+      "name": "Flag Airtable Failure",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9e8f3075-3502-4866-bd3f-8b8ab3c68785",
+              "name": "airtable_saved",
+              "value": "={{ $json.airtable_saved !== false }}",
+              "type": "boolean"
+            },
+            {
+              "id": "09cf0aa0-9fb0-41b3-b04e-6768044adc6a",
+              "name": "record_id",
+              "value": "={{ $json.airtable_saved === false ? '' : ($json.id ?? '') }}",
+              "type": "string"
+            },
+            {
+              "id": "0a7144e2-5f49-4d56-ad2c-de971c50553e",
+              "name": "channel",
+              "value": "={{ ($('Config · Routing Rules').first().json.routing[$('Pick Route & Priority').first().json.route_key] ?? $('Config · Routing Rules').first().json.routing.default).channel }}",
+              "type": "string"
+            },
+            {
+              "id": "38fb827c-7a63-4720-88bc-c2fa365af960",
+              "name": "fallback_text",
+              "value": "={{ 'New ' + $('Pick Route & Priority').first().json.route_key + ' inquiry from ' + $('Map Typeform Answers').first().json.submission.full_name + ' (' + $('Map Typeform Answers').first().json.submission.email + ')' }}",
+              "type": "string"
+            },
+            {
+              "id": "34d01717-107e-447e-8e64-67f5b4751041",
+              "name": "blocks",
+              "value": "={{ (() => {\n  const sub = $('Map Typeform Answers').first().json.submission;\n  const pick = $('Pick Route & Priority').first().json;\n  const cfg = $('Config · Routing Rules').first().json;\n  const route = cfg.routing[pick.route_key] ?? cfg.routing.default;\n  const saved = $json.airtable_saved !== false;\n  const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const cut = (v, n) => { const t = esc(v); return t.length > n ? t.slice(0, n - 1) + '…' : t; };\n  const recordUrl = saved && $json.id ? 'https://airtable.com/' + cfg.airtable_base_id + '/' + cfg.airtable_table_id + '/' + $json.id : '';\n\n  const blocks = [\n    { type: 'header', text: { type: 'plain_text', text: (pick.priority === 'HOT' ? '🔥 ' : '🆕 ') + 'New ' + route.label + ' inquiry: ' + String(sub.full_name || 'Unknown').slice(0, 80), emoji: true } },\n    { type: 'section', text: { type: 'mrkdwn', text: '<@' + route.owner_slack_id + '> this one is yours. *Priority:* ' + (pick.priority === 'HOT' ? '🔥 HOT' : 'Normal') } },\n    { type: 'section', fields: [\n      { type: 'mrkdwn', text: '*Name*\\n' + cut(sub.full_name || '-', 200) },\n      { type: 'mrkdwn', text: '*Email*\\n<mailto:' + sub.email + '|' + cut(sub.email, 200) + '>' },\n      { type: 'mrkdwn', text: '*Company*\\n' + cut(sub.company || '-', 200) },\n      { type: 'mrkdwn', text: '*Inquiry type*\\n' + cut(sub.inquiry_type || '-', 200) },\n      { type: 'mrkdwn', text: '*Team size*\\n' + cut(sub.team_size || '-', 100) },\n      { type: 'mrkdwn', text: '*Budget*\\n' + cut(sub.budget || '-', 100) }\n    ] },\n    { type: 'section', text: { type: 'mrkdwn', text: '*Details*\\n' + (cut(sub.details, 2800) || '_none_') } },\n    { type: 'context', elements: [ { type: 'mrkdwn', text: 'Submitted ' + sub.submitted_at + ' · Response `' + sub.response_id + '`' + (sub.utm_source ? ' · Source ' + esc(sub.utm_source) : '') } ] }\n  ];\n  if (recordUrl) {\n    blocks.push({ type: 'actions', elements: [ { type: 'button', text: { type: 'plain_text', text: 'Open in Airtable' }, url: recordUrl, style: 'primary' } ] });\n  } else {\n    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: ':warning: *NOT saved to Airtable* (' + cut($json.airtable_error || 'unknown error', 200) + '). This message is the only copy; the team has been alerted by email.' } });\n  }\n  return blocks;\n})() }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5000e831-6732-4033-a705-048570385ea1",
+      "name": "Build Slack Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1580,
+        220
+      ],
+      "notes": "Reached from two mutually exclusive paths (Airtable ok / Airtable failed). User text is escaped for Slack mrkdwn (&, <, >)."
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channel }}",
+          "mode": "name"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ { \"blocks\": $json.blocks } }}",
+        "text": "={{ $json.fallback_text }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "ca0a196a-b872-4066-a902-99cbdef2d4f2",
+      "name": "Notify Owner in Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1820,
+        220
+      ],
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Blocks must be wrapped as { blocks: [...] }; a bare array posts as plain text. Retry 3× / 5 s, then the error output escalates."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b79d1132-e598-4e0f-b383-907d9f5b839e",
+              "leftValue": "={{ $('Build Slack Message').first().json.airtable_saved === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "57c1704a-ab97-4a78-a997-f879a5cd98c6",
+      "name": "Saved to Airtable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2060,
+        140
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6d997075-b9be-48a5-96d7-4433de5c4afd",
+      "name": "Done",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2300,
+        60
+      ],
+      "notes": "Happy path: saved in Airtable and owner notified."
+    },
+    {
+      "parameters": {
+        "errorMessage": "=[CRITICAL] Typeform response {{ $('Map Typeform Answers').first().json.submission.response_id }} could NOT be saved to Airtable after 3 attempts ({{ $('Build Slack Message').first().json.channel }} was notified with all answers). Add it manually: {{ JSON.stringify($('Map Typeform Answers').first().json.submission).slice(0, 1500) }}"
+      },
+      "id": "5cf90168-4f7e-4ccb-bbfa-e09c23787889",
+      "name": "Escalate · Airtable Write Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2300,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ $('Build Slack Message').first().json.airtable_saved ? '[WARNING]' : '[CRITICAL]' }} Slack notification to {{ $('Build Slack Message').first().json.channel }} failed after 3 attempts. Please notify the owner manually. {{ $('Build Slack Message').first().json.fallback_text }}. Airtable saved: {{ $('Build Slack Message').first().json.airtable_saved }}. Submission: {{ JSON.stringify($('Map Typeform Answers').first().json.submission).slice(0, 1500) }}"
+      },
+      "id": "11366000-b972-4d89-8ff6-aea648d75d24",
+      "name": "Escalate · Slack Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2060,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "content": "### ⚠️ Built-in error handler\nThis section runs **automatically** whenever a production execution of this workflow fails: an unexpected crash, an exhausted retry, or a deliberate `[CRITICAL]` / `[WARNING]` escalation from one of the *Escalate ·* nodes above.\n\n- No extra setup is needed. Leave *Settings → Error workflow* empty, and n8n uses this Error Trigger.\n- **Email Alert** (Gmail, 3 retries) sends an incident email with links to the failed execution and the editor. Swap it for Outlook or SMTP if you prefer.\n- If the email fails → **Fallback · Slack Ops Channel** posts a short alert to the channel in *Alert Settings*. If that fails too, this error run shows as *failed* in the Executions list.\n- Severity comes from the message tag: `[CRITICAL]` = act now, `[WARNING]` = auto-recovered, no tag = unexpected `ERROR`.\n- Manual test runs do not trigger it. To preview the alert, run **On Workflow Error** on its own; it emits sample data.",
+        "height": 620,
+        "width": 1300,
+        "color": 7
+      },
+      "id": "83239357-9c8e-4802-b5da-744493766be2",
+      "name": "Sticky Note 5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        900
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "15b49706-4bea-45bd-87c9-be72b23c69ba",
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1240
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b19a5b1a-d011-4568-8bb4-56e9d1b77fa4",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "f184f61b-ea24-4d92-8eb9-5dbf37c1623d",
+              "name": "slack_ops_channel",
+              "value": "#n8n-alerts",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "56275dfb-1b0e-4910-aa82-a54f2f1cd00c",
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        1240
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "37c2d4d2-369d-4ebb-a6a6-d1aa4b19fc6f",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "fa327e4f-f51e-4831-9602-7d74043170cb",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "b375edd2-2b10-461a-afbd-b2eb12dfbbb5",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "b6739a06-8d3a-463b-b45b-6ba21cb7411c",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a321cec7-1709-44ed-b246-0cff7dabc234",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "00f1d358-f0f5-4994-b237-1c9068eea1d5",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "efc54301-28a2-40d2-a7bd-8e1c5d1bc7c2",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "077cf791-f62a-4e88-ade6-873ab78b8d19",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "d1993c20-1599-4038-b5ba-6486c3f4d901",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "088d5828-9641-4724-acfb-18b350002211",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "fecb15dc-f390-4725-bda6-1763a084dddd",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "1fb2b919-5222-435b-9415-54922a8c2a05",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "d8dd0fa1-c17f-4908-a2be-e0c72a39877f",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bb3660bf-760b-442b-91bc-3175406f174a",
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        1240
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "dbd3d3e6-c12d-46c7-a528-3092a065ab16",
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        1240
+      ],
+      "onError": "continueErrorOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Primary alert. Email is independent of every service this workflow monitors, so an outage of those services cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('Alert Settings').first().json.slack_ops_channel }}",
+          "mode": "name"
+        },
+        "text": "=:rotating_light: [{{ $('Build Incident Report').first().json.severity }}] n8n workflow failed (email alert also failed)\nWorkflow: {{ $('Build Incident Report').first().json.workflow_name }}\nFailed node: {{ $('Build Incident Report').first().json.failed_node }}\nError: {{ $('Build Incident Report').first().json.error_message.slice(0, 400) }}\nExecution: {{ $('Build Incident Report').first().json.execution_url || $('Build Incident Report').first().json.execution_id }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "0bb8fa33-5c46-4a79-848e-73d2f8fc6474",
+      "name": "Fallback · Slack Ops Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        920,
+        1400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Reuses this workflow's Slack credential; invite the bot to the ops channel."
+    }
+  ],
+  "connections": {
+    "Typeform Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config · Routing Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config · Routing Rules": {
+      "main": [
+        [
+          {
+            "node": "Map Typeform Answers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Typeform Answers": {
+      "main": [
+        [
+          {
+            "node": "Pick Route & Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Route & Priority": {
+      "main": [
+        [
+          {
+            "node": "Has Required Answers?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Required Answers?": {
+      "main": [
+        [
+          {
+            "node": "Upsert Record in Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate · Unmappable Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Record in Airtable": {
+      "main": [
+        [
+          {
+            "node": "Build Slack Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Flag Airtable Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flag Airtable Failure": {
+      "main": [
+        [
+          {
+            "node": "Build Slack Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Slack Message": {
+      "main": [
+        [
+          {
+            "node": "Notify Owner in Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Owner in Slack": {
+      "main": [
+        [
+          {
+            "node": "Saved to Airtable?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate · Slack Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Saved to Airtable?": {
+      "main": [
+        [
+          {
+            "node": "Done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate · Airtable Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Fallback · Slack Ops Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
