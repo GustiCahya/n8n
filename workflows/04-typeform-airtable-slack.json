@@ -4,96 +4,160 @@
     {
       "id": "3157b7d8-aaf2-44ed-a93a-5dbc90c656a1",
       "parameters": {
-        "content": "## Route Typeform leads to Airtable and Slack with SLA follow-up reminders\nEvery Typeform submission becomes an Airtable lead, reaches the right owner in Slack within seconds, and is chased automatically if nobody picks it up.\n\n### How it works\n1. **Typeform Trigger** receives each submission; answers are mapped by question *ref*.\n2. Keyword rules pick the team (Sales, Support, Partnership, General) and flag big sales leads as **HOT**.\n3. Earlier submissions from the same email are looked up, so the owner sees returning contacts.\n4. The lead is **upserted** in Airtable by Response ID, with its owner and channel.\n5. A Block Kit message @-mentions the owner, with a button to the record.\n6. Every 15 minutes, leads still **New** after their SLA remind the owner; the second reminder tags a manager.\n7. A **built-in error handler** emails you any failure, with a Slack fallback.\n\n### Setup\n1. In Typeform, set question refs `full_name`, `email`, `company`, `inquiry_type`, `team_size`, `budget`, `details` (optional hidden field `utm_source`).\n2. Create an Airtable table with fields: Response ID, Submitted At, Full Name, Email, Company, Inquiry Type, Team Size, Budget, Details, Routed To, Priority, Status (single select incl. \"New\"), UTM Source, Owner Slack ID, Slack Channel, Reminders Sent (number).\n3. Add **Typeform**, **Airtable**, **Slack** and **Gmail** credentials. Set the form ID and select the base and table in the four Airtable nodes.\n4. Edit **Config · Routing Rules** (channels, owner member IDs), **SLA Settings** and **Alert Settings**.\n5. Invite the Slack bot to every channel, then activate.\n\n### Customization\nChange the keyword rules in **Pick Route & Priority** and the SLA minutes in **SLA Settings**.",
-        "height": 1160,
-        "width": 760
+        "content": "## Route Typeform leads to Airtable and Slack with SLA follow-up reminders\n\n### How it works\n1. Typeform sends each submission. Answers are mapped by question ref, so renaming a question never breaks the flow.\n2. Keyword rules pick the team (Sales, Support, Partnership or General) and flag large sales leads as HOT.\n3. Earlier submissions from the same email are looked up, then the lead is upserted in Airtable by Response ID.\n4. A Slack message @-mentions the owner with the answers, the history and a button to the record.\n5. Every 15 minutes, leads still New after their SLA trigger a reminder. The second one also tags a manager.\n6. A built-in error handler emails you about failures, with a Slack fallback.\n\n### Setup steps\n- [ ] Add **Typeform**, **Airtable**, **Slack** and **Gmail** credentials.\n- [ ] Give the Typeform questions the refs `full_name`, `email`, `company`, `inquiry_type`, `team_size`, `budget` and `details`, and set the form ID.\n- [ ] Create an Airtable table with the fields Response ID, Submitted At, Full Name, Email, Company, Inquiry Type, Team Size, Budget, Details, Routed To, Priority, Status (single select with \"New\"), UTM Source, Owner Slack ID, Slack Channel and Reminders Sent (number). Select it in the four Airtable nodes.\n- [ ] Edit **Config · Routing Rules**, **SLA Settings** and **Alert Settings**.\n- [ ] Invite the Slack bot to every channel, leave *Settings → Error workflow* empty and activate.\n\n### Customization\nChange the keyword rules in **Pick Route & Priority** and the SLA minutes in **SLA Settings**.",
+        "height": 752,
+        "width": 480
       },
       "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -900,
-        -260
+        -608,
+        -144
       ]
     },
     {
       "id": "d480fa9e-57ee-4a9f-a19b-674941e28d7d",
       "parameters": {
-        "content": "## ① Map & route\nAnswers are matched by question *ref*, so renaming a question never breaks the mapping. Keyword rules pick the team; big sales leads are flagged HOT. A submission without an email escalates instead of creating an empty record.",
-        "height": 820,
-        "width": 1080,
+        "content": "## Map and route the lead\nMatches answers by question ref and picks the team and priority.",
+        "height": 304,
+        "width": 864,
         "color": 7
       },
-      "name": "Sticky Note 2",
+      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        -40
+        -48,
+        -144
       ]
     },
     {
       "id": "e21ad8d4-7003-4d26-a509-d17e87badcf6",
       "parameters": {
-        "content": "## ② Returning contact & save\nEarlier submissions with the same email are looked up first. The lead is upserted by Response ID with its owner and channel. If Airtable fails, Slack still gets every answer.",
-        "height": 820,
-        "width": 720,
+        "content": "## Stop incomplete submissions\nA submission without an email raises an alert, not an empty record.",
+        "height": 528,
+        "width": 416,
         "color": 7
       },
-      "name": "Sticky Note 3",
+      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1060,
-        -40
+        912,
+        -144
       ]
     },
     {
       "id": "7d8d14f8-f573-40ad-a7fd-1a3c59f68362",
       "parameters": {
-        "content": "## ③ Notify the owner\nBlock Kit message in the team channel that @-mentions the owner, with priority, history and a button to the record. Slack failures escalate by email.",
-        "height": 820,
-        "width": 1000,
+        "content": "## Save the lead in Airtable\nLooks up earlier leads by email, then upserts by Response ID.",
+        "height": 528,
+        "width": 640,
         "color": 7
       },
-      "name": "Sticky Note 4",
+      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1820,
-        -40
+        1424,
+        -144
       ]
     },
     {
       "id": "adde7ee3-9170-4f1d-b52b-4b0c149b4319",
       "parameters": {
-        "content": "## ④ SLA follow-up every 15 min\nLeads still *New* after their SLA (HOT 30 min, others 4 h) remind the owner; the second reminder also tags a manager. Only reminders that were posted are counted, so failed ones retry next run.",
-        "height": 500,
-        "width": 1440,
+        "content": "## Notify the owner in Slack\nMentions the owner with the answers, history and a record link.",
+        "height": 304,
+        "width": 416,
         "color": 7
       },
-      "name": "Sticky Note 6",
+      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        820
+        2160,
+        -144
       ]
     },
     {
       "id": "665fa0c0-9aa5-4dd8-b7bd-7682f63e6e05",
       "parameters": {
-        "content": "## ⚠️ Built-in error handler\nRuns when a production execution fails. Emails an incident report; if Gmail fails too, posts to the Slack ops channel. Leave *Settings → Error workflow* empty.",
-        "height": 640,
-        "width": 1300,
+        "content": "## Finish or escalate failures\nEmails you if Slack or Airtable failed, so no lead is lost.",
+        "height": 528,
+        "width": 416,
         "color": 7
       },
-      "name": "Sticky Note 5",
+      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        1360
+        2672,
+        -144
+      ]
+    },
+    {
+      "id": "516ca524-162f-47b2-be0a-8532cde07de9",
+      "parameters": {
+        "content": "## Find overdue leads\nEvery 15 minutes: leads still New after their SLA.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        528
+      ]
+    },
+    {
+      "id": "b93934fe-d1e6-4fce-97d1-249f75013f37",
+      "parameters": {
+        "content": "## Remind the owner\nPosts a Slack reminder. The second one also tags a manager.",
+        "height": 496,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        528
+      ]
+    },
+    {
+      "id": "a1a516d1-5b9e-4123-a7cd-31205b3707d8",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 304,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1120
+      ]
+    },
+    {
+      "id": "45e08fc1-3e16-4948-8afe-89782db76222",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or posts to the Slack ops channel if Gmail fails.",
+        "height": 304,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1120
       ]
     },
     {
@@ -108,7 +172,7 @@
       "typeVersion": 1.1,
       "position": [
         0,
-        300
+        0
       ],
       "notes": "Raw payload on purpose (simplify OFF) so answers can be mapped by question ref. n8n registers the webhook with Typeform on activation and checks its signature on every call.",
       "webhookId": "b359f1ec-d86d-41f8-ba56-8d8bfe3d5a9d"
@@ -139,8 +203,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        300
+        224,
+        0
       ],
       "notes": "EDIT ME. The routing table: one key per team with label, channel and owner_slack_id (Slack profile → ⋮ → Copy member ID). hot_team_size: sales leads at or above this team size are HOT."
     },
@@ -164,8 +228,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        440,
-        300
+        448,
+        0
       ],
       "notes": "Contract: submission{response_id, submitted_at, full_name, email, company, inquiry_type, team_size, budget, details, utm_source, unmapped_refs[]}."
     },
@@ -196,8 +260,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        660,
-        300
+        672,
+        0
       ],
       "notes": "Keyword rules on the inquiry_type answer → a key in Config.routing. Team size '11-50' / '200+' uses the largest number."
     },
@@ -231,8 +295,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        880,
-        300
+        960,
+        0
       ],
       "notes": "Data guard: an expression error or a renamed ref would otherwise create an empty Airtable record with a green execution."
     },
@@ -245,8 +309,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        880,
-        540
+        1184,
+        224
       ],
       "notes": "CRITICAL: usually a renamed question ref. The raw answers stay in the execution log."
     },
@@ -288,8 +352,8 @@
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.1,
       "position": [
-        1120,
-        300
+        1472,
+        0
       ],
       "alwaysOutputData": true,
       "onError": "continueRegularOutput",
@@ -503,8 +567,8 @@
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.1,
       "position": [
-        1340,
-        300
+        1696,
+        0
       ],
       "onError": "continueErrorOutput",
       "retryOnFail": true,
@@ -539,8 +603,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1560,
-        500
+        1920,
+        224
       ],
       "notes": "Marks the lead as not saved; the Slack message then carries every answer."
     },
@@ -588,8 +652,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1880,
-        300
+        2208,
+        0
       ],
       "notes": "Reached from two mutually exclusive paths (Airtable saved / failed). Text from the form is escaped for Slack mrkdwn (&, <, >), so an answer like \"<!channel>\" cannot mention everyone."
     },
@@ -613,8 +677,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
-        2100,
-        300
+        2432,
+        0
       ],
       "onError": "continueErrorOutput",
       "retryOnFail": true,
@@ -652,8 +716,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        2320,
-        220
+        2720,
+        0
       ],
       "notes": "Decides whether the run ends cleanly or escalates the Airtable failure."
     },
@@ -664,8 +728,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        2540,
-        140
+        2944,
+        0
       ],
       "notes": "Happy path: saved in Airtable and owner notified."
     },
@@ -678,8 +742,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        2540,
-        320
+        2944,
+        224
       ],
       "notes": "CRITICAL: the lead is only in Slack. The message includes every answer for manual entry."
     },
@@ -692,8 +756,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        2320,
-        520
+        2720,
+        224
       ],
       "notes": "WARNING if the lead is safe in Airtable, CRITICAL if it is not."
     },
@@ -714,7 +778,7 @@
       "typeVersion": 1.2,
       "position": [
         0,
-        1040
+        640
       ],
       "notes": "Runs only while the workflow is active."
     },
@@ -762,8 +826,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        1040
+        224,
+        640
       ],
       "notes": "EDIT ME. Reminder 1 fires after the SLA, reminder 2 after twice the SLA and also tags manager_slack_id. fallback_channel is used for leads without a stored channel."
     },
@@ -797,8 +861,8 @@
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.1,
       "position": [
-        440,
-        1040
+        448,
+        640
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -849,8 +913,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        660,
-        1040
+        736,
+        640
       ],
       "notes": "One reminder per overdue lead. Form text is escaped for Slack mrkdwn."
     },
@@ -872,8 +936,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
-        880,
-        1040
+        960,
+        640
       ],
       "onError": "continueErrorOutput",
       "notes": "No node-level retry: with several items it would re-post reminders that already went out. A failed reminder is simply picked up again by the next run."
@@ -932,8 +996,8 @@
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.1,
       "position": [
-        1100,
-        960
+        1184,
+        640
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -949,8 +1013,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1100,
-        1160
+        1184,
+        864
       ],
       "executeOnce": true,
       "notes": "Slack error items carry no link to their lead, so the failed ones are derived from what was marked as sent."
@@ -963,7 +1027,7 @@
       "typeVersion": 1,
       "position": [
         0,
-        1660
+        1264
       ],
       "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
     },
@@ -993,8 +1057,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        1660
+        224,
+        1264
       ],
       "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
     },
@@ -1090,8 +1154,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        440,
-        1660
+        448,
+        1264
       ],
       "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
     },
@@ -1110,8 +1174,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        680,
-        1660
+        736,
+        1264
       ],
       "onError": "continueErrorOutput",
       "retryOnFail": true,
@@ -1137,8 +1201,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
-        920,
-        1820
+        960,
+        1264
       ],
       "retryOnFail": true,
       "maxTries": 3,

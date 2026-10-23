@@ -4,96 +4,176 @@
     {
       "id": "69477e1f-d1f0-44f8-9940-d59e985a7fbe",
       "parameters": {
-        "content": "## Pre-screen refund requests with an AI agent and approve risky ones in Slack\nRefund, cancellation and payment-dispute requests arrive from your helpdesk or shop. Code rules and an AI agent auto-approve the routine ones and send the risky ones to a person, who approves or declines with one click in Slack.\n\n### How it works\n1. A **Webhook** (Header Auth) takes 1–100 requests and answers `202` with a `batch_id`.\n2. **Hard rules** in code force review for risk keywords or large amounts.\n3. The **AI agent** (OpenAI) decides per request. It can look up the customer's earlier decisions, including human ones, and returns schema-checked JSON. If it fails, a person decides.\n4. Every decision is logged to the `Review Log` sheet.\n5. Each request that needs a person gets its own run: a Slack message with **Approve / Decline** buttons that waits up to 48 h.\n6. The answer (or `expired`) is written back to the log.\n7. A **built-in error handler** emails you any failure, with a Slack fallback.\n\n### Setup\n1. Add **Header Auth**, **OpenAI**, **Google Sheets**, **Slack** and **Gmail** credentials.\n2. Create an empty sheet tab `Review Log` (headers are written on the first run) and select the spreadsheet in the three Sheets nodes.\n3. Edit **Config** (approval channel, thresholds, keywords) and **Alert Settings**. Invite the Slack bot to both channels.\n4. Activate, then test:\n```\ncurl -X POST https://<your-n8n>/webhook/refund-requests -H \"X-API-Key: <secret>\" -H \"Content-Type: application/json\" -d '{\"records\":[{\"id\":\"R-1\",\"title\":\"Charged twice\",\"content\":\"I was charged twice, refund one\",\"customer_email\":\"a@b.co\",\"amount\":49}]}'\n```\n\n### Customization\nConnect your payment provider after **Record Human Decision** to issue approved refunds.",
-        "height": 1160,
-        "width": 760
+        "content": "## Pre-screen refund requests with an AI agent and approve risky ones in Slack\n\n### How it works\n1. A header-protected webhook takes 1–100 refund, cancellation or dispute requests and answers `202` with a `batch_id`.\n2. Hard rules in code send risk keywords and large amounts to a person.\n3. An AI agent (OpenAI) reviews each request, can look up the customer's earlier decisions, and returns schema-checked JSON. If it fails, a person decides.\n4. Every decision is logged to the `Review Log` sheet.\n5. Each risky request starts its own run: a Slack message with **Approve / Decline** buttons that waits up to 48 hours. The answer, or `expired`, is written back to the log.\n6. A built-in error handler emails you about failures, with a Slack fallback.\n\n### Setup steps\n- [ ] Add **Header Auth**, **OpenAI**, **Google Sheets**, **Slack** and **Gmail** credentials.\n- [ ] Create an empty `Review Log` tab and select the spreadsheet in the three Sheets nodes.\n- [ ] Edit **Config** (approval channel, thresholds, keywords) and **Alert Settings**, and invite the Slack bot to both channels.\n- [ ] Leave *Settings → Error workflow* empty, activate, and send the test request from the **Records Webhook** node notes.\n\n### Customization\nConnect your payment provider after **Record Human Decision** to issue approved refunds automatically.",
+        "height": 704,
+        "width": 480
       },
       "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -900,
-        -300
+        -608,
+        -144
       ]
     },
     {
       "id": "31b4baf6-0008-488f-a389-51ce43c37003",
       "parameters": {
-        "content": "## ① Validate & accept\nHeader-auth webhook for 1–100 refund requests. Bad input gets `400` with details; valid batches get `202` + `batch_id` at once, so callers never wait for the AI.",
-        "height": 880,
-        "width": 1520,
+        "content": "## Receive and validate batch\nAccepts 1–100 refund requests and checks every field.",
+        "height": 304,
+        "width": 864,
         "color": 7
       },
-      "name": "Sticky Note 2",
+      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        -40
+        -48,
+        -144
       ]
     },
     {
       "id": "0e60e0b4-834b-4b6e-bd10-6f54c4af0ef8",
       "parameters": {
-        "content": "## ② Hard rules + AI agent\nCode flags risk keywords and large amounts first; the AI cannot override them. The agent checks the customer's past decisions with a Sheets tool and returns schema-checked JSON. If it fails, the request goes to a person.",
-        "height": 880,
-        "width": 1140,
+        "content": "## Reject invalid batches\nReturns `400`. A validator crash returns `500` and raises an alert.",
+        "height": 272,
+        "width": 640,
         "color": 7
       },
-      "name": "Sticky Note 3",
+      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1500,
-        -40
+        912,
+        288
       ]
     },
     {
       "id": "5ae8f7e6-619c-49d8-87cf-98993d41e6ae",
       "parameters": {
-        "content": "## ③ Log & route\nEvery decision is logged to `Review Log` first. Low-risk requests are auto-approved; each of the others starts its own approval run, so one slow reviewer never blocks the batch.",
-        "height": 880,
-        "width": 1140,
+        "content": "## Accept and apply hard rules\nReturns `202` at once. Risk keywords and large amounts always need a person.",
+        "height": 304,
+        "width": 640,
         "color": 7
       },
-      "name": "Sticky Note 4",
+      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2680,
-        -40
+        912,
+        -144
       ]
     },
     {
       "id": "af1f4299-245b-4eb1-8c61-871a98bdfe21",
       "parameters": {
-        "content": "## ④ Human approval in Slack\nOne execution per request posts Approve / Decline buttons and waits up to 48 h. The answer (or `expired`) is written back to the Review Log, where the agent sees it next time.",
-        "height": 560,
-        "width": 1100,
+        "content": "## Review with an AI agent\nChecks the customer's past decisions and returns schema-checked JSON.",
+        "height": 704,
+        "width": 816,
         "color": 7
       },
-      "name": "Sticky Note 6",
+      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        880
+        1632,
+        -144
       ]
     },
     {
       "id": "4f41a618-ee6f-4d7a-8d81-b76ce54ec62a",
       "parameters": {
-        "content": "## ⚠️ Built-in error handler\nRuns when a production execution fails. Emails an incident report; if Gmail fails too, posts to the Slack ops channel. Leave *Settings → Error workflow* empty.",
-        "height": 640,
-        "width": 1300,
+        "content": "## Log every decision\nWrites each verdict to the `Review Log` sheet first.",
+        "height": 304,
+        "width": 640,
         "color": 7
       },
-      "name": "Sticky Note 5",
+      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        1480
+        2512,
+        -144
+      ]
+    },
+    {
+      "id": "e4333bf6-6ca6-4ab8-91ed-8d3a4d53c21d",
+      "parameters": {
+        "content": "## Route to a person\nStarts one approval run per risky request. The rest are auto-approved.",
+        "height": 528,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3248,
+        -144
+      ]
+    },
+    {
+      "id": "0f80fefd-60db-4c37-a1ff-824d59985244",
+      "parameters": {
+        "content": "## Ask for approval in Slack\nPosts Approve / Decline buttons and waits up to 48 hours.",
+        "height": 304,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        656
+      ]
+    },
+    {
+      "id": "e466d768-2545-4a2e-b362-c0fab41d17d3",
+      "parameters": {
+        "content": "## Record the answer\nWrites it back to the log, or alerts you if Slack refused the message.",
+        "height": 528,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        656
+      ]
+    },
+    {
+      "id": "0cd084bb-3175-46d3-8ee8-8a57fadeda86",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 304,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1280
+      ]
+    },
+    {
+      "id": "cf43d113-ba24-4f8d-8dc5-a0416b6d6d87",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or posts to the Slack ops channel if Gmail fails.",
+        "height": 304,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1280
       ]
     },
     {
@@ -110,10 +190,10 @@
       "typeVersion": 2,
       "position": [
         0,
-        300
+        0
       ],
       "webhookId": "1eb67e24-898e-4655-b4ef-5f2f3eab6a86",
-      "notes": "Header Auth protected. Accepts {\"records\": [...]} or a single request object with content (or text / description / message), customer_email, amount and currency."
+      "notes": "Header Auth protected. Accepts {\"records\": [...]} or a single request object with content (or text / description / message), customer_email, amount and currency.\n\nTest request:\ncurl -X POST https://<your-n8n>/webhook/refund-requests -H \"X-API-Key: <secret>\" -H \"Content-Type: application/json\" -d '{\"records\":[{\"id\":\"R-1\",\"title\":\"Charged twice\",\"content\":\"I was charged twice, refund one\",\"customer_email\":\"a@b.co\",\"amount\":49}]}'"
     },
     {
       "id": "ae96f8b4-be3d-409f-ab34-880e14e3b1be",
@@ -159,8 +239,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        300
+        224,
+        0
       ],
       "notes": "EDIT ME. review_channel: where approvals are posted. confidence_threshold: AI auto-approvals below it go to a person. amount_threshold: same currency as the incoming amount. approval_hours: how long an approval waits before it is marked expired."
     },
@@ -184,8 +264,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        440,
-        300
+        448,
+        0
       ],
       "notes": "Whole-batch schema check in one expression: 1–100 requests, each with content of at most 10,000 characters."
     },
@@ -219,8 +299,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        660,
-        300
+        672,
+        0
       ],
       "notes": "A missing result (validator crashed) also goes to the false branch, where the responder turns it into a 500."
     },
@@ -245,8 +325,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        900,
-        200
+        960,
+        0
       ],
       "notes": "Answer before the AI step. The batch_id is written to every log row."
     },
@@ -271,8 +351,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        900,
-        460
+        960,
+        400
       ],
       "notes": "One responder, status by expression: 400 for bad input, 500 if the validator itself crashed."
     },
@@ -306,8 +386,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1120,
-        460
+        1184,
+        400
       ],
       "notes": "Only a 500 is our bug; 400s are the caller's problem and are not escalated."
     },
@@ -320,8 +400,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1340,
-        460
+        1408,
+        400
       ],
       "notes": "Fails the execution on purpose so the error handler sends a CRITICAL incident."
     },
@@ -336,8 +416,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        1560,
-        200
+        1184,
+        0
       ],
       "notes": "Each request becomes its own item."
     },
@@ -367,8 +447,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1780,
-        200
+        1408,
+        0
       ],
       "notes": "Deterministic guardrails. force_review = true can never be auto-cleared by the AI. 'no customer email' is informational only."
     },
@@ -387,8 +467,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        2000,
-        200
+        1696,
+        0
       ],
       "onError": "continueRegularOutput",
       "notes": "On Error = Continue: a failed request becomes { error } and goes to a person (fail_safe). maxIterations 6 = history lookup + think + answer, with headroom."
@@ -411,8 +491,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        1880,
-        460
+        1680,
+        224
       ],
       "notes": "Max Retries 3 handles 429 / 5xx inside the OpenAI client."
     },
@@ -446,8 +526,8 @@
       "type": "n8n-nodes-base.googleSheetsTool",
       "typeVersion": 4.5,
       "position": [
-        2020,
-        460
+        1840,
+        224
       ],
       "notes": "Reads the same Review Log that Log Decision writes, so the agent sees earlier AI and human decisions. For very high volumes, switch to a database or Data Table tool with a row limit."
     },
@@ -458,8 +538,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolThink",
       "typeVersion": 1,
       "position": [
-        2160,
-        460
+        2000,
+        224
       ],
       "notes": "Scratch-pad tool: lets the model reason step by step on multi-factor records without extra API calls."
     },
@@ -474,8 +554,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        2300,
-        460
+        2160,
+        224
       ],
       "notes": "Enums and ranges are enforced; lengths are trimmed in Finalize Decision instead of failing the parse. autoFix repairs malformed JSON once with the fixer model."
     },
@@ -497,8 +577,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        2400,
-        640
+        2192,
+        416
       ],
       "notes": "Only called when the agent returns JSON that does not match Decision Schema."
     },
@@ -546,8 +626,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2460,
-        200
+        2560,
+        0
       ],
       "notes": "Single place where the verdict is made. Order: fail_safe → hard_rule → ai → low_confidence → auto-approve. review_id = batch_id:record_id identifies the request across runs."
     },
@@ -679,8 +759,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2740,
-        200
+        2784,
+        0
       ],
       "notes": "Field names = Review Log headers, in order; they are created on the first run. Human Decision starts as pending (or not needed) and is updated by the approval run."
     },
@@ -712,8 +792,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        2960,
-        200
+        3008,
+        0
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -750,8 +830,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        3180,
-        200
+        3296,
+        0
       ],
       "notes": "True → an approval run per request. False → auto-approved; the decision is already logged."
     },
@@ -762,8 +842,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3400,
-        380
+        3520,
+        224
       ],
       "notes": "Low-risk request: nothing else to do here. Connect your refund action after this node if you want to pay out automatically."
     },
@@ -823,8 +903,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3400,
-        100
+        3520,
+        0
       ],
       "notes": "Everything the approval run needs travels with the item: that run starts at its own trigger and cannot read nodes from this run. < and > in request or AI text become ‹ ›, so text like <!channel> cannot ping anyone (the send-and-wait message decodes HTML entities, so &lt; would not help)."
     },
@@ -854,8 +934,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        3620,
-        100
+        3744,
+        0
       ],
       "notes": "Calls THIS workflow ($workflow.id) once per request without waiting, so each approval waits in its own execution and the template stays a single file."
     },
@@ -869,7 +949,7 @@
       "typeVersion": 1.1,
       "position": [
         0,
-        1120
+        800
       ],
       "notes": "Entry point of the approval run, started by Start Approval Run with one request."
     },
@@ -906,8 +986,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
-        220,
-        1120
+        224,
+        800
       ],
       "webhookId": "a8f24121-b0a2-494e-a979-0e711b4ff5c0",
       "onError": "continueRegularOutput",
@@ -947,8 +1027,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        440,
-        1120
+        448,
+        800
       ],
       "notes": "True for an answer, or for a timeout (it can only happen after the wait). False when the request came back within seconds: Slack refused the message, so escalate."
     },
@@ -1177,8 +1257,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        680,
-        1040
+        736,
+        800
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -1194,8 +1274,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        680,
-        1240
+        960,
+        1024
       ],
       "notes": "The error handler then emails a CRITICAL incident with the request, so the decision is not lost."
     },
@@ -1207,7 +1287,7 @@
       "typeVersion": 1,
       "position": [
         0,
-        1780
+        1424
       ],
       "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
     },
@@ -1237,8 +1317,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        1780
+        224,
+        1424
       ],
       "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
     },
@@ -1334,8 +1414,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        440,
-        1780
+        448,
+        1424
       ],
       "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
     },
@@ -1354,8 +1434,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        680,
-        1780
+        736,
+        1424
       ],
       "onError": "continueErrorOutput",
       "retryOnFail": true,
@@ -1381,8 +1461,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.3,
       "position": [
-        920,
-        1940
+        960,
+        1424
       ],
       "retryOnFail": true,
       "maxTries": 3,

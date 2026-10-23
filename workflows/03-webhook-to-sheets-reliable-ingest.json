@@ -4,128 +4,224 @@
     {
       "id": "4b0a9a81-9c79-4c11-96e1-02bb31febe13",
       "parameters": {
-        "content": "## Log order webhooks to Google Sheets with a dead-letter queue and replay\nA webhook endpoint for order, payment or sign-up events that never silently drops a request. Every call is logged, retried, queued while Google is down and replayed later. Callers can check any request's status, and you get a daily health report.\n\n### How it works\n1. The **Webhook** (Header Auth) validates the payload and assigns a `request_id` (your `X-Request-ID`, or a generated one). Invalid → `400` with details.\n2. Rows are **upserted by Request ID**, so resends never duplicate. A failed write is retried in-request (2 s, then 4 s).\n3. Still failing → the request is saved in a **dead-letter Data Table** and the caller gets `202`. The queue is replayed every 15 minutes.\n4. If even the queue fails → `503` + `Retry-After`.\n5. `GET /webhook/ingest-status?request_id=…` returns the latest status of a request.\n6. Every morning a **report** emails counts, top rejection reasons and the queue backlog.\n7. A **built-in error handler** emails you about every degraded path.\n\n### Setup\n1. Add **Header Auth**, **Google Sheets** and **Gmail** credentials.\n2. Create an empty sheet tab `Events`. Its headers are written on the first request.\n3. Create two Data Tables, all columns *String*: `ingest_request_log` (request_id, received_at, status, http_status, detail) and `ingest_dead_letters` (request_id, received_at, payload_json, last_error, attempts, status, resolved_at).\n4. Select the spreadsheet in both Sheets nodes. Set emails in **Report Settings** and **Alert Settings**.\n5. Activate, then test:\n```\ncurl -X POST https://<your-n8n>/webhook/ingest -H \"X-API-Key: <secret>\" -H \"X-Request-ID: test-001\" -H \"Content-Type: application/json\" -d '{\"event\":\"order.created\",\"reference\":\"INV-1001\",\"customer_email\":\"a@b.co\",\"amount\":150000}'\n```",
-        "height": 1160,
-        "width": 760
+        "content": "## Log order webhooks to Google Sheets with a dead-letter queue and replay\n\n### How it works\n1. A header-protected webhook validates each order, payment or sign-up event and assigns a request ID. Invalid payloads get `400`.\n2. The row is upserted into Google Sheets by request ID, so resends never create duplicates.\n3. A failed write is retried twice. If Sheets is still down, the request is parked in an n8n Data Table and the caller gets `202`.\n4. Every 15 minutes, parked requests are replayed into the sheet.\n5. Callers can check any request with `GET /webhook/ingest-status?request_id=…`.\n6. A daily email reports stored, queued and rejected requests. A built-in error handler emails you when something breaks.\n\n### Setup steps\n- [ ] Add **Header Auth**, **Google Sheets** and **Gmail** credentials.\n- [ ] Create an empty `Events` tab and select the spreadsheet in both Sheets nodes.\n- [ ] Create two Data Tables with *String* columns: `ingest_request_log` (request_id, received_at, status, http_status, detail) and `ingest_dead_letters` (request_id, received_at, payload_json, last_error, attempts, status, resolved_at).\n- [ ] Set your email in **Report Settings** and **Alert Settings**.\n- [ ] Leave *Settings → Error workflow* empty, activate, and send the test request from the **Ingest Webhook** node notes.\n\n### Customization\nChange the required fields and their checks in **Build Request Envelope**.",
+        "height": 704,
+        "width": 480
       },
       "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -900,
-        -300
+        -608,
+        -112
       ]
     },
     {
       "id": "51fdca5a-f28f-415d-b531-ec4d0ff3b6ea",
       "parameters": {
-        "content": "## ① Receive & validate\nHeader-auth webhook. One expression assigns the request ID and checks the schema. Invalid payloads are logged as `REJECTED` and get `400` with per-field details.",
-        "height": 820,
-        "width": 1040,
+        "content": "## Receive and validate request\nChecks required fields and assigns a request ID.",
+        "height": 272,
+        "width": 640,
         "color": 7
       },
-      "name": "Sticky Note 2",
+      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        -60
+        -48,
+        -112
       ]
     },
     {
       "id": "86a04c0d-5f5e-44ec-ba29-e45247a23362",
       "parameters": {
-        "content": "## ② Write with retry\nUpsert by Request ID, so resends never duplicate. A failed write is retried in-request (2 s, then 4 s). The loop counts attempts with `$runIndex`, so it always stops after 3.",
-        "height": 820,
-        "width": 1060,
+        "content": "## Reject invalid payloads\nLogs the request and returns `400` with field errors.",
+        "height": 304,
+        "width": 416,
         "color": 7
       },
-      "name": "Sticky Note 3",
+      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1000,
-        -60
+        624,
+        256
       ]
     },
     {
       "id": "2a8b39f1-9a49-4559-851c-be493eb0c1a8",
       "parameters": {
-        "content": "## ③ Dead-letter queue\nAfter 3 failed writes the request is stored in a Data Table inside n8n and the caller gets `202`. If that fails too: `503` + `Retry-After`, and a CRITICAL alert with the payload.",
-        "height": 820,
-        "width": 920,
+        "content": "## Write row to Google Sheets\nUpserts by request ID, logs it and returns `200`.",
+        "height": 272,
+        "width": 864,
         "color": 7
       },
-      "name": "Sticky Note 4",
+      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        2100,
-        -60
+        1072,
+        -112
       ]
     },
     {
       "id": "cd33601b-f8df-4cab-9d93-4b9acf585b46",
       "parameters": {
-        "content": "## ④ Auto-replay every 15 min\nUp to 50 queued requests are written in one batch, then marked `RESOLVED`. Upserts make a crash between those two steps harmless.",
-        "height": 500,
-        "width": 1300,
+        "content": "## Retry failed writes\nWaits 2 s, then 4 s, and writes again.",
+        "height": 544,
+        "width": 416,
         "color": 7
       },
-      "name": "Sticky Note 5",
+      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        800
+        1520,
+        256
       ]
     },
     {
       "id": "32c5d0ec-f0da-4107-a5ec-887fdf661209",
       "parameters": {
-        "content": "## ⑤ Status lookup\n`GET /webhook/ingest-status?request_id=…` (same API key) returns the latest log entry: `STORED`, `QUEUED` or `REJECTED`. Unknown IDs get `404`.",
-        "height": 500,
-        "width": 800,
+        "content": "## Park request for replay\nSaves it in a Data Table, returns `202` and alerts you.",
+        "height": 304,
+        "width": 864,
         "color": 7
       },
-      "name": "Sticky Note 7",
+      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        1280,
-        800
+        1968,
+        256
       ]
     },
     {
       "id": "3d80abad-42fd-47f6-88b3-a4e1ca4af216",
       "parameters": {
-        "content": "## ⑥ Daily health report\nEvery day at 07:00: counts by status, top rejection reasons, queue backlog and requests stuck in the queue, by email.",
-        "height": 500,
-        "width": 1300,
+        "content": "## Return 503 if queue fails\nAsks the sender to retry later and raises a critical alert.",
+        "height": 304,
+        "width": 416,
         "color": 7
       },
-      "name": "Sticky Note 8",
+      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        1340
+        2192,
+        624
       ]
     },
     {
       "id": "2433ee97-9ccf-43ba-b00a-311c618baf60",
       "parameters": {
-        "content": "## ⚠️ Built-in error handler\nRuns when a production execution fails. Emails an incident report; if Gmail fails too, writes an `INCIDENT` row to `ingest_request_log`. Leave *Settings → Error workflow* empty.",
-        "height": 760,
-        "width": 1300,
+        "content": "## Load parked requests\nEvery 15 minutes, up to 50 at a time.",
+        "height": 272,
+        "width": 640,
         "color": 7
       },
-      "name": "Sticky Note 6",
+      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -60,
-        1880
+        -48,
+        1040
+      ]
+    },
+    {
+      "id": "7d83dc04-ee41-4298-8205-ebdabb7a7de8",
+      "parameters": {
+        "content": "## Replay into Google Sheets\nWrites the rows and marks each request resolved.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1040
+      ]
+    },
+    {
+      "id": "a9338853-da07-4262-9f2a-5439c3c43e1d",
+      "parameters": {
+        "content": "## Look up request status\nReturns the latest status of a request ID.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        1040
+      ]
+    },
+    {
+      "id": "dea7f83a-48aa-4015-805d-b9be4e66e008",
+      "parameters": {
+        "content": "## Collect last 24 hours\nReads the request log and the replay backlog at 07:00.",
+        "height": 304,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1392
+      ]
+    },
+    {
+      "id": "22025661-16d4-42b4-8e66-5ec74d01e871",
+      "parameters": {
+        "content": "## Email daily health report\nCounts, top rejection reasons and stuck requests.",
+        "height": 304,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        1392
+      ]
+    },
+    {
+      "id": "ac5a2a7a-aa39-46bc-b6b5-43a3c3ad91a3",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 304,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1776
+      ]
+    },
+    {
+      "id": "ab92ca7f-2fcf-4001-b6bd-8625c14e7ca0",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs an `INCIDENT` row if Gmail fails.",
+        "height": 304,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1776
       ]
     },
     {
@@ -142,10 +238,10 @@
       "typeVersion": 2,
       "position": [
         0,
-        300
+        0
       ],
       "webhookId": "5bd2def0-5d7c-47d7-8f70-5af696ef2fda",
-      "notes": "Header Auth protected. Wrong/missing key → n8n answers 403 before this workflow runs."
+      "notes": "Header Auth protected. Wrong/missing key → n8n answers 403 before this workflow runs.\n\nTest request:\ncurl -X POST https://<your-n8n>/webhook/ingest -H \"X-API-Key: <secret>\" -H \"X-Request-ID: test-001\" -H \"Content-Type: application/json\" -d '{\"event\":\"order.created\",\"reference\":\"INV-1001\",\"customer_email\":\"a@b.co\",\"amount\":150000}'"
     },
     {
       "id": "6fbae72e-7673-41db-91e2-890554598d0a",
@@ -185,8 +281,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        300
+        224,
+        0
       ],
       "notes": "One node = identity + audit copy + schema check. Every later node reads from here by name."
     },
@@ -220,8 +316,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        440,
-        300
+        448,
+        0
       ],
       "notes": "A missing validation result (expression error) also lands on the false branch, so nothing unvalidated is written."
     },
@@ -303,8 +399,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        660,
-        480
+        672,
+        400
       ],
       "onError": "continueRegularOutput",
       "notes": "Audit trail even for bad requests. On Error = continue: a logging hiccup must not block the 400 response."
@@ -330,8 +426,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        880,
-        480
+        896,
+        400
       ],
       "notes": "4xx: the caller must fix the payload; retrying unchanged will fail again."
     },
@@ -403,8 +499,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1020,
-        200
+        1120,
+        0
       ],
       "notes": "Field names = sheet headers. Rebuilt from the envelope on every attempt, so a retry never carries leftover fields into the sheet."
     },
@@ -438,8 +534,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        1240,
-        200
+        1344,
+        0
       ],
       "onError": "continueErrorOutput",
       "notes": "appendOrUpdate keyed on 'Request ID' = idempotent: resends and replays update the same row; headers are created on an empty tab. Cell format RAW stores values literally, so a note starting with '=' never runs as a formula. Error output → retry loop."
@@ -522,8 +618,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1460,
-        200
+        1568,
+        0
       ],
       "onError": "continueRegularOutput",
       "notes": "Best-effort audit log. The data itself is already safe in the sheet."
@@ -549,8 +645,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1680,
-        200
+        1792,
+        0
       ],
       "notes": "200 only after the row is in the sheet."
     },
@@ -584,8 +680,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1460,
-        440
+        1568,
+        400
       ],
       "notes": "3 attempts in total. Counts with $runIndex (how many times this node already ran in this execution), not with a field on the item: when the sheet lookup itself fails, the Sheets error item carries only { error }, so an item counter would reset and loop forever."
     },
@@ -599,8 +695,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1680,
-        440
+        1792,
+        640
       ],
       "webhookId": "6c90c27f-0188-439f-99aa-37597d816246",
       "notes": "2 s, then 4 s. The caller is waiting, so keep this short."
@@ -705,7 +801,7 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        2160,
+        2016,
         400
       ],
       "onError": "continueErrorOutput",
@@ -789,8 +885,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        2380,
-        280
+        2240,
+        400
       ],
       "onError": "continueRegularOutput",
       "notes": "Best-effort audit log; the request itself is already safe in the queue."
@@ -816,8 +912,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        2600,
-        280
+        2464,
+        400
       ],
       "notes": "Honest status: received and safe, but not in the sheet yet. Callers must NOT resend (202 ≠ failure)."
     },
@@ -830,8 +926,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        2820,
-        280
+        2688,
+        400
       ],
       "notes": "Fails the execution on purpose after the 202 was sent, so the error handler emails a WARNING."
     },
@@ -860,8 +956,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        2380,
-        520
+        2240,
+        768
       ],
       "notes": "Both the sheet and the DLQ failed. Telling the caller to retry is the only safe answer. Same X-Request-ID → no duplicate thanks to the upsert."
     },
@@ -874,8 +970,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        2600,
-        520
+        2464,
+        768
       ],
       "notes": "CRITICAL: nothing was stored. The incident email carries the payload."
     },
@@ -896,7 +992,7 @@
       "typeVersion": 1.2,
       "position": [
         0,
-        1000
+        1152
       ],
       "notes": "Replays dead letters. Runs only while the workflow is active."
     },
@@ -929,8 +1025,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        220,
-        1000
+        224,
+        1152
       ],
       "notes": "Oldest 50 first. Zero rows → zero items → the run ends quietly (normal case)."
     },
@@ -945,8 +1041,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        440,
-        1000
+        448,
+        1152
       ],
       "notes": "Re-derives the sheet row from the stored raw payload, with the same normalisation and column names as the live path."
     },
@@ -980,8 +1076,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        660,
-        1000
+        736,
+        1152
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -1049,8 +1145,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        880,
-        1000
+        960,
+        1152
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -1135,8 +1231,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1100,
-        1000
+        1184,
+        1152
       ],
       "onError": "continueRegularOutput",
       "notes": "Audit row for each replayed request (http_status 202 = it was queued first)."
@@ -1154,8 +1250,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        1340,
-        1000
+        1536,
+        1152
       ],
       "webhookId": "2a143724-2901-4b57-a4aa-ce4c9cfe6214",
       "notes": "Same Header Auth credential as the ingest webhook. Usage: GET /webhook/ingest-status?request_id=test-001"
@@ -1189,8 +1285,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        1560,
-        1000
+        1760,
+        1152
       ],
       "alwaysOutputData": true,
       "notes": "Newest log row for the ID (a queued request later gets a STORED row). Always Output Data lets the responder answer 404 when nothing matches."
@@ -1216,8 +1312,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        1780,
-        1000
+        1984,
+        1152
       ],
       "notes": "200 with the status, 404 for an unknown ID, 400 when request_id is missing."
     },
@@ -1238,7 +1334,7 @@
       "typeVersion": 1.2,
       "position": [
         0,
-        1580
+        1536
       ],
       "notes": "Uses the workflow time zone (Settings → Timezone)."
     },
@@ -1268,8 +1364,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        1580
+        224,
+        1536
       ],
       "notes": "EDIT ME. report_email_to: who gets the daily report. stuck_after_minutes: queued requests older than this are flagged as stuck."
     },
@@ -1299,8 +1395,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        440,
-        1580
+        448,
+        1536
       ],
       "alwaysOutputData": true,
       "retryOnFail": true,
@@ -1334,8 +1430,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        660,
-        1580
+        672,
+        1536
       ],
       "executeOnce": true,
       "alwaysOutputData": true,
@@ -1364,8 +1460,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        880,
-        1580
+        960,
+        1536
       ],
       "executeOnce": true,
       "notes": "Numbers only, computed once over both queries. stored_replay = requests that went through the queue first."
@@ -1385,8 +1481,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        1100,
-        1580
+        1184,
+        1536
       ],
       "retryOnFail": true,
       "maxTries": 3,
@@ -1401,7 +1497,7 @@
       "typeVersion": 1,
       "position": [
         0,
-        2280
+        1920
       ],
       "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
     },
@@ -1425,8 +1521,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        220,
-        2280
+        224,
+        1920
       ],
       "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
     },
@@ -1522,8 +1618,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        440,
-        2280
+        448,
+        1920
       ],
       "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
     },
@@ -1542,8 +1638,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        680,
-        2280
+        736,
+        1920
       ],
       "onError": "continueErrorOutput",
       "retryOnFail": true,
@@ -1629,8 +1725,8 @@
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
       "position": [
-        920,
-        2440
+        960,
+        1920
       ],
       "retryOnFail": true,
       "maxTries": 3,

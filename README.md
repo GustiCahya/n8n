@@ -42,7 +42,7 @@ Each fallback reuses a credential the workflow already has, so the only extra cr
 2. Open the yellow overview sticky (top left) and follow its **Setup** section.
 3. Search the workflow for `REPLACE_WITH_` (spreadsheet IDs, WhatsApp phone-number ID, Airtable base/table IDs, Typeform form ID). The **Config** / **… Settings** nodes hold all business settings.
 4. Leave *Settings → Error workflow* **empty**, so the built-in handler is used.
-5. Run the `curl` test shown on the canvas (01: first section sticky; 02, 03, 05: the overview sticky), then **activate**.
+5. Run the `curl` test (01: first section sticky; 02, 03, 05: the notes of the webhook node), then **activate**.
 
 Credentials are deliberately not in the JSON. Every credential field shows a normal dropdown after import.
 
@@ -139,15 +139,16 @@ n8n finds a Data Table by name with a case-insensitive *contains* match and take
 
 ## 6. Before posting to the n8n community
 
-Rules from n8n's *Template submission guidelines* and *Sticky note guidelines for templates* (Creator Hub pages on n8n.notion.site, checked 2026-10-21):
+Rules from n8n's *Template submission guidelines* and *Sticky note guidelines for templates* (Creator Hub pages on n8n.notion.site, checked 2026-10-21 and 2026-10-24):
 - Low-effort templates are not published; a template should show "thoughtful design, utility, and real-world value". This is why the first version of 02 was rejected as "too basic"; 03–05 were then given concrete use cases too.
 - Title: sentence case, action verb + what + where, name the main apps, no emojis or hype (e.g. "Sync contacts from Pipedrive to HubSpot").
 - Exactly one yellow overview sticky at the top left, 100–300 words, with **How it works** and **Setup** (optional **Customization**).
-- White section stickies for workflows with 4+ nodes, **under 50 words each** (a short heading plus 1–2 lines). Put longer explanations in node notes.
+- White section stickies for workflows with 4+ nodes, **under 50 words each**: a `##` title of 3–6 words in sentence case plus at most one short line. Each one wraps a small cluster of 2–4 nodes tightly, without large empty areas. Put longer explanations in node notes.
+- n8n's official [Auto-generate sticky notes](https://n8n.io/workflows/13868-auto-generate-sticky-notes-and-rename-nodes/) template shows the expected result: overview with a numbered **How it works** (one sentence per step), **Setup steps** as `- [ ]` checkboxes, optional **Customization**; about one section sticky per 3 nodes.
 - No credentials, API keys, pinned data or real contact details. Only placeholders such as `you@example.com`, `6281200000000` and `REPLACE_WITH_…`.
 - Description: about 200 words, Markdown, no HTML.
 
-02–05 follow all of these. **01 still has section stickies of 86–161 words**; shorten them before submitting. Ready-to-paste titles and descriptions for 02–05 are in [`TEMPLATE-SUBMISSIONS.md`](TEMPLATE-SUBMISSIONS.md).
+On 2026-10-24 n8n returned 03 because its stickies did not meet their quality standards: six large section stickies with 25–40 words of implementation detail, and a dense overview with a `curl` block. 02–05 now follow the official template's layout: 9–13 tight section stickies each and a 200–236-word overview, with the `curl` tests moved to the webhook node notes. **01 still has the old style** (section stickies of 86–161 words); restyle it before submitting. Ready-to-paste titles and descriptions for 02–05 are in [`TEMPLATE-SUBMISSIONS.md`](TEMPLATE-SUBMISSIONS.md).
 
 If you re-export a workflow after testing it on your own instance, check the export for your credential names, real email addresses, phone numbers or Slack IDs, and remove any pinned data before submitting. The safest option is to submit the files in this folder.
 
