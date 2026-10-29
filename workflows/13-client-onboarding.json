@@ -1,0 +1,2322 @@
+{
+  "name": "Onboard paying clients with Stripe, Google Drive, a Docs contract, Trello and Gmail",
+  "nodes": [
+    {
+      "id": "eb274c56-69e1-4c4e-b25d-1bc6a4ee317d",
+      "parameters": {
+        "content": "## Onboard paying clients with Stripe, Google Drive, a Docs contract, Trello and Gmail\n\n### How it works\n1. A paid Stripe Checkout (or the internal form for bank transfers) starts the onboarding, once per payment.\n2. A client folder with subfolders is created in Google Drive, and your contract template is copied and filled in.\n3. The contract is shared for comments, and the assets subfolder is shared so the client can upload files.\n4. A Trello board is copied from your template, the client is logged in Google Sheets, and the client gets a welcome email with every next step.\n5. The brief form saves answers as a Google Doc in the client folder. Clients who have not sent it get up to two reminders.\n\n### Setup steps\n- [ ] Add **Stripe** (with the webhook signing secret), **Google Drive**, **Google Docs**, **Google Sheets**, **Trello**, **Gmail** and **Basic Auth** credentials.\n- [ ] Create a contract template in Google Docs with placeholders like `[[client_company]]` and `[[amount]]` (see **Fill Contract**), and a Trello template board.\n- [ ] Create a spreadsheet with empty `Clients` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Onboarding Settings**: folder, template IDs and texts.\n\n### Customization\nChange the subfolders, packages and reminder timing in **Onboarding Settings**.",
+        "height": 720,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "b20de01b-9bcf-408c-9243-c889a9cb8947",
+      "parameters": {
+        "content": "## Receive payments and briefs\nStripe, a transfer form, the brief form and the daily run.",
+        "height": 944,
+        "width": 704,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "9e0c26b2-70e5-450e-a05d-3ec2c0777842",
+      "parameters": {
+        "content": "## Check the payment\nPaid, and only once per payment.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        -112
+      ]
+    },
+    {
+      "id": "e18d5c63-ac6a-4fed-a1c9-9a79a64a843b",
+      "parameters": {
+        "content": "## Create the client folders\nA client folder with your subfolders.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        -112
+      ]
+    },
+    {
+      "id": "e6e8787d-c111-4990-b390-c61103b56a2f",
+      "parameters": {
+        "content": "## Prepare and share the contract\nTemplate copy, filled in, shared for comments.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        -112
+      ]
+    },
+    {
+      "id": "0104aa1c-2875-4ef5-8af0-65d8f4871a55",
+      "parameters": {
+        "content": "## Set up the project\nTrello board from your template, row in Clients.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3408,
+        -112
+      ]
+    },
+    {
+      "id": "094dc846-ebb3-45d5-a69d-f355f4c8f63f",
+      "parameters": {
+        "content": "## Welcome the client\nNext steps for the client, links for the team.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4144,
+        -112
+      ]
+    },
+    {
+      "id": "eccc21d7-a5a2-4290-b4c9-3732386be275",
+      "parameters": {
+        "content": "## Match the brief to a client\nThe hidden client ID from the email link.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        336
+      ]
+    },
+    {
+      "id": "64227c59-6a9c-4f32-8c3b-6369144bcde7",
+      "parameters": {
+        "content": "## Save the brief\nA Google Doc in the client folder.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        336
+      ]
+    },
+    {
+      "id": "608eb6d1-0102-4e4f-9092-8553e394e368",
+      "parameters": {
+        "content": "## Remind about the brief\nUp to two reminders, the last one copies the team.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        656
+      ]
+    },
+    {
+      "id": "2f18937d-b2f2-488f-98f8-8153c3f2f38d",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1040
+      ]
+    },
+    {
+      "id": "b16dd980-ac80-43ae-b52f-cb5371c4e10c",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1040
+      ]
+    },
+    {
+      "id": "10e1da65-857c-45e0-b685-e6acefa98e6a",
+      "parameters": {
+        "events": [
+          "checkout.session.completed",
+          "checkout.session.async_payment_succeeded"
+        ],
+        "apiVersion": ""
+      },
+      "name": "Stripe Payment",
+      "type": "n8n-nodes-base.stripeTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "169f4668-220a-4f71-b6c2-74727103c5cb",
+      "notes": "Stripe Checkout or Payment Links. Add a \"company\" custom field and a \"package\" metadata value to the Payment Link. After the first activation, copy the endpoint signing secret from Stripe (Developers → Webhooks) into the credential, so only signed events are accepted."
+    },
+    {
+      "id": "e4adf8eb-4ac9-43a5-819a-15ddf2c58a38",
+      "parameters": {
+        "authentication": "basicAuth",
+        "formTitle": "New client (paid by transfer)",
+        "formDescription": "For clients who paid by bank transfer or invoice. Starts the same onboarding as a Stripe payment.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Company",
+              "fieldName": "company",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Contact name",
+              "fieldName": "contact",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldName": "email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone or WhatsApp",
+              "fieldName": "phone",
+              "fieldType": "text"
+            },
+            {
+              "fieldLabel": "Package",
+              "fieldName": "package",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Website package"
+                  },
+                  {
+                    "option": "Social media retainer"
+                  },
+                  {
+                    "option": "Branding package"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Amount paid",
+              "fieldName": "amount",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Currency",
+              "fieldName": "currency",
+              "fieldType": "text",
+              "defaultValue": "IDR",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Payment reference",
+              "fieldName": "reference",
+              "fieldType": "text",
+              "placeholder": "Bank transfer ID or invoice number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Project start date",
+              "fieldName": "start_date",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "path": "new-client",
+          "appendAttribution": false,
+          "buttonLabel": "Start onboarding",
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Onboarding started. The client receives the welcome email in a minute."
+            }
+          }
+        }
+      },
+      "name": "Manual Payment Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        224
+      ],
+      "webhookId": "cdb8fbe3-0e7e-4923-8e1a-f2c1fb24ef8e",
+      "notes": "Internal form, protected with Basic Auth. The payment reference prevents double onboarding."
+    },
+    {
+      "id": "351501c8-f8b4-4498-a734-f4a2c56e097f",
+      "parameters": {
+        "authentication": "none",
+        "formTitle": "Project brief",
+        "formDescription": "Help us start right. This takes about 10 minutes.",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "client_id",
+              "fieldType": "hiddenField"
+            },
+            {
+              "fieldLabel": "Company",
+              "fieldName": "company",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What should this project achieve?",
+              "fieldName": "goals",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Who are your customers?",
+              "fieldName": "audience",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Websites or brands you like, and why",
+              "fieldName": "references",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Content and brand assets you already have",
+              "fieldName": "assets",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Deadline or launch date",
+              "fieldName": "deadline",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Who approves our work?",
+              "fieldName": "approver",
+              "fieldType": "text"
+            },
+            {
+              "fieldLabel": "Anything else we should know?",
+              "fieldName": "notes",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "path": "client-brief",
+          "appendAttribution": false,
+          "buttonLabel": "Send brief",
+          "ignoreBots": true,
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Thank you! Your brief is with our team. We will review it before the kick-off call."
+            }
+          }
+        }
+      },
+      "name": "Project Brief Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        448
+      ],
+      "webhookId": "d89fe1fe-c26e-4bbf-89a2-1a67fddae950",
+      "notes": "Public form. The welcome email links to it with ?client_id=..., which fills the hidden field."
+    },
+    {
+      "id": "756cbe66-1706-4a9d-a07e-21366b577548",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "name": "Every Day at 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        672
+      ],
+      "notes": "Brief reminders. Uses the workflow time zone."
+    },
+    {
+      "id": "14266721-2d6a-448f-918e-5e466dee90c8",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "97486810-e7db-4834-9e0b-df12e0a7e6c0",
+              "name": "agency_name",
+              "value": "Your Agency",
+              "type": "string"
+            },
+            {
+              "id": "6a91eb39-cb8e-4c55-88ad-8f59e701fd28",
+              "name": "sender_name",
+              "value": "Your Name",
+              "type": "string"
+            },
+            {
+              "id": "c3462247-8f1e-4a86-88f7-f224928426fa",
+              "name": "team_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "9bb7e2a8-3b8c-4a8f-9045-ba4c4a2200f5",
+              "name": "clients_folder_id",
+              "value": "REPLACE_WITH_CLIENTS_FOLDER_ID",
+              "type": "string"
+            },
+            {
+              "id": "1b1d12c9-2594-4196-bf76-0d7aa9762dbe",
+              "name": "subfolders",
+              "value": "01 Contract & Invoices, 02 Brief & Assets, 03 Work in Progress, 04 Deliverables",
+              "type": "string"
+            },
+            {
+              "id": "f0b6f4e8-ab1c-402c-bb92-0b00186e8f87",
+              "name": "contract_subfolder",
+              "value": "01 Contract & Invoices",
+              "type": "string"
+            },
+            {
+              "id": "712db28e-d077-4170-8d8e-2635ea489408",
+              "name": "shared_subfolder",
+              "value": "02 Brief & Assets",
+              "type": "string"
+            },
+            {
+              "id": "6e7f2f37-e98c-4b7c-87d7-e1396f5e2e0c",
+              "name": "contract_template_id",
+              "value": "REPLACE_WITH_CONTRACT_TEMPLATE_DOC_ID",
+              "type": "string"
+            },
+            {
+              "id": "be61b808-2bdc-47f7-82f1-38c6320e8312",
+              "name": "trello_template_board_id",
+              "value": "REPLACE_WITH_TRELLO_TEMPLATE_BOARD_ID",
+              "type": "string"
+            },
+            {
+              "id": "ffb29616-83de-46ce-80ee-8989576fd16f",
+              "name": "kickoff_link",
+              "value": "https://cal.com/your-name/kickoff",
+              "type": "string"
+            },
+            {
+              "id": "4ce917de-11fe-41ee-925c-46814577a924",
+              "name": "brief_form_url",
+              "value": "={{ $execution.resumeFormUrl.replace(/\\/form-waiting\\/.*$/, '') + '/form/client-brief' }}",
+              "type": "string"
+            },
+            {
+              "id": "a85a9807-1b12-4346-825e-21edf8ddbadc",
+              "name": "default_package",
+              "value": "Website package",
+              "type": "string"
+            },
+            {
+              "id": "ae1f2b63-4f99-4069-997c-241b5ecb025a",
+              "name": "reminder_after_days",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "b18ccffe-fd08-4dc1-a397-c1d9d7daa268",
+              "name": "max_reminders",
+              "value": 2,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Onboarding Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        336
+      ],
+      "notes": "EDIT ME. One place for every setting. brief_form_url is built from this n8n's address; replace it if the form runs behind another domain."
+    },
+    {
+      "id": "9d637cd4-9044-4b25-aec4-80175a450545",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1fb4557f-e042-472a-a609-8dfa73e0f95d",
+                    "leftValue": "={{ $('Stripe Payment').isExecuted || $('Manual Payment Form').isExecuted }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Payment"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "df14e6c6-8786-40a7-bc1d-91c7c7c3658a",
+                    "leftValue": "={{ $('Project Brief Form').isExecuted }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Brief"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "178ee437-a54f-4e0a-a166-5cc2c95b3a9f",
+                    "leftValue": "={{ $('Every Day at 09:00').isExecuted }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Daily"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Route by Trigger",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        336
+      ]
+    },
+    {
+      "id": "d5641346-b3c2-433f-ba5a-cc00d9f4c87b",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// One client record from a Stripe Checkout payment or the manual payment form.\nconst s = $('Onboarding Settings').first().json;\nconst ZERO_DECIMAL = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];\nlet c;\nif ($('Stripe Payment').isExecuted) {\n  const o = $('Stripe Payment').first().json.data?.object ?? {};\n  const cd = o.customer_details ?? {};\n  const md = o.metadata ?? {};\n  const field = k => (o.custom_fields ?? []).find(f => f.key === k)?.text?.value;\n  const currency = String(o.currency ?? '').toUpperCase();\n  c = {\n    source: 'Stripe',\n    payment_id: String(o.payment_intent || o.id || ''),\n    paid: o.payment_status === 'paid',\n    company: field('company') || md.company || cd.name || cd.email || 'New client',\n    contact_name: cd.name || '',\n    email: String(cd.email || o.customer_email || '').trim().toLowerCase(),\n    phone: cd.phone || '',\n    package: md.package || s.default_package,\n    amount: Number(o.amount_total || 0) / (ZERO_DECIMAL.includes(currency) ? 1 : 100),\n    currency,\n    start_date: DateTime.now().toISODate(),\n  };\n} else {\n  const f = $('Manual Payment Form').first().json;\n  c = {\n    source: 'Manual',\n    payment_id: 'manual:' + String(f.reference || '').trim().toLowerCase(),\n    paid: true,\n    company: String(f.company || '').trim(),\n    contact_name: String(f.contact || '').trim(),\n    email: String(f.email || '').trim().toLowerCase(),\n    phone: String(f.phone || '').trim(),\n    package: f.package || s.default_package,\n    amount: Number(f.amount) || 0,\n    currency: String(f.currency || 'IDR').trim().toUpperCase(),\n    start_date: f.start_date || DateTime.now().toISODate(),\n  };\n}\nreturn [{ json: {\n  ...c,\n  client_id: 'CL-' + DateTime.now().toFormat('yyMMdd') + '-' + $execution.id,\n  first_name: String(c.contact_name).split(/\\s+/)[0] || 'there',\n  amount_text: c.amount.toLocaleString('id-ID') + ' ' + c.currency,\n} }];"
+      },
+      "name": "Normalize Client",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "notes": "Stripe amounts are in cents, except for zero-decimal currencies."
+    },
+    {
+      "id": "1848c309-2325-4901-afed-450bfef0ecc4",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5d39b597-977b-4eae-a841-9a99da4c536e",
+              "leftValue": "={{ $json.paid === true && $json.email.includes('@') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Only Paid",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1024,
+        0
+      ],
+      "notes": "Bank debits and other delayed methods arrive unpaid first; their \"async payment succeeded\" event starts the onboarding."
+    },
+    {
+      "id": "2b6ee4a7-2953-4aaf-9e3a-883dd4a90f17",
+      "parameters": {
+        "operation": "removeItemsSeenInPreviousExecutions",
+        "logic": "removeItemsWithAlreadySeenKeyValues",
+        "dedupeValue": "={{ $json.payment_id }}",
+        "options": {
+          "historySize": 10000
+        }
+      },
+      "name": "Skip Repeat Payments",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        0
+      ],
+      "notes": "Stripe resends events, and a transfer may be entered twice. Each payment onboards once."
+    },
+    {
+      "id": "348de49a-1dc8-418b-ae87-b6fe183c4979",
+      "parameters": {
+        "resource": "folder",
+        "operation": "create",
+        "name": "={{ $json.company + ' · ' + $json.package + ' · ' + $now.toFormat('yyyy-MM') }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Onboarding Settings').first().json.clients_folder_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "name": "Create Client Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1536,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Inside your Clients folder (clients_folder_id)."
+    },
+    {
+      "id": "0792728b-52e7-4f14-8f87-1957732b8fae",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// One item per subfolder from the settings.\nconst s = $('Onboarding Settings').first().json;\nconst parent = $('Create Client Folder').first().json.id;\nreturn String(s.subfolders).split(',').map(n => n.trim()).filter(Boolean).map(name => ({ json: { name, parent } }));"
+      },
+      "name": "List Subfolders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ]
+    },
+    {
+      "id": "7303cccd-5786-4fd4-8ae8-c02b2c0f88ce",
+      "parameters": {
+        "resource": "folder",
+        "operation": "create",
+        "name": "={{ $json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.parent }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "name": "Create Subfolder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1984,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "7dbd7607-f9f0-4c90-9ad4-3b65a62852c3",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Folder IDs for the next steps. Missing subfolders fall back to the client folder.\nconst s = $('Onboarding Settings').first().json;\nconst client = $('Create Client Folder').first().json.id;\nconst subs = $('Create Subfolder').all().map(i => i.json);\nconst byName = n => subs.find(f => f.name === n)?.id || client;\nreturn [{ json: {\n  client_folder_id: client,\n  client_folder_url: 'https://drive.google.com/drive/folders/' + client,\n  contract_folder_id: byName(s.contract_subfolder),\n  shared_folder_id: byName(s.shared_subfolder),\n  shared_folder_url: 'https://drive.google.com/drive/folders/' + byName(s.shared_subfolder),\n} }];"
+      },
+      "name": "Collect Folders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2208,
+        0
+      ]
+    },
+    {
+      "id": "4cd209ff-7854-4a0c-87b4-acae391cbf55",
+      "parameters": {
+        "resource": "file",
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Onboarding Settings').first().json.contract_template_id }}",
+          "mode": "id"
+        },
+        "name": "={{ 'Contract · ' + $('Normalize Client').first().json.company }}",
+        "sameFolder": false,
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.contract_folder_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "name": "Copy Contract",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2496,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "A copy of your Google Docs contract template."
+    },
+    {
+      "id": "dd82bd60-3c32-48c9-ab1a-7915a3b81136",
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "simple": true,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[client_company]]",
+              "replaceText": "={{ $('Normalize Client').first().json.company }}",
+              "matchCase": true
+            },
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[client_name]]",
+              "replaceText": "={{ $('Normalize Client').first().json.contact_name }}",
+              "matchCase": true
+            },
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[client_email]]",
+              "replaceText": "={{ $('Normalize Client').first().json.email }}",
+              "matchCase": true
+            },
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[package]]",
+              "replaceText": "={{ $('Normalize Client').first().json.package }}",
+              "matchCase": true
+            },
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[amount]]",
+              "replaceText": "={{ $('Normalize Client').first().json.amount_text }}",
+              "matchCase": true
+            },
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[start_date]]",
+              "replaceText": "={{ DateTime.fromISO($('Normalize Client').first().json.start_date).toFormat('d LLLL yyyy') }}",
+              "matchCase": true
+            },
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[contract_date]]",
+              "replaceText": "={{ $now.toFormat('d LLLL yyyy') }}",
+              "matchCase": true
+            },
+            {
+              "object": "text",
+              "action": "replaceAll",
+              "text": "[[agency_name]]",
+              "replaceText": "={{ $('Onboarding Settings').first().json.agency_name }}",
+              "matchCase": true
+            }
+          ]
+        }
+      },
+      "name": "Fill Contract",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Replaces [[client_company]], [[client_name]], [[client_email]], [[package]], [[amount]], [[start_date]], [[contract_date]] and [[agency_name]] in the copy."
+    },
+    {
+      "id": "cbe98e0a-972a-4665-9c40-a17e56ecbf91",
+      "parameters": {
+        "resource": "file",
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Copy Contract').first().json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "commenter",
+            "type": "user",
+            "emailAddress": "={{ $('Normalize Client').first().json.email }}"
+          }
+        },
+        "options": {
+          "sendNotificationEmail": true,
+          "emailMessage": "={{ \"Your contract with \" + $('Onboarding Settings').first().json.agency_name + \". Comments are welcome.\" }}"
+        }
+      },
+      "name": "Share Contract",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2944,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "The client can read and comment. Google requires a notification email for addresses without a Google account. If sharing fails, onboarding goes on and the team email says so."
+    },
+    {
+      "id": "d263c3b7-b5c6-4cf3-a5a2-0fccdb3d6682",
+      "parameters": {
+        "resource": "folder",
+        "operation": "share",
+        "folderNoRootId": {
+          "__rl": true,
+          "value": "={{ $('Collect Folders').first().json.shared_folder_id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "writer",
+            "type": "user",
+            "emailAddress": "={{ $('Normalize Client').first().json.email }}"
+          }
+        },
+        "options": {
+          "sendNotificationEmail": true,
+          "emailMessage": "Upload your logo, brand files and content here."
+        }
+      },
+      "name": "Share Brief Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3168,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Only this subfolder is shared, so the client can upload assets."
+    },
+    {
+      "id": "a944d1e7-cb70-400d-a0dc-151a1bfe8137",
+      "parameters": {
+        "resource": "board",
+        "operation": "create",
+        "name": "={{ $('Normalize Client').first().json.company + ' · ' + $('Normalize Client').first().json.package }}",
+        "description": "={{ 'Client ' + $('Normalize Client').first().json.client_id + ' · ' + $('Normalize Client').first().json.contact_name + ' <' + $('Normalize Client').first().json.email + '> · start ' + $('Normalize Client').first().json.start_date + '\\nDrive: ' + $('Collect Folders').first().json.client_folder_url }}",
+        "additionalFields": {
+          "idBoardSource": "={{ $('Onboarding Settings').first().json.trello_template_board_id }}",
+          "keepFromSource": "cards",
+          "prefs_permissionLevel": "private"
+        }
+      },
+      "name": "Create Project Board",
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        3456,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "A copy of your template board, with its lists and cards (your standard project checklist)."
+    },
+    {
+      "id": "daa85788-b981-40d4-86b9-0a8f0f4a1fca",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "74d8279a-620b-4aea-bbff-28a7508fcc52",
+              "name": "Client ID",
+              "value": "={{ $('Normalize Client').first().json.client_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4afc3a55-5df2-4dd9-b67f-85d308e25843",
+              "name": "Created At",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "40140d86-7533-41ec-9a19-6aed86651c67",
+              "name": "Company",
+              "value": "={{ $('Normalize Client').first().json.company }}",
+              "type": "string"
+            },
+            {
+              "id": "a3fdf0ae-77f0-4c30-bd39-5acd0322db47",
+              "name": "Contact",
+              "value": "={{ $('Normalize Client').first().json.contact_name }}",
+              "type": "string"
+            },
+            {
+              "id": "7c9c54a5-67c5-4048-8ef2-24eb05a0315d",
+              "name": "Email",
+              "value": "={{ $('Normalize Client').first().json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "eed1ccc1-c925-40c0-bc27-8123818c66a0",
+              "name": "Phone",
+              "value": "={{ $('Normalize Client').first().json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "4c376b68-42c5-4daf-bdde-cfe88046ebc8",
+              "name": "Package",
+              "value": "={{ $('Normalize Client').first().json.package }}",
+              "type": "string"
+            },
+            {
+              "id": "117c28d7-daf3-4184-8bcc-44656401ee06",
+              "name": "Amount",
+              "value": "={{ $('Normalize Client').first().json.amount }}",
+              "type": "number"
+            },
+            {
+              "id": "4e3fcd5e-9138-4ede-ae3f-647c52497acb",
+              "name": "Currency",
+              "value": "={{ $('Normalize Client').first().json.currency }}",
+              "type": "string"
+            },
+            {
+              "id": "91a6e29a-8545-4432-a5ae-8116a8750179",
+              "name": "Payment ID",
+              "value": "={{ $('Normalize Client').first().json.payment_id }}",
+              "type": "string"
+            },
+            {
+              "id": "114c7722-8c95-47ef-b0be-64e0bb636fd4",
+              "name": "Source",
+              "value": "={{ $('Normalize Client').first().json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "68a1e08c-a242-4fb6-86d2-0a1b98d599b7",
+              "name": "Start Date",
+              "value": "={{ $('Normalize Client').first().json.start_date }}",
+              "type": "string"
+            },
+            {
+              "id": "0c3f155b-81af-4357-a6a2-78171a180d9d",
+              "name": "Folder",
+              "value": "={{ $('Collect Folders').first().json.client_folder_url }}",
+              "type": "string"
+            },
+            {
+              "id": "17546672-87d9-469f-a0ca-40030cd5a153",
+              "name": "Contract",
+              "value": "={{ 'https://docs.google.com/document/d/' + $('Copy Contract').first().json.id + '/edit' }}",
+              "type": "string"
+            },
+            {
+              "id": "960e97a2-35b8-43be-b36b-d84906ca7a0f",
+              "name": "Board",
+              "value": "={{ $json.url || $json.shortUrl || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "7f4b689e-63a2-4e3e-942b-22d851e5fe27",
+              "name": "Status",
+              "value": "Waiting for brief",
+              "type": "string"
+            },
+            {
+              "id": "eae37501-e968-4635-9a60-5236cbf28d5e",
+              "name": "Brief",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "85f08f57-1b54-4027-8f69-924bfddbd944",
+              "name": "Brief At",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "aff59aca-8571-47db-8dbe-edd50afed8a7",
+              "name": "Reminders Sent",
+              "value": "0",
+              "type": "number"
+            },
+            {
+              "id": "91c876bc-9f5f-4584-a7d1-4ac9d33be55c",
+              "name": "Last Reminder At",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Client Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3680,
+        0
+      ],
+      "notes": "Field names = Clients sheet headers. They are created on an empty tab."
+    },
+    {
+      "id": "08f9602b-e5ae-487f-a615-91b10d07b802",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Save Client",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3904,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "ca34993b-9689-48f7-94de-ca537f7ef80f",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Normalize Client').first().json.email }}",
+        "subject": "={{ 'Welcome to ' + $('Onboarding Settings').first().json.agency_name + ': your next steps' }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const c = $('Normalize Client').first().json;\n  const s = $('Onboarding Settings').first().json;\n  const f = $('Collect Folders').first().json;\n  const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\n  const link = (url, text) => '<a href=\"' + esc(url) + '\">' + esc(text) + '</a>';\n  const contract = 'https://docs.google.com/document/d/' + $('Copy Contract').first().json.id + '/edit';\n  const brief = s.brief_form_url + '?client_id=' + encodeURIComponent(c.client_id);\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px;line-height:1.5\"><p>Hi ' + esc(c.first_name) + ',</p>' +\n    '<p>Thank you for choosing ' + esc(s.agency_name) + '! We received your payment of <b>' + esc(c.amount_text) + '</b> for <b>' + esc(c.package) + '</b>. Here is how we get started:</p><ol>' +\n    '<li><b>Review the contract</b>: ' + link(contract, 'open the contract') + '. Comment in the document if anything should change, or reply \"Approved\" to this email.</li>' +\n    '<li><b>Fill in the project brief</b> (about 10 minutes): ' + link(brief, 'open the brief') + '.</li>' +\n    '<li><b>Upload your logo, brand files and content</b> to ' + link(f.shared_folder_url, 'your shared folder') + '.</li>' +\n    '<li><b>Book the kick-off call</b>: ' + link(s.kickoff_link, s.kickoff_link) + '.</li></ol>' +\n    '<p>Questions? Just reply to this email.</p><p>Best regards,<br>' + esc(s.sender_name) + '<br>' + esc(s.agency_name) + '</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $('Onboarding Settings').first().json.sender_name }}"
+        }
+      },
+      "name": "Send Welcome Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        4192,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Contract, brief form, shared folder and kick-off link in one email."
+    },
+    {
+      "id": "c8ed7e6f-fbdf-4f25-9105-d55905a65467",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Onboarding Settings').first().json.team_email }}",
+        "subject": "={{ 'New client: ' + $('Normalize Client').first().json.company + ' · ' + $('Normalize Client').first().json.package + ' · ' + $('Normalize Client').first().json.amount_text }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const c = $('Normalize Client').first().json;\n  const f = $('Collect Folders').first().json;\n  const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\n  const shareErr = ['Share Contract', 'Share Brief Folder'].map(n => $(n).first().json.error ? n + ': ' + esc($(n).first().json.error.message ?? $(n).first().json.error) : '').filter(Boolean);\n  const board = $('Create Project Board').first().json;\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\"><p><b>' + esc(c.company) + '</b> (' + esc(c.contact_name) + ', ' + esc(c.email) + (c.phone ? ', ' + esc(c.phone) : '') + ') paid ' + esc(c.amount_text) + ' via ' + esc(c.source) + '.</p><ul>' +\n    '<li><a href=\"' + esc(f.client_folder_url) + '\">Client folder</a></li>' +\n    '<li><a href=\"https://docs.google.com/document/d/' + esc($('Copy Contract').first().json.id) + '/edit\">Contract</a> (check it before the client signs)</li>' +\n    '<li><a href=\"' + esc(board.url || board.shortUrl || '') + '\">Trello board</a></li></ul>' +\n    (shareErr.length ? '<p style=\"color:#b00020\"><b>Could not share with the client:</b><br>' + shareErr.join('<br>') + '</p>' : '') +\n    '<p>The welcome email is out. Status in the Clients tab: Waiting for brief.</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Notify Team",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        4416,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "985bf055-ed83-4da2-9535-cf9ab45e4c85",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// The brief answers as plain text (for the Google Doc) and HTML (for the team email).\nconst f = $('Project Brief Form').first().json;\nconst q = [\n  ['Company', f.company], ['What should this project achieve?', f.goals], ['Who are your customers?', f.audience],\n  ['Websites or brands you like, and why', f.references], ['Content and brand assets they already have', f.assets],\n  ['Deadline or launch date', f.deadline], ['Who approves the work?', f.approver], ['Anything else', f.notes],\n].filter(([, a]) => a !== null && a !== undefined && String(a).trim() !== '');\nconst esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nreturn [{ json: {\n  client_id: String(f.client_id || '').trim(),\n  company: String(f.company || '').trim(),\n  text: 'Project brief, received ' + DateTime.now().toFormat('d LLLL yyyy') + '\\n\\n' + q.map(([k, a]) => k + '\\n' + String(a).trim()).join('\\n\\n') + '\\n',\n  html: q.map(([k, a]) => '<p><b>' + esc(k) + '</b><br>' + esc(String(a).trim()).replace(/\\n/g, '<br>') + '</p>').join(''),\n} }];"
+      },
+      "name": "Format Brief",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        448
+      ]
+    },
+    {
+      "id": "ff4232e6-52be-4feb-8932-b3078a0e17f0",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Client ID",
+              "lookupValue": "={{ $json.client_id || \"-\" }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "name": "Find Client",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "25e8e0fb-1387-4c6a-acbb-f47f7c714138",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "eb5a4589-8caa-4dd8-928b-a8c21ccae2c3",
+              "leftValue": "={{ !!$json['Client ID'] && $json['Client ID'] === $('Format Brief').first().json.client_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Known Client?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        448
+      ],
+      "notes": "A brief without a valid link still reaches the team, marked as unmatched."
+    },
+    {
+      "id": "161d6720-8e17-4762-b46d-536b76c87fbe",
+      "parameters": {
+        "operation": "create",
+        "driveId": "myDrive",
+        "folderId": "={{ (String($json.Folder).match(/folders\\/([^/?#]+)/) || [])[1] || 'default' }}",
+        "title": "={{ \"Project brief · \" + $json.Company }}"
+      },
+      "name": "Create Brief Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "In the client folder."
+    },
+    {
+      "id": "7ef19ea6-23c5-4933-a8a3-22bef3075b0a",
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "simple": true,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "object": "text",
+              "action": "insert",
+              "locationChoice": "endOfSegmentLocation",
+              "text": "={{ $('Format Brief').first().json.text }}"
+            }
+          ]
+        }
+      },
+      "name": "Write Brief",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "375ad568-bafa-4c4e-b3c5-1065b9084c98",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Client ID": "={{ $('Format Brief').first().json.client_id }}",
+            "Status": "Brief received",
+            "Brief": "={{ 'https://docs.google.com/document/d/' + $('Create Brief Doc').first().json.id + '/edit' }}",
+            "Brief At": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "Client ID"
+          ],
+          "schema": [
+            {
+              "id": "Client ID",
+              "displayName": "Client ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brief",
+              "displayName": "Brief",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brief At",
+              "displayName": "Brief At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Mark Brief Received",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1984,
+        448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "81f3c986-0d53-4280-87b2-4971b2bca1c0",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Onboarding Settings').first().json.team_email }}",
+        "subject": "={{ ($('Create Brief Doc').isExecuted ? 'Brief received: ' : '[Unmatched brief] ') + ($('Format Brief').first().json.company || 'unknown company') }}",
+        "emailType": "html",
+        "message": "={{ ($('Create Brief Doc').isExecuted\n  ? '<p><a href=\"https://docs.google.com/document/d/' + $('Create Brief Doc').first().json.id + '/edit\">Brief document</a> in the client folder. Status: Brief received.</p>'\n  : '<p style=\"color:#b00020\">This brief did not come through a client link (client ID \"' + $('Format Brief').first().json.client_id + '\"). Match it to a client by hand.</p>') + $('Format Brief').first().json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Notify Team · Brief",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2208,
+        448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "e32d47d7-c3a7-4239-bbd8-3828fe456bea",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Clients",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        768
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "cb159d67-fc8c-485a-a428-98e23ba7062c",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Clients still waiting for their brief: a reminder every reminder_after_days, at most max_reminders.\nconst s = $('Onboarding Settings').first().json;\nconst now = DateTime.now();\nconst out = [];\nfor (const r of $input.all().map(i => i.json)) {\n  if (r.Status !== 'Waiting for brief' || !r.Email) continue;\n  const created = DateTime.fromISO(String(r['Created At'] || ''));\n  if (!created.isValid) continue;\n  const sent = Number(r['Reminders Sent'] || 0);\n  if (sent >= Number(s.max_reminders)) continue;\n  const last = DateTime.fromISO(String(r['Last Reminder At'] || ''));\n  if (now.diff(last.isValid ? last : created, 'days').days < Number(s.reminder_after_days)) continue;\n  const final = sent + 1 >= Number(s.max_reminders);\n  const first = String(r.Contact || '').trim().split(/\\s+/)[0] || 'there';\n  out.push({ json: {\n    client_id: r['Client ID'], to: r.Email, cc: final ? s.team_email : '', count: sent + 1,\n    subject: 'Reminder: your project brief for ' + s.agency_name,\n    body: 'Hi ' + first + ',\\n\\nTo start work on your ' + (r.Package || 'project') + ', we need your project brief. It takes about 10 minutes:\\n' +\n      s.brief_form_url + '?client_id=' + encodeURIComponent(r['Client ID']) + '\\n\\nIf anything is unclear, just reply to this email.\\n\\nBest regards,\\n' + s.sender_name + '\\n' + s.agency_name,\n  } });\n}\nreturn out;"
+      },
+      "name": "Plan Brief Reminders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        768
+      ],
+      "notes": "The last reminder copies the team, so someone can call the client."
+    },
+    {
+      "id": "ac59554c-163f-4f83-982e-bb01bef967a4",
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Loop Brief Reminders",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1248,
+        768
+      ],
+      "notes": "One email per pass, so a retried send never repeats another client's reminder."
+    },
+    {
+      "id": "3d131dcd-cb3d-4152-9e91-fc66d8f75b41",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "={{ $json.cc }}",
+          "senderName": "={{ $('Onboarding Settings').first().json.sender_name }}"
+        }
+      },
+      "name": "Send Brief Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        768
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "d7b45683-020c-4b9d-af3b-895cd0a394b3",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clients",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Client ID": "={{ $('Loop Brief Reminders').item.json.client_id }}",
+            "Reminders Sent": "={{ $('Loop Brief Reminders').item.json.count }}",
+            "Last Reminder At": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "Client ID"
+          ],
+          "schema": [
+            {
+              "id": "Client ID",
+              "displayName": "Client ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminders Sent",
+              "displayName": "Reminders Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Reminder At",
+              "displayName": "Last Reminder At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Update Reminder Count",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1696,
+        768
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "4226b349-e109-4cfa-adea-3ca264e9ee3b",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1152
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "8f4307fc-13f6-4335-b541-8300493e8cd1",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "15614b0a-f43c-4f50-baca-763b42ccbd99",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1152
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "52b32efa-477d-42b3-9bfa-43ebe12fcf1a",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b6dc4d5-f082-45e8-9185-eb97b24df2b4",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "3de6f720-9408-434f-b76f-d65d5f37f3a7",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "6f8692a9-2e8b-42bc-a6de-03d071b60ed5",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "4ac33d08-0eda-4132-8532-64463bcd54f9",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "27833860-f7b8-495b-ae3f-e728a1c81c8b",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "a2ab360d-590a-446d-bd85-5ed59c72c424",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "7081a044-e014-49d2-80b5-d3d7181afb8a",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "80fd9dd5-2be9-4e13-acbe-8f2b28e6332a",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "9c1101e7-5ecb-43e9-89b0-386efa10f5a7",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "6c4d8271-3581-4307-9b13-1a677bece301",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "9da7a23b-bdaa-4c17-8786-eda9f34ca409",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "efa685c3-9e21-4263-b00b-a9a3a68c35a7",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "91aa72d2-0782-411d-8409-4f0b4ffe69ff",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        1152
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "be34f1ef-10f1-4844-80f3-66b772f3be5d",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "d5a3a23b-da43-45f2-a3db-3678b80ec597",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42d0cd26-9d41-4060-b7bd-1ffa2e4c1239",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "52ee38dd-3b5c-4e44-8970-9565bad2feec",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "30d46150-21a1-4c0e-9869-5906cf474697",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "e7af3268-c543-4545-975e-7804326c1f39",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "3063a23b-4018-4d25-921a-c2ca18733ead",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "5a72dffc-870b-43ea-a401-c1e4d3cc45c6",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "05feaa9e-af6f-409b-b0f6-3e6bea354368",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "a51454a1-fd45-4480-8f71-9c7fc459dad2",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        1152
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "98fac770-2cab-4e0e-85b7-47fd98b01e2d",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "Stripe Payment": {
+      "main": [
+        [
+          {
+            "node": "Onboarding Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Payment Form": {
+      "main": [
+        [
+          {
+            "node": "Onboarding Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Brief Form": {
+      "main": [
+        [
+          {
+            "node": "Onboarding Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Day at 09:00": {
+      "main": [
+        [
+          {
+            "node": "Onboarding Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Onboarding Settings": {
+      "main": [
+        [
+          {
+            "node": "Route by Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Client",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Brief",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Clients",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Client": {
+      "main": [
+        [
+          {
+            "node": "Only Paid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only Paid": {
+      "main": [
+        [
+          {
+            "node": "Skip Repeat Payments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip Repeat Payments": {
+      "main": [
+        [
+          {
+            "node": "Create Client Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Client Folder": {
+      "main": [
+        [
+          {
+            "node": "List Subfolders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Subfolders": {
+      "main": [
+        [
+          {
+            "node": "Create Subfolder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Subfolder": {
+      "main": [
+        [
+          {
+            "node": "Collect Folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Folders": {
+      "main": [
+        [
+          {
+            "node": "Copy Contract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy Contract": {
+      "main": [
+        [
+          {
+            "node": "Fill Contract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fill Contract": {
+      "main": [
+        [
+          {
+            "node": "Share Contract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Contract": {
+      "main": [
+        [
+          {
+            "node": "Share Brief Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Brief Folder": {
+      "main": [
+        [
+          {
+            "node": "Create Project Board",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Project Board": {
+      "main": [
+        [
+          {
+            "node": "Client Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Client Row": {
+      "main": [
+        [
+          {
+            "node": "Save Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Client": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Notify Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Brief": {
+      "main": [
+        [
+          {
+            "node": "Find Client",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Client": {
+      "main": [
+        [
+          {
+            "node": "Known Client?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known Client?": {
+      "main": [
+        [
+          {
+            "node": "Create Brief Doc",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Team · Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Brief Doc": {
+      "main": [
+        [
+          {
+            "node": "Write Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Brief": {
+      "main": [
+        [
+          {
+            "node": "Mark Brief Received",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Brief Received": {
+      "main": [
+        [
+          {
+            "node": "Notify Team · Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Clients": {
+      "main": [
+        [
+          {
+            "node": "Plan Brief Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Brief Reminders": {
+      "main": [
+        [
+          {
+            "node": "Loop Brief Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Brief Reminders": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send Brief Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Brief Reminder": {
+      "main": [
+        [
+          {
+            "node": "Update Reminder Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Reminder Count": {
+      "main": [
+        [
+          {
+            "node": "Loop Brief Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

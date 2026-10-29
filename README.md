@@ -1,6 +1,8 @@
-# n8n workflow templates: 5 standalone workflows with built-in error handling
+# n8n workflow templates: 13 standalone workflows with built-in error handling
 
-Five production-style n8n workflows, each **fully self-contained**: no shared error workflow and no cross-workflow setup. Every file carries its own documentation on the canvas (one yellow overview sticky, white section stickies, a note on every node) and its own **built-in error handler**.
+Thirteen production-style n8n workflows, each **fully self-contained**: no shared error workflow and no cross-workflow setup. Every file carries its own documentation on the canvas (one yellow overview sticky, white section stickies, a note on every node) and its own **built-in error handler**.
+
+Sections 1–7 describe 01–05. Workflows 06–13 (added 2026-10-29) are covered in [section 8](#8-workflows-0613).
 
 | File | Workflow name | Trigger | Services |
 |------|---------------|---------|----------|
@@ -9,6 +11,14 @@ Five production-style n8n workflows, each **fully self-contained**: no shared er
 | `workflows/03-webhook-to-sheets-reliable-ingest.json` | Log order webhooks to Google Sheets with a dead-letter queue and replay | Webhook `POST /ingest` + `GET /ingest-status` + Schedules (15 min replay, daily 07:00 report) | Google Sheets, n8n Data Tables, Gmail |
 | `workflows/04-typeform-airtable-slack.json` | Route Typeform leads to Airtable and Slack with SLA follow-up reminders | Typeform Trigger + Schedule (15 min) | Typeform, Airtable, Slack, Gmail |
 | `workflows/05-ai-agent-record-filter.json` | Pre-screen refund requests with an AI agent and approve risky ones in Slack | Webhook `POST /refund-requests` + one approval run per request (the workflow calls itself) | OpenAI (AI Agent + tools), Google Sheets, Slack, Gmail |
+| `workflows/06-whatsapp-ai-sales-agent.json` | Answer WhatsApp sales chats with an AI agent, a Google Sheets catalog and lead capture | WhatsApp Trigger + staff reply form `/form/wa-staff-reply` + Schedule (hourly follow-ups) | WhatsApp Cloud API, OpenAI (AI Agent, Whisper), Google Sheets, n8n Data Tables, Gmail |
+| `workflows/07-ai-lead-generation-outreach.json` | Find Google Maps leads with SerpAPI, score them with OpenAI and send personal emails with Gmail | Schedules (daily 07:00 search, weekday hourly outreach) | SerpAPI, OpenAI, Google Sheets, Gmail |
+| `workflows/08-content-repurposing-engine.json` | Turn YouTube videos and podcasts into 30 posts with OpenAI, Google Docs and a Sheets content calendar | Form `/form/content-pack` + YouTube RSS (ships disabled) + Schedule (hourly publishing) | Supadata, OpenAI, Google Drive, Google Sheets, LinkedIn, Gmail |
+| `workflows/09-ai-bookkeeping-invoices.json` | Read invoices and receipts with OpenAI, track them in Google Sheets and send payment reminders with Gmail | Gmail Trigger + upload form `/form/finance-upload` + Schedules (daily 09:00 reminders, Monday 08:00 report) | OpenAI, Google Drive, Google Sheets, Gmail |
+| `workflows/10-rag-support-agent.json` | Answer customer questions from your own docs with an OpenAI agent, Pinecone and automatic support tickets | Chat Trigger (hosted chat) + Schedules (hourly docs sync, Monday 08:00 insights) | OpenAI (AI Agent), Pinecone, Google Drive, Google Sheets, n8n Data Tables, Gmail |
+| `workflows/11-multi-store-order-hub.json` | Sync orders and stock across Shopify, WooCommerce and marketplaces with Google Sheets and WhatsApp reports | Shopify Trigger + WooCommerce Trigger + Webhook `POST /marketplace-order` + Schedule (daily 21:00) | Shopify, WooCommerce, Google Sheets, n8n Data Tables, WhatsApp Cloud API, Gmail |
+| `workflows/12-ai-cv-screening-interviews.json` | Screen CVs with OpenAI, rank candidates in Google Sheets and book interviews with Google Calendar | Form `/form/apply` + Schedule (daily 08:00) + one booking run per candidate (the workflow calls itself) | OpenAI, Google Sheets, Google Drive, Google Calendar, Gmail |
+| `workflows/13-client-onboarding.json` | Onboard paying clients with Stripe, Google Drive, a Docs contract, Trello and Gmail | Stripe Trigger + forms `/form/new-client` and `/form/client-brief` + Schedule (daily 09:00) | Stripe, Google Drive, Google Docs, Google Sheets, Trello, Gmail |
 
 ---
 
@@ -29,6 +39,7 @@ On Workflow Error (Error Trigger) → Alert Settings → Build Incident Report �
 | 02 | Row in the **`Error Log`** sheet tab | create the empty tab |
 | 03 | `INCIDENT` row in the existing **`ingest_request_log`** Data Table | none |
 | 04, 05 | Message to the **Slack** ops channel in *Alert Settings* | invite the bot |
+| 06–13 | Row in the **`Error Log`** sheet tab | create the empty tab |
 
 Each fallback reuses a credential the workflow already has, so the only extra credential is Gmail. To use Outlook or SMTP instead, swap out the **Email Alert** node.
 
@@ -42,7 +53,7 @@ Each fallback reuses a credential the workflow already has, so the only extra cr
 2. Open the yellow overview sticky (top left) and follow its **Setup** section.
 3. Search the workflow for `REPLACE_WITH_` (spreadsheet IDs, WhatsApp phone-number ID, Airtable base/table IDs, Typeform form ID). The **Config** / **… Settings** nodes hold all business settings.
 4. Leave *Settings → Error workflow* **empty**, so the built-in handler is used.
-5. Run the `curl` test (01: first section sticky; 02, 03, 05: the notes of the webhook node), then **activate**.
+5. Run the `curl` test (01: first section sticky; 02, 03, 05: the notes of the webhook node), then **activate**. For 06–13, follow the **Setup steps** checklist in the overview sticky.
 
 Credentials are deliberately not in the JSON. Every credential field shows a normal dropdown after import.
 
@@ -148,7 +159,7 @@ Rules from n8n's *Template submission guidelines* and *Sticky note guidelines fo
 - No credentials, API keys, pinned data or real contact details. Only placeholders such as `you@example.com`, `6281200000000` and `REPLACE_WITH_…`.
 - Description: about 200 words, Markdown, no HTML.
 
-On 2026-10-24 n8n returned 03 because its stickies did not meet their quality standards: six large section stickies with 25–40 words of implementation detail, and a dense overview with a `curl` block. 02–05 now follow the official template's layout: 9–13 tight section stickies each and a 200–236-word overview, with the `curl` tests moved to the webhook node notes. **01 still has the old style** (section stickies of 86–161 words); restyle it before submitting. Ready-to-paste titles and descriptions for 02–05 are in [`TEMPLATE-SUBMISSIONS.md`](TEMPLATE-SUBMISSIONS.md).
+On 2026-10-24 n8n returned 03 because its stickies did not meet their quality standards: six large section stickies with 25–40 words of implementation detail, and a dense overview with a `curl` block. 02–05 now follow the official template's layout: 9–13 tight section stickies each and a 200–236-word overview, with the `curl` tests moved to the webhook node notes. **01 still has the old style** (section stickies of 86–161 words); restyle it before submitting. 06–13 were built in this layout from the start (9–20 section stickies, 179–226-word overviews). Ready-to-paste titles and descriptions for 02–13 are in [`TEMPLATE-SUBMISSIONS.md`](TEMPLATE-SUBMISSIONS.md).
 
 If you re-export a workflow after testing it on your own instance, check the export for your credential names, real email addresses, phone numbers or Slack IDs, and remove any pinned data before submitting. The safest option is to submit the files in this folder.
 
@@ -167,3 +178,96 @@ These live tests found bugs that the original 2026-10-19 versions also had: the 
 No real OpenAI, Google, Typeform, Airtable or Slack account was used, so check answer quality, quotas and app permissions on your own instance before activating.
 
 Node versions used: Webhook 2, Schedule Trigger 1.2, Typeform Trigger 1.1, Execute Workflow 1.2, Execute Workflow Trigger 1.1, Set 3.4, IF 2.2, Switch 3.2, Google Sheets 4.5, Google Sheets Tool 4.5, Slack 2.3, Airtable 2.1, Gmail 2.1, Data Table 1.1, AI Agent 3.1, Think Tool 1, Basic LLM Chain 1.7, Structured Output Parser 1.3, OpenAI Chat Model 1.2. They need a recent n8n (one that has Data Tables and AI Agent v3). Default models are `gpt-5-mini` (main) and `gpt-5` (JSON fixer).
+
+## 8. Workflows 06–13
+
+Built on 2026-10-29 with the same rules as 02–05: one JSON per workflow, its own error handler (Gmail alert, `Error Log` tab as fallback), placeholders only, and n8n's official sticky layout. Each canvas starts with an overview sticky whose **Setup steps** checklist is the install guide.
+
+### Credentials
+
+| Credential type | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Gmail OAuth2 (alerts, reports, emails) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Google Sheets OAuth2 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| OpenAI | ✓ | ✓ | ✓ | ✓ | ✓ | | ✓ | |
+| Google Drive OAuth2 | | | ✓ | ✓ | ✓ | | ✓ | ✓ |
+| WhatsApp OAuth (trigger) + WhatsApp API | ✓ | | | | | API only | | |
+| Basic Auth (internal forms) | ✓ | | | ✓ | | | | ✓ |
+| Header Auth | | | Supadata `x-api-key` | | | marketplace webhook | | |
+| SerpAPI | | ✓ | | | | | | |
+| LinkedIn OAuth2 | | | ✓ | | | | | |
+| Pinecone | | | | | ✓ | | | |
+| Shopify (access token) + WooCommerce | | | | | | ✓ | | |
+| Google Calendar OAuth2 | | | | | | | ✓ | |
+| Google Docs OAuth2 + Stripe + Trello | | | | | | | | ✓ |
+
+### External resources
+
+**Google Sheets.** Every workflow needs an empty `Error Log` tab. Tabs marked "empty" get their headers on the first write.
+
+| Workflow | Tabs |
+|---|---|
+| 06 | `Products` (SKU, Name, Category, Price, Stock, Description, Link); `Leads`, `Orders` empty |
+| 07 | `Leads` empty |
+| 08 | `Content Calendar` empty |
+| 09 | `Transactions` empty; `Invoices` with Invoice No, Client, Client Email, Issue Date, Due Date, Amount, Currency, Status, Reminders Sent, Last Reminder At, Notes |
+| 10 | `Tickets` empty |
+| 11 | `Inventory` (SKU, Name, Start Stock, Counted At, Low Stock At, Shopify Inventory Item ID, WooCommerce Product ID); `Orders` empty |
+| 12 | `Jobs` (Job ID, Title, Status, Description, Must Have, Nice to Have, Interviewer Email); `Candidates` empty |
+| 13 | `Clients` empty |
+
+**n8n Data Tables** (all columns *String*):
+- 06: `wa_messages` (phone, message_id, direction, text, status, received_at) and `wa_contacts` (phone, name, phone_number_id, stage, mode, human_until, last_inbound_at, followup_sent)
+- 10: `support_log` (session_id, kind, question, answer, created_at)
+- 11: `hub_stock_moves` (sku, qty, order_key, channel, created_at)
+
+**Other setup:**
+- 08: a Supadata API key, your LinkedIn profile in **Post to LinkedIn**, and optionally your channel ID in the disabled **New YouTube Video** trigger.
+- 09: a Gmail label `Finance` and a Drive folder in **Save to Drive**.
+- 10: a Pinecone index `support-kb` (1536 dimensions, cosine) and a Drive folder with your SOPs and FAQ.
+- 11: two approved WhatsApp templates (`low_stock_alert` and `daily_sales_report`, language `id`).
+- 12: the **Position** options in the form must match the Jobs titles. `calendar_id` is the email of the calendar to book in.
+- 13: a Google Docs contract template with `[[client_company]]`, `[[client_name]]`, `[[client_email]]`, `[[package]]`, `[[amount]]`, `[[start_date]]`, `[[contract_date]]` and `[[agency_name]]`, plus a Trello template board. On the Stripe Payment Link, add a custom field `company` and a metadata key `package`. After the first activation, copy the endpoint's signing secret into the Stripe credential so unsigned events are refused.
+
+### Design choices
+- **Each event is handled once.** 06 skips repeated WhatsApp message IDs, 07 skips businesses already in the sheet, 11 skips order keys it has seen, 12 skips the same email applying for the same job, and 13 onboards each payment ID once.
+- **Parallel runs never overwrite each other.** Every Sheets append uses *Minimise API Calls*, which appends through the Sheets API (see below). 11 keeps stock as an append-only ledger in a Data Table instead of editing a stock cell.
+- **One side effect per loop pass.** Emails to many people (07 outreach, 09 and 13 reminders, 12 rejections) go through a loop of one item, so a retried send never repeats someone else's email.
+- **AI output is checked, never trusted blindly.** Structured output uses a JSON schema (and an auto-fix parser in 06, 07, 08 and 10). 09 re-checks totals and dates. If an AI step fails, 12 still saves the candidate for review and 09 marks the document "Needs review".
+- **People keep the final say.** 06 hands chats to staff, 12 sends no rejection until HR sets the status, and 13 asks the team to check the generated contract.
+- **Fair, private screening (12).** The scoring call only sees an anonymized profile: no name, contact details, age, gender, photo, schools or employers. The form asks for consent, and the AI notes stay out of the calendar invite the candidate receives.
+
+### n8n behaviour found while building 06–13 (live on n8n 2.18.5)
+- **Google Sheets append and append-or-update read the last row, then write to the next one.** Two executions at the same moment write the same row, and one order or candidate is lost. The option *Minimise API Calls* (`useAppend`) uses the Sheets `values:append` endpoint instead. It is now on in every append in 06–13.
+- **Node retry only checks the first output item.** With *On Error: Continue*, later failed items are never retried, and if the first item fails, every item runs again (duplicate emails). Multi-item sends therefore use a loop of one.
+- **Declarative nodes such as WhatsApp return `{ error }` items that the retry never sees.** No retry is promised on those nodes.
+- **The Structured Output Parser wraps the schema in `{ output: … }`**, and its auto-fix model must have the Responses API switched off. Otherwise the fixer receives `[object Object]`.
+- **Split Out with "Include selected other fields" nests the element under the split field's name**, so 11 sets *Destination Field Name*. A `NaN` in a Data Table insert breaks the SQL with "no such column: NaN".
+- **Set 3.4 drops binary data**, so file steps read the file from the trigger node.
+- **A fixedCollection without multiple values takes an object, not an array.** An array is silently ignored, as with the OpenAI node's text format and reasoning options.
+- **The Code node sandbox has no `URL` class.** URLs are parsed with regular expressions.
+- **Data Table "get" returns one item per row**, so the next single-shot node runs with *Execute Once*.
+- **Replying to your own sent Gmail message puts you in the To field.** Follow-ups use a thread reply with *Reply to Recipients Only*.
+- **Google Calendar in ID mode only accepts an email-shaped calendar ID** (`primary` is rejected), and event attendees must be a list of strings.
+- **A Form Trigger with *Ignore Bots* answers 401 to non-browser clients**, which matters when you test it with `curl`.
+- **Gmail send-and-wait with a custom JSON form can build its fields from earlier nodes** (12 lists the free times). A timeout continues with the input item, without a `data` field.
+- **A Chat Trigger that loads the previous session from memory needs that memory node connected to the trigger too**, not only to the agent.
+- **The Stripe Trigger verifies signatures only when the credential has a signing secret.** Without one, every request is accepted.
+
+### How 06–13 were checked
+Every file passed n8n's own `@n8n/workflow-sdk` validator, a parameter check against the installed node definitions (unknown or ignored parameters, wrong collection shapes), and layout checks for the stickies. Each one then ran end to end on an isolated **n8n 2.18.5** with mocked APIs (OpenAI, Google Sheets, Drive, Docs, Calendar, Gmail, WhatsApp, SerpAPI, Supadata, LinkedIn, Pinecone, Shopify, WooCommerce, Stripe and Trello). After the final changes, every check passed:
+
+| Workflow | Live checks | Examples of what was tested |
+|---|:-:|---|
+| 06 | 50 | message bursts get one reply, voice notes, catalog search, orders, staff handoff form, follow-up window, WhatsApp send failure, Gmail down |
+| 07 | 21 | deduplication, website parsing, scoring, first emails, follow-ups in the same thread, replies and opt-outs, nothing re-sent the next hour |
+| 08 | 26 | short and long transcripts, missing transcript, 30 pieces plus the blog in the calendar, LinkedIn publishing once, reminders |
+| 09 | 21 | PDFs and photos, checks and duplicates, unreadable files, Drive archive, reminder stages, weekly report |
+| 10 | 17 | answers from the docs, tickets, knowledge gaps, docs-folder rebuild, weekly insights |
+| 11 | 22 | Shopify and WooCommerce signatures, repeated webhooks, stock sync, low-stock alerts, two orders at the same moment, daily report |
+| 12 | 36 | blind scoring, closed jobs, repeats, non-CVs, AI down, slot picking, a time taken before confirmation, no answer within the limit, HR decisions |
+| 13 | 32 | Stripe signatures and resends, delayed payments, bank-transfer form, contract placeholders, sharing failures, brief form, reminders |
+
+The canvases were also opened in n8n and checked visually. No real account of any of these services was used, so check answer quality, quotas, app permissions and message templates on your own instance before activating.
+
+Node versions: AI Agent 3.1, Basic LLM Chain 1.9, OpenAI Chat Model 1.3, OpenAI 2.3, Structured Output Parser 1.3, Google Sheets 4.7, Gmail 2.2, Google Calendar 1.3, Google Drive 3, Data Table 1.1, IF and Filter 2.3, Set 3.4, Switch 3.4, HTTP Request 4.4, Webhook 2.1, Form Trigger 2.5, Execute Workflow 1.3, Schedule Trigger 1.3. Default models are `gpt-5-mini`.

@@ -1,0 +1,2704 @@
+{
+  "name": "Screen CVs with OpenAI, rank candidates in Google Sheets and book interviews with Google Calendar",
+  "nodes": [
+    {
+      "id": "f38f6e45-93b0-4ecf-a9bb-bfc2957f26ed",
+      "parameters": {
+        "content": "## Screen CVs with OpenAI, rank candidates in Google Sheets and book interviews with Google Calendar\n\n### How it works\n1. Candidates apply through an n8n form with a PDF CV. Repeat applications are skipped.\n2. OpenAI turns the CV into a profile without name, age, gender, photo, schools or employers. A second call scores only that profile against the job's must-haves.\n3. Each candidate lands in the Candidates tab with score, strengths, gaps and interview questions, and the CV goes to Google Drive.\n4. Strong matches get an email to pick a free time from your Google Calendar. The booking sends a Google Meet invite and briefs the interviewer.\n5. Every morning HR gets a ranked digest. Set Status to Invite or Rejected and the next run sends the invite or a polite rejection.\n\n### Setup steps\n- [ ] Add **OpenAI**, **Google Sheets**, **Google Drive**, **Google Calendar** and **Gmail** credentials.\n- [ ] Create a spreadsheet with a `Jobs` tab (Job ID, Title, Status, Description, Must Have, Nice to Have, Interviewer Email) and empty `Candidates` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Match the Position options in the form to your job titles, pick a Drive folder in **Upload CV** and edit **Hiring Settings**.\n\n### Customization\nChange the score thresholds, working hours and email texts in **Hiring Settings**. The AI only suggests: no rejection is sent before HR confirms it.",
+        "height": 720,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "dc9647a2-4b8e-41fb-85cc-2166fa1e0200",
+      "parameters": {
+        "content": "## Receive applications\nThe public form, and the daily HR run.",
+        "height": 496,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "ee408de2-1fb6-4abd-bbc8-35850f1e6994",
+      "parameters": {
+        "content": "## Match the job, skip repeats\nOpen jobs from the Jobs tab.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -112
+      ]
+    },
+    {
+      "id": "1b3b48b5-b5e6-4af4-8a06-faafba735f56",
+      "parameters": {
+        "content": "## Blind AI screening\nA profile without personal details, then a score.",
+        "height": 448,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        -112
+      ]
+    },
+    {
+      "id": "6fc5c97c-3706-4320-8d56-7db12407b943",
+      "parameters": {
+        "content": "## Save and rank the candidate\nCV to Drive, row to Candidates, strong matches invited.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        -112
+      ]
+    },
+    {
+      "id": "365af940-a52b-48b2-a679-9d9f696130ce",
+      "parameters": {
+        "content": "## Plan the daily HR actions\nReads the decisions HR made in the sheet.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        416
+      ]
+    },
+    {
+      "id": "45fbf1bf-eee0-41a0-bc25-732929bc6cc0",
+      "parameters": {
+        "content": "## Act on HR decisions\nApproved invites, confirmed rejections and the digest.",
+        "height": 720,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        416
+      ]
+    },
+    {
+      "id": "5221333f-ca84-49f9-9a0d-648e1479da5e",
+      "parameters": {
+        "content": "## Find free interview times\nFree/busy from Google Calendar.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1296
+      ]
+    },
+    {
+      "id": "2472fbe8-289f-4680-ab28-b9c978bb15a6",
+      "parameters": {
+        "content": "## Let the candidate pick\nAn email with a form, then the wait.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        1296
+      ]
+    },
+    {
+      "id": "953c1dac-3930-4315-bdf4-623edc50ca4d",
+      "parameters": {
+        "content": "## Book the interview\nRe-checked, then a Google Meet invite.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1872,
+        1296
+      ]
+    },
+    {
+      "id": "907fa158-bdac-49cb-8d87-0be5ca7d82f9",
+      "parameters": {
+        "content": "## Hand over to HR\nNo free time, another time or no answer.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1872,
+        1616
+      ]
+    },
+    {
+      "id": "f0d645ea-0cc3-44fe-a6bd-4b6a33d3b50b",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1952
+      ]
+    },
+    {
+      "id": "975f53bd-d671-4dd5-a445-d6741b66b7bf",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1952
+      ]
+    },
+    {
+      "id": "232b09f4-9adf-4459-8971-dbee2db9547f",
+      "parameters": {
+        "authentication": "none",
+        "formTitle": "Apply for a job",
+        "formDescription": "Send us your CV as a PDF. We reply to every application within 5 working days.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full name",
+              "fieldName": "name",
+              "fieldType": "text",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldName": "email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone or WhatsApp",
+              "fieldName": "phone",
+              "fieldType": "text"
+            },
+            {
+              "fieldLabel": "Position",
+              "fieldName": "position",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Backend Developer"
+                  },
+                  {
+                    "option": "Sales Executive"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "CV (PDF)",
+              "fieldName": "cv",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "LinkedIn or portfolio URL",
+              "fieldName": "linkedin",
+              "fieldType": "text"
+            },
+            {
+              "fieldLabel": "Expected monthly salary",
+              "fieldName": "salary",
+              "fieldType": "text"
+            },
+            {
+              "fieldLabel": "Consent",
+              "fieldName": "consent",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "I agree that my application is stored and screened with AI for this hiring process."
+                  }
+                ]
+              },
+              "limitSelection": "exact",
+              "numberOfSelections": 1,
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "path": "apply",
+          "appendAttribution": false,
+          "buttonLabel": "Send application",
+          "ignoreBots": true,
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Thank you! We have received your application and will get back to you within 5 working days."
+            }
+          }
+        }
+      },
+      "name": "Job Application Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "513a9bff-d1a3-437f-a90f-717afa64edf0",
+      "notes": "Public form. The Position options must match the Title column of the Jobs tab."
+    },
+    {
+      "id": "736dcaa4-2942-4cdd-922c-85b27b7b18be",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "name": "Every Day at 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        224
+      ],
+      "notes": "Runs the daily HR actions. Uses the workflow time zone."
+    },
+    {
+      "id": "09dc3aa7-af5a-4534-bf63-2ec6e8824bba",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8f961ac-8ed8-4fe8-acc7-4ae402918b31",
+              "name": "company_name",
+              "value": "Your Company",
+              "type": "string"
+            },
+            {
+              "id": "7e8206a0-f91c-4a2a-b60c-4e241b93c381",
+              "name": "hr_name",
+              "value": "Your Name",
+              "type": "string"
+            },
+            {
+              "id": "d9c17628-6b37-4153-ba5d-a5f494247a69",
+              "name": "hr_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "c4ec67ea-fd2b-446f-b7d2-c88e454f1978",
+              "name": "auto_invite",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "477f997a-fb50-42c2-bb46-220891b400a1",
+              "name": "shortlist_score",
+              "value": 75,
+              "type": "number"
+            },
+            {
+              "id": "50a1d80e-6b82-4b53-9369-96f0b72f9c11",
+              "name": "reject_below",
+              "value": 50,
+              "type": "number"
+            },
+            {
+              "id": "d7f70fd8-4f83-4dee-b216-52be4a550201",
+              "name": "calendar_id",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "84bb8d72-6707-4cab-9613-aa50f0444695",
+              "name": "interview_minutes",
+              "value": 45,
+              "type": "number"
+            },
+            {
+              "id": "a7aa70fe-3136-44ad-9097-9b3391e90482",
+              "name": "buffer_minutes",
+              "value": 15,
+              "type": "number"
+            },
+            {
+              "id": "c8b71644-3d74-4a6d-ade4-33a84ea0c173",
+              "name": "workday_start",
+              "value": 9,
+              "type": "number"
+            },
+            {
+              "id": "cf452351-41d9-4411-b7ea-515cfe07e0a9",
+              "name": "workday_end",
+              "value": 17,
+              "type": "number"
+            },
+            {
+              "id": "c3bb47dd-c766-4827-ad1a-b6a65e54e5ee",
+              "name": "days_ahead",
+              "value": 7,
+              "type": "number"
+            },
+            {
+              "id": "852a83df-d477-4519-849d-126ea156e48d",
+              "name": "min_notice_hours",
+              "value": 24,
+              "type": "number"
+            },
+            {
+              "id": "d6db9227-42c6-4a71-bb38-146d92fd8c43",
+              "name": "max_slots",
+              "value": 6,
+              "type": "number"
+            },
+            {
+              "id": "8ee275b6-7157-487d-8e1a-4c419940d874",
+              "name": "reply_days",
+              "value": 4,
+              "type": "number"
+            },
+            {
+              "id": "a6f20ea1-c7a3-4f88-bd88-ae63fca44335",
+              "name": "timezone_label",
+              "value": "WIB",
+              "type": "string"
+            },
+            {
+              "id": "554626c2-e983-4dba-b7e2-7f8382e1d5fa",
+              "name": "rejection_subject",
+              "value": "Your application for {position} at {company}",
+              "type": "string"
+            },
+            {
+              "id": "0fa21af1-1b73-4def-8312-fbf86229a45d",
+              "name": "rejection_body",
+              "value": "Hi {name},\n\nThank you for applying for the {position} role at {company} and for the time you put into your application. After careful review, we have decided to continue with candidates whose experience matches this role more closely.\n\nWe will keep your CV on file and may contact you about future openings. We wish you every success.\n\nKind regards,\n{sender}\n{company}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Hiring Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        112
+      ],
+      "notes": "EDIT ME. One place for every setting, used by all lanes. calendar_id is the email of the calendar to book in (your Google account email for your main calendar). auto_invite false: strong matches wait for HR (Status \"Shortlisted\")."
+    },
+    {
+      "id": "a6aaca17-9928-48b4-94cc-64aeb4a4b563",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "dc240823-deb2-45ce-9e55-ce8368e86bc7",
+                    "leftValue": "={{ $('Job Application Form').isExecuted }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "New application"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9a08e63a-3d5f-4030-a81e-f37ed358bc25",
+                    "leftValue": "={{ !$('Job Application Form').isExecuted }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Daily run"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Route by Trigger",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        112
+      ]
+    },
+    {
+      "id": "4ed71308-da9e-4b98-93ac-21951e2d85d0",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Jobs",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Jobs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "Open roles with their must-haves. Only rows with Status \"Open\" receive applications."
+    },
+    {
+      "id": "8d41ad94-ab6b-49ee-97df-b2d794702292",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidates",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Candidates",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        960,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "Existing candidates, to skip repeat applications."
+    },
+    {
+      "id": "b84480b6-83f2-4ec3-a2f8-5cc54b38f259",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Matches the application to an open job, skips repeats and keeps the PDF for the AI.\nconst form = $('Job Application Form').first();\nconst a = form.json;\nconst email = String(a.email || '').trim().toLowerCase();\nconst position = String(a.position || '').trim();\nconst job = $('Read Jobs').all().map(i => i.json)\n  .find(j => String(j.Title || '').trim().toLowerCase() === position.toLowerCase() && String(j.Status || '').trim().toLowerCase() === 'open') || null;\nconst key = email + '|' + (job ? String(job['Job ID']) : position.toLowerCase());\nconst repeat = $('Read Candidates').all().some(i => String(i.json['Dedupe Key'] || '') === key);\nconst cv = Object.values(form.binary || {}).find(b => /pdf/i.test(b.mimeType || '') || /\\.pdf$/i.test(b.fileName || ''));\nconst issue = !job ? 'No open job called \"' + position + '\" in the Jobs tab' : !cv ? 'No PDF CV attached' : '';\nreturn [{\n  json: {\n    route: repeat ? 'repeat' : issue ? 'unscreened' : 'screen',\n    candidate_id: 'CAND-' + DateTime.now().toFormat('yyMMdd') + '-' + $execution.id,\n    applied_at: DateTime.now().toISO(),\n    name: String(a.name || '').trim(),\n    email,\n    phone: String(a.phone || '').trim(),\n    position,\n    job,\n    job_id: job ? String(job['Job ID']) : '',\n    interviewer: job ? String(job['Interviewer Email'] || '').trim() : '',\n    linkedin: String(a.linkedin || '').trim(),\n    salary: String(a.salary || '').trim(),\n    file_name: cv?.fileName || 'cv.pdf',\n    dedupe_key: key,\n    issue,\n  },\n  binary: cv ? { cv } : {},\n}];"
+      },
+      "name": "Check Application",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        0
+      ],
+      "notes": "Reads the CV from the form trigger: the Set node in between does not pass files on."
+    },
+    {
+      "id": "a8d5e0ac-0141-48b4-bd26-1cdd7b83b5bf",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f6fee8b3-b3d2-4e68-8d64-1d7fd936c9c9",
+                    "leftValue": "={{ $json.route === 'screen' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Screen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "64d08bd7-0dd3-4146-875d-16f5ea798d59",
+                    "leftValue": "={{ $json.route === 'unscreened' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Save for review"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Route Application",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1408,
+        0
+      ],
+      "notes": "Repeat applications (same email and job) stop here. Unknown or closed jobs are saved for HR without AI."
+    },
+    {
+      "id": "9192e995-ff6b-4cf8-8e64-16b256d6ad9f",
+      "parameters": {
+        "resource": "text",
+        "operation": "response",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "type": "file",
+              "role": "user",
+              "fileType": "base64",
+              "binaryPropertyName": "cv",
+              "fileName": "={{ $json.file_name }}"
+            },
+            {
+              "type": "text",
+              "role": "user",
+              "content": "={{ 'CV file: ' + $json.file_name + '\\nApplied for: ' + $json.position }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {
+          "instructions": "You turn a CV into an anonymized professional profile for blind screening.\n- Extract only what the CV states: roles, years, skills, tools, education level and field, certifications, languages and achievements.\n- Leave out everything that identifies the person or hints at their background: name, contact details, photo, age or birth date, gender, marital status, religion, ethnicity, nationality, address, and the names of schools and employers. Describe employers by industry and size instead.\n- Years are numbers; round to one decimal. Use 0 when unknown.\n- Set is_cv to false when the file is not a CV or resume (a cover letter alone, a certificate, an empty page).",
+          "maxTokens": 6000,
+          "reasoning": {
+            "reasoningOptions": {
+              "effort": "low",
+              "summary": "none"
+            }
+          },
+          "store": false,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "cv_profile",
+              "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"is_cv\": {\n      \"type\": \"boolean\",\n      \"description\": \"false when the file is not a CV or resume\"\n    },\n    \"headline\": {\n      \"type\": \"string\",\n      \"description\": \"e.g. \\\"Backend developer, 6 years, payments\\\"\"\n    },\n    \"total_years_experience\": {\n      \"type\": \"number\"\n    },\n    \"current_or_last_role\": {\n      \"type\": \"string\"\n    },\n    \"roles\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"title\": {\n            \"type\": \"string\"\n          },\n          \"industry\": {\n            \"type\": \"string\",\n            \"description\": \"Industry and size of the employer instead of its name\"\n          },\n          \"years\": {\n            \"type\": \"number\"\n          },\n          \"highlights\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"required\": [\n          \"title\",\n          \"industry\",\n          \"years\",\n          \"highlights\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"skills\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"tools\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"education\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"level\": {\n            \"type\": \"string\"\n          },\n          \"field\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"level\",\n          \"field\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"certifications\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"languages\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"achievements\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"Three sentences about the professional profile\"\n    }\n  },\n  \"required\": [\n    \"is_cv\",\n    \"headline\",\n    \"total_years_experience\",\n    \"current_or_last_role\",\n    \"roles\",\n    \"skills\",\n    \"tools\",\n    \"education\",\n    \"certifications\",\n    \"languages\",\n    \"achievements\",\n    \"summary\"\n  ],\n  \"additionalProperties\": false\n}",
+              "strict": true,
+              "verbosity": "low"
+            }
+          }
+        }
+      },
+      "name": "Extract Profile",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1696,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "OpenAI reads the PDF (scans too) into a profile without name, age, gender, photo, schools or employers. If it fails, the candidate is still saved for review."
+    },
+    {
+      "id": "f6597aa1-6c21-46a5-ba8d-451d5a9ec4ff",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "73c72522-09b7-4309-9694-9946da8184d6",
+              "leftValue": "={{ $json.output?.[0]?.content?.[0]?.text?.is_cv === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Is a Readable CV?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        0
+      ],
+      "notes": "Unreadable files and non-CVs skip the scoring."
+    },
+    {
+      "id": "52f616c0-2fca-40f2-86c5-55b0abf4f69e",
+      "parameters": {
+        "resource": "text",
+        "operation": "response",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "type": "text",
+              "role": "user",
+              "content": "={{ (() => {\n  const j = $('Check Application').first().json.job;\n  const p = $json.output[0].content[0].text;\n  return 'Role: ' + j.Title + '\\n\\nAbout the role:\\n' + (j.Description || '-') + '\\n\\nMust have:\\n' + (j['Must Have'] || '-') +\n    '\\n\\nNice to have:\\n' + (j['Nice to Have'] || '-') + '\\n\\nCandidate profile (anonymized):\\n' + JSON.stringify(p, null, 1);\n})() }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {
+          "instructions": "=You screen job candidates for {{ $('Hiring Settings').first().json.company_name }}. You only see an anonymized profile, so judge job-relevant evidence only.\n- Check every line of \"Must have\": \"met\" needs clear evidence in the profile, \"partly\" fits related or shorter experience, \"not_met\" means no evidence. Quote the evidence in a few words.\n- overall_score from 0 to 100: 85 or more is an excellent match, 70 to 84 good, 50 to 69 possible with gaps, below 50 weak.\n- Never let age, gender, nationality, religion, family status, disability, school prestige or career breaks change the score.\n- strengths and gaps: up to 3 each, short and specific to this role.\n- interview_questions: 3 questions that test the gaps or confirm the strongest claims.\n- summary: 2 sentences for the hiring manager.",
+          "maxTokens": 6000,
+          "reasoning": {
+            "reasoningOptions": {
+              "effort": "medium",
+              "summary": "none"
+            }
+          },
+          "store": false,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "cv_score",
+              "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"must_haves\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"requirement\": {\n            \"type\": \"string\"\n          },\n          \"status\": {\n            \"type\": \"string\",\n            \"enum\": [\n              \"met\",\n              \"partly\",\n              \"not_met\"\n            ]\n          },\n          \"evidence\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"requirement\",\n          \"status\",\n          \"evidence\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"nice_to_haves_met\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"skills_score\": {\n      \"type\": \"number\",\n      \"description\": \"0 to 100\"\n    },\n    \"experience_score\": {\n      \"type\": \"number\",\n      \"description\": \"0 to 100\"\n    },\n    \"overall_score\": {\n      \"type\": \"number\",\n      \"description\": \"0 to 100\"\n    },\n    \"strengths\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"gaps\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"interview_questions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"summary\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"must_haves\",\n    \"nice_to_haves_met\",\n    \"skills_score\",\n    \"experience_score\",\n    \"overall_score\",\n    \"strengths\",\n    \"gaps\",\n    \"interview_questions\",\n    \"summary\"\n  ],\n  \"additionalProperties\": false\n}",
+              "strict": true,
+              "verbosity": "low"
+            }
+          }
+        }
+      },
+      "name": "Score Candidate",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        2144,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Blind scoring: this call sees the job and the anonymized profile, never the CV or the form."
+    },
+    {
+      "id": "a5a1643d-259c-45af-b427-7c854dbfc1ca",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Turns the AI results into a recommendation and puts the CV back on the item for the upload.\nconst s = $('Hiring Settings').first().json;\nconst app = $('Check Application').first();\nconst read = j => { const t = j?.output?.[0]?.content?.[0]?.text; return t && typeof t === 'object' ? t : null; };\nconst ex = $('Extract Profile').first().json;\nconst profile = read(ex);\nconst sc = $('Score Candidate').isExecuted ? $('Score Candidate').first().json : null;\nconst score = read(sc);\nconst why = j => (j?.error ? ': ' + String(j.error.message ?? j.error).slice(0, 200) : '');\nlet issue = '', recommendation = 'Review', status = 'Review', overall = '', must = [];\nif (!profile) issue = 'The AI could not read the CV' + why(ex);\nelse if (profile.is_cv !== true) issue = 'The file does not look like a CV';\nelse if (!score || !Number.isFinite(Number(score.overall_score))) issue = 'The AI could not score the CV' + why(sc);\nelse {\n  overall = Math.round(Number(score.overall_score));\n  must = Array.isArray(score.must_haves) ? score.must_haves : [];\n  const notMet = must.filter(m => m.status === 'not_met').length;\n  const partly = must.filter(m => m.status === 'partly').length;\n  if (notMet || overall < Number(s.reject_below)) recommendation = 'Reject';\n  else if (overall >= Number(s.shortlist_score) && !partly) recommendation = 'Shortlist';\n  status = recommendation === 'Shortlist' ? (s.auto_invite === true ? 'Invited' : 'Shortlisted') : recommendation === 'Reject' ? 'Reject suggested' : 'Review';\n}\nconst lines = (a, numbered) => (Array.isArray(a) ? a : []).map((x, i) => (numbered ? (i + 1) + '. ' : '- ') + x).join('\\n');\nconst open = must.filter(m => m.status !== 'met');\nreturn [{\n  json: {\n    score: overall, recommendation, status, issue,\n    must_haves: must.length ? must.length - open.length + '/' + must.length + ' met' + (open.length ? '. Missing: ' + open.map(m => m.requirement + ' (' + m.status.replace('_', ' ') + ')').join('; ') : '') : '',\n    summary: score?.summary || '', strengths: lines(score?.strengths), gaps: lines(score?.gaps), questions: lines(score?.interview_questions, true),\n  },\n  binary: app.binary,\n}];"
+      },
+      "name": "Keep CV",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        176
+      ],
+      "notes": "Shortlist: score at or above shortlist_score and every must-have met. Reject suggested: a must-have missing or a score below reject_below. Everything else: Review."
+    },
+    {
+      "id": "dbb5038f-fa59-422c-915d-6cfe9c40e6f1",
+      "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "inputDataFieldName": "cv",
+        "name": "={{ (() => { const a = $('Check Application').first().json; return [a.position, a.name, a.candidate_id].join(' · ').replace(/[\\\\/:*?\"<>|]/g, '-') + '.pdf'; })() }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "name": "Upload CV",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2656,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Pick your hiring folder in \"Parent Folder\". If the upload fails, the candidate is still saved with a note."
+    },
+    {
+      "id": "cfc313a1-f83a-4f88-9e34-85416068f87d",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// One Candidates row, always with the same columns so the header row stays stable.\nconst a = $('Check Application').first().json;\nconst d = $('Keep CV').isExecuted ? $('Keep CV').first().json : null;\nconst up = $input.first().json;\nconst issues = [a.issue, d?.issue, up.id ? '' : 'CV not saved to Drive' + (up.error ? ': ' + String(up.error.message ?? up.error).slice(0, 150) : '')].filter(Boolean).join('; ');\nreturn [{ json: {\n  'Candidate ID': a.candidate_id,\n  'Applied At': a.applied_at,\n  'Name': a.name,\n  'Email': a.email,\n  'Phone': a.phone,\n  'Position': a.position,\n  'Job ID': a.job_id,\n  'Score': d?.score ?? '',\n  'Recommendation': d?.recommendation ?? 'Review',\n  'Must-haves': d?.must_haves ?? '',\n  'Summary': d?.summary ?? '',\n  'Strengths': d?.strengths ?? '',\n  'Gaps': d?.gaps ?? '',\n  'Interview Questions': d?.questions ?? '',\n  'CV': up.id ? 'https://drive.google.com/file/d/' + up.id + '/view' : '',\n  'LinkedIn': a.linkedin,\n  'Expected Salary': a.salary,\n  'Status': d?.status ?? 'Review',\n  'Issues': issues,\n  'Interviewer': a.interviewer,\n  'Invited At': '',\n  'Interview At': '',\n  'Meet Link': '',\n  'Rejection Sent At': '',\n  'Notes': '',\n  'Dedupe Key': a.dedupe_key,\n} }];"
+      },
+      "name": "Build Candidate Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        0
+      ],
+      "notes": "Field names = Candidates sheet headers. They are created on an empty tab."
+    },
+    {
+      "id": "d57e0931-831b-4bf1-bdcc-2b3a327ebb6c",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidates",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Save Candidate",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3104,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Minimise API Calls is on, so applications that arrive together never overwrite each other."
+    },
+    {
+      "id": "61fafcac-ac82-4ef7-8ce2-981382aae545",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cc15cab2-cffe-4884-ae40-5af81c1d9683",
+              "leftValue": "={{ $json.Status === 'Invited' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Invite Now?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        3328,
+        0
+      ],
+      "notes": "Only strong matches, and only when auto_invite is on."
+    },
+    {
+      "id": "c7199c81-9c0e-4400-8eb9-4b5dd17f2677",
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "candidate": "={{ $json }}",
+            "settings": "={{ $('Hiring Settings').first().json }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "candidate",
+              "displayName": "candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "settings",
+              "displayName": "settings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "name": "Start Interview Booking",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        3552,
+        0
+      ],
+      "notes": "Starts \"When Booking Starts\" (this same workflow) and does not wait: the candidate may take days to pick a time."
+    },
+    {
+      "id": "b442892a-a299-4549-99c5-61429b962868",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidates",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read All Candidates",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        528
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "c1befbdf-4536-40ba-b316-cc97ad401375",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Invites and rejections HR confirmed in the Candidates tab, plus the morning digest.\nconst s = $('Hiring Settings').first().json;\nconst rows = $input.all().map(i => i.json).filter(r => r['Candidate ID']);\nconst now = DateTime.now();\nconst first = r => String(r.Name || '').trim().split(/\\s+/)[0] || 'there';\nconst fill = (t, r) => String(t).replace(/\\{name\\}/g, first(r)).replace(/\\{position\\}/g, r.Position || 'the role')\n  .replace(/\\{company\\}/g, s.company_name).replace(/\\{sender\\}/g, s.hr_name);\nconst out = [];\nfor (const r of rows) {\n  if (r.Status === 'Invite') out.push({ json: { action: 'invite', ...r } });\n  if (r.Status === 'Rejected' && !r['Rejection Sent At'] && r.Email) out.push({ json: { action: 'reject', candidate_id: r['Candidate ID'], to: r.Email, subject: fill(s.rejection_subject, r), body: fill(s.rejection_body, r) } });\n}\nconst esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst score = r => (r.Score === '' || r.Score === undefined ? -1 : Number(r.Score));\nconst fresh = rows.filter(r => { const d = DateTime.fromISO(String(r['Applied At'] || '')); return d.isValid && d >= now.minus({ hours: 24 }); });\nconst byJob = {};\nfor (const r of fresh) (byJob[r.Position || '-'] ??= []).push(r);\nconst waiting = rows.filter(r => ['Review', 'Shortlisted', 'Reject suggested'].includes(r.Status)).sort((a, b) => score(b) - score(a));\nconst soon = rows.filter(r => r.Status === 'Interview booked')\n  .map(r => ({ r, t: DateTime.fromFormat(String(r['Interview At'] || ''), 'yyyy-MM-dd HH:mm') }))\n  .filter(x => x.t.isValid && x.t >= now.startOf('day') && x.t < now.plus({ days: 2 }).startOf('day')).sort((a, b) => a.t - b.t);\nconst stuck = rows.filter(r => ['Needs scheduling', 'No response'].includes(r.Status));\nconst invites = out.filter(o => o.json.action === 'invite').length;\nconst rejects = out.filter(o => o.json.action === 'reject').length;\nif (fresh.length || waiting.length || soon.length || stuck.length || invites || rejects) {\n  const cv = r => (r.CV ? '<a href=\"' + esc(r.CV) + '\">CV</a>' : '');\n  const table = (head, body) => '<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\"><tr>' + head.map(h => '<th align=\"left\">' + h + '</th>').join('') + '</tr>' + body + '</table>';\n  let html = '<div style=\"font-family:Arial,sans-serif;font-size:14px\">';\n  for (const [job, list] of Object.entries(byJob)) {\n    list.sort((a, b) => score(b) - score(a));\n    html += '<h3 style=\"margin-bottom:4px\">New for ' + esc(job) + ' (' + list.length + ')</h3>' + table(['#', 'Candidate', 'Score', 'AI says', 'Status', ''],\n      list.map((r, i) => '<tr><td>' + (i + 1) + '</td><td>' + esc(r.Name) + '<br><span style=\"color:#666\">' + esc(r.Summary || r.Issues) + '</span></td><td>' + esc(r.Score) + '</td><td>' + esc(r.Recommendation) + '</td><td>' + esc(r.Status) + '</td><td>' + cv(r) + '</td></tr>').join(''));\n  }\n  if (soon.length) html += '<h3 style=\"margin-bottom:4px\">Interviews today and tomorrow</h3><ul>' + soon.map(x => '<li>' + esc(x.t.toFormat('ccc d LLL, HH:mm')) + ' · ' + esc(x.r.Name) + ' · ' + esc(x.r.Position) + (x.r['Meet Link'] ? ' · <a href=\"' + esc(x.r['Meet Link']) + '\">Meet</a>' : '') + '</li>').join('') + '</ul>';\n  if (waiting.length) html += '<h3 style=\"margin-bottom:4px\">Waiting for your decision (' + waiting.length + ')</h3><ul>' + waiting.slice(0, 20).map(r => '<li>' + esc(r.Name) + ' · ' + esc(r.Position) + ' · ' + (score(r) >= 0 ? 'score ' + esc(r.Score) + ' · ' : '') + esc(r.Status) + (r.Issues ? ' · ' + esc(r.Issues) : '') + ' ' + cv(r) + '</li>').join('') + '</ul>';\n  if (stuck.length) html += '<h3 style=\"margin-bottom:4px\">Interview not booked (' + stuck.length + ')</h3><ul>' + stuck.map(r => '<li>' + esc(r.Name) + ' · ' + esc(r.Status) + (r.Notes ? ' · ' + esc(r.Notes) : '') + '</li>').join('') + '</ul>';\n  html += '<p style=\"color:#666\">Today: ' + invites + ' interview invitation(s) and ' + rejects + ' rejection email(s) sent from your decisions. Set Status to <b>Invite</b> or <b>Rejected</b> in the Candidates tab and the next run takes care of it.</p></div>';\n  out.push({ json: { action: 'digest', subject: 'Hiring digest: ' + fresh.length + ' new, ' + waiting.length + ' waiting for you, ' + soon.length + ' interview(s) soon', html } });\n}\nreturn out;"
+      },
+      "name": "Plan Daily Actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        528
+      ],
+      "notes": "HR decides in the sheet: Status \"Invite\" starts the booking, \"Rejected\" sends the rejection once. The digest is skipped on quiet days."
+    },
+    {
+      "id": "01fc0204-b7ae-454e-b290-48227e39034d",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a1004c6b-9bbe-4f04-9975-7e1588800a64",
+                    "leftValue": "={{ $json.action === 'invite' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Invite"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ebdbef54-f669-4956-ae25-b0e46d61cd78",
+                    "leftValue": "={{ $json.action === 'reject' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reject"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f9b97c76-03dd-4b5a-8d50-31fa718c0cec",
+                    "leftValue": "={{ $json.action === 'digest' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Digest"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Route Daily Actions",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        528
+      ]
+    },
+    {
+      "id": "61aa9fec-96e1-4e3e-ad24-44896b781f76",
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "candidate": "={{ $json }}",
+            "settings": "={{ $('Hiring Settings').first().json }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "candidate",
+              "displayName": "candidate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "settings",
+              "displayName": "settings",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "name": "Start Booking · HR Picks",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1472,
+        528
+      ],
+      "notes": "Same as \"Start Interview Booking\", for candidates HR set to \"Invite\"."
+    },
+    {
+      "id": "1cd2c91a-7116-4a85-9705-0b4d49f5e66b",
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Loop Rejections",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        752
+      ],
+      "notes": "One email per pass, so a retried send never repeats another candidate's email."
+    },
+    {
+      "id": "beef9d5c-c3ea-4eaf-8740-51563da4f192",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $('Hiring Settings').first().json.hr_name }}"
+        }
+      },
+      "name": "Send Rejection",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        752
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "fd5a2566-ded1-480d-ae6c-aca12d080208",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidates",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate ID": "={{ $('Loop Rejections').item.json.candidate_id }}",
+            "Rejection Sent At": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "Candidate ID"
+          ],
+          "schema": [
+            {
+              "id": "Candidate ID",
+              "displayName": "Candidate ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Rejection Sent At",
+              "displayName": "Rejection Sent At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Mark Rejection Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1920,
+        752
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "82374a2d-7699-4261-b3c7-d89728661016",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Hiring Settings').first().json.hr_email }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Daily Digest",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        976
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "c9ca74b6-cdd8-4911-9cb9-21f72cc9869b",
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "candidate",
+              "type": "object"
+            },
+            {
+              "name": "settings",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "name": "When Booking Starts",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        1408
+      ],
+      "notes": "Entry point of both \"Start ... Booking\" nodes: the Candidates row plus Hiring Settings."
+    },
+    {
+      "id": "ddc87ee5-2ae9-4888-a61f-c1deda7e3701",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidates",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate ID": "={{ $('When Booking Starts').first().json.candidate['Candidate ID'] }}",
+            "Status": "Invited",
+            "Invited At": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "Candidate ID"
+          ],
+          "schema": [
+            {
+              "id": "Candidate ID",
+              "displayName": "Candidate ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Invited At",
+              "displayName": "Invited At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Mark Invited",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "9271449e-620e-44d5-a77f-a2e146db9b2b",
+      "parameters": {
+        "resource": "calendar",
+        "operation": "availability",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $('When Booking Starts').first().json.settings.calendar_id }}",
+          "mode": "id"
+        },
+        "timeMin": "={{ $now.toISO() }}",
+        "timeMax": "={{ $now.plus({ days: Number($('When Booking Starts').first().json.settings.days_ahead) + 1 }).endOf('day').toISO() }}",
+        "options": {
+          "outputFormat": "bookedSlots"
+        }
+      },
+      "name": "Get Busy Times",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "Busy blocks of the hiring calendar (free/busy only, no event details)."
+    },
+    {
+      "id": "6ae82ada-e643-4964-87a2-d82176b57467",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Free interview times on working days: busy blocks plus a buffer are avoided, at most two times per day.\nconst s = $('When Booking Starts').first().json.settings;\nconst busy = $input.all().map(i => i.json).filter(b => b.start && b.end).map(b => ({ start: DateTime.fromISO(b.start), end: DateTime.fromISO(b.end) }));\nconst len = Number(s.interview_minutes) || 45, buffer = Number(s.buffer_minutes) || 0;\nconst earliest = DateTime.now().plus({ hours: Number(s.min_notice_hours) || 0 });\nconst times = [];\nfor (let d = 0; d <= Number(s.days_ahead); d++) {\n  const day = DateTime.now().plus({ days: d }).startOf('day');\n  if (day.weekday > 5) continue;\n  const close = day.set({ hour: Number(s.workday_end) });\n  const picked = [];\n  for (let t = day.set({ hour: Number(s.workday_start) }); t.plus({ minutes: len }) <= close; t = t.plus({ minutes: 30 })) {\n    const end = t.plus({ minutes: len });\n    if (t < earliest) continue;\n    if (busy.some(b => t < b.end.plus({ minutes: buffer }) && end > b.start.minus({ minutes: buffer }))) continue;\n    if (picked.length && t < picked[picked.length - 1].plus({ hours: 3 })) continue;\n    picked.push(t);\n    if (picked.length === 2) break;\n  }\n  times.push(...picked);\n}\nconst slots = times.slice(0, Number(s.max_slots) || 6).map(t => ({\n  label: t.toFormat('cccc d LLL, HH:mm') + '–' + t.plus({ minutes: len }).toFormat('HH:mm') + ' ' + s.timezone_label,\n  start: t.toISO(),\n  end: t.plus({ minutes: len }).toISO(),\n}));\nconst none = 'None of these times work for me';\nreturn [{ json: {\n  slots,\n  form_fields: [\n    { fieldLabel: 'Interview time', fieldType: 'dropdown', fieldOptions: { values: [...slots.map(x => ({ option: x.label })), { option: none }] }, requiredField: true },\n    { fieldLabel: 'Anything we should know?', fieldType: 'textarea', placeholder: 'Optional, e.g. other times that suit you', requiredField: false },\n  ],\n  status: 'Needs scheduling',\n  note: slots.length ? '' : 'No free interview time in the next ' + s.days_ahead + ' days. Please schedule by hand.',\n} }];"
+      },
+      "name": "Plan Slots",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        1408
+      ],
+      "notes": "Times are offered in the workflow time zone. Each candidate sees the same free times; the booking step re-checks them."
+    },
+    {
+      "id": "0ff37a6d-ba51-4650-9464-378084a1057b",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "12fb6e10-54a1-4b38-8f08-f5fad99c4d0f",
+              "leftValue": "={{ $json.slots.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Has Free Slots?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        1408
+      ]
+    },
+    {
+      "id": "f04854e6-8762-4d05-ba69-f06e733d8e93",
+      "parameters": {
+        "resource": "message",
+        "operation": "sendAndWait",
+        "sendTo": "={{ $('When Booking Starts').first().json.candidate.Email }}",
+        "subject": "={{ 'Interview for ' + $('When Booking Starts').first().json.candidate.Position + ' at ' + $('When Booking Starts').first().json.settings.company_name + ': pick a time' }}",
+        "message": "=Hi {{ String($('When Booking Starts').first().json.candidate.Name).trim().split(/\\s+/)[0] }},\n\nThank you for applying for the {{ $('When Booking Starts').first().json.candidate.Position }} role at {{ $('When Booking Starts').first().json.settings.company_name }}. We would like to invite you to a {{ $('When Booking Starts').first().json.settings.interview_minutes }}-minute video interview.{{ $runIndex > 0 ? '\\n\\nThe time you picked a moment ago was just booked by someone else, sorry. Please choose another one.' : '' }}\n\nClick the button below to choose a time that suits you. The link stays open for {{ $('When Booking Starts').first().json.settings.reply_days }} days.\n\nBest regards,\n{{ $('When Booking Starts').first().json.settings.hr_name }}\n{{ $('When Booking Starts').first().json.settings.company_name }}",
+        "responseType": "customForm",
+        "defineForm": "json",
+        "jsonOutput": "={{ $('Plan Slots').first().json.form_fields }}",
+        "options": {
+          "messageButtonLabel": "Pick a time",
+          "responseFormTitle": "Choose your interview time",
+          "responseFormDescription": "={{ $('When Booking Starts').first().json.candidate.Position + ' at ' + $('When Booking Starts').first().json.settings.company_name + '. ' + $('When Booking Starts').first().json.settings.interview_minutes + ' minutes on Google Meet. Times are in ' + $('When Booking Starts').first().json.settings.timezone_label + '.' }}",
+          "responseFormButtonLabel": "Confirm",
+          "limitWaitTime": {
+            "values": {
+              "limitType": "afterTimeInterval",
+              "resumeAmount": "={{ $('When Booking Starts').first().json.settings.reply_days }}",
+              "resumeUnit": "days"
+            }
+          },
+          "appendAttribution": false
+        }
+      },
+      "name": "Offer Interview Times",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        1408
+      ],
+      "webhookId": "5b8028eb-e68d-4113-b8a6-0654fddaef52",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Emails a button to a short form with the free times, then waits for the answer (up to reply_days)."
+    },
+    {
+      "id": "c7289f12-5107-46f0-9fca-ba34334829eb",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// The chosen time. Without \"data\" the wait ran out before the candidate answered.\nconst s = $('When Booking Starts').first().json.settings;\nconst plan = $('Plan Slots').first().json;\nconst r = $input.first().json;\nif (!r.data) return [{ json: { outcome: 'no_response', status: 'No response', note: 'Did not pick an interview time within ' + s.reply_days + ' days.' } }];\nconst picked = String(r.data['Interview time'] ?? '');\nconst note = String(r.data['Anything we should know?'] ?? '').trim();\nconst slot = plan.slots.find(x => x.label === picked);\nif (!slot) return [{ json: { outcome: 'other_time', status: 'Needs scheduling', note: 'None of the offered times work.' + (note ? ' Candidate wrote: ' + note : '') } }];\nreturn [{ json: { outcome: 'picked', slot, note } }];"
+      },
+      "name": "Read Choice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        1408
+      ]
+    },
+    {
+      "id": "43678b4b-1e58-4340-8713-2d42dacf1100",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ee7e2537-927d-4af9-aff7-b63207b9604c",
+              "leftValue": "={{ $json.outcome === 'picked' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Picked a Time?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        1408
+      ]
+    },
+    {
+      "id": "550ea8d3-a55f-494b-bddf-22f547dea1b5",
+      "parameters": {
+        "resource": "calendar",
+        "operation": "availability",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $('When Booking Starts').first().json.settings.calendar_id }}",
+          "mode": "id"
+        },
+        "timeMin": "={{ $json.slot.start }}",
+        "timeMax": "={{ $json.slot.end }}",
+        "options": {
+          "outputFormat": "availability"
+        }
+      },
+      "name": "Check Slot Still Free",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1920,
+        1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Another candidate may have taken the same time in the meantime."
+    },
+    {
+      "id": "cb5829f7-72ce-4dc0-9c6d-191ca7edad1a",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fdc647bc-217f-4868-939b-4510fadbd67c",
+              "leftValue": "={{ $json.available === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Slot Still Free?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2144,
+        1408
+      ],
+      "notes": "Taken: new free times are offered by email."
+    },
+    {
+      "id": "b09360a4-72fd-4b0b-ac81-65530ad4281a",
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ $('When Booking Starts').first().json.settings.calendar_id }}",
+          "mode": "id"
+        },
+        "start": "={{ $('Read Choice').first().json.slot.start }}",
+        "end": "={{ $('Read Choice').first().json.slot.end }}",
+        "useDefaultReminders": true,
+        "additionalFields": {
+          "summary": "={{ 'Interview: ' + $('When Booking Starts').first().json.candidate.Name + ' · ' + $('When Booking Starts').first().json.candidate.Position }}",
+          "attendees": [
+            "={{ [$('When Booking Starts').first().json.candidate.Email, $('When Booking Starts').first().json.candidate.Interviewer].filter(Boolean).join(',') }}"
+          ],
+          "description": "={{ 'Interview for the ' + $('When Booking Starts').first().json.candidate.Position + ' role at ' + $('When Booking Starts').first().json.settings.company_name + ' (' + $('When Booking Starts').first().json.settings.interview_minutes + ' minutes). Join with the Google Meet link in this invitation.' }}",
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolution": "hangoutsMeet"
+            }
+          },
+          "sendUpdates": "all"
+        }
+      },
+      "name": "Create Interview",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2368,
+        1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Google sends the invitation with a Meet link to the candidate and the interviewer. The AI notes stay out of the invite."
+    },
+    {
+      "id": "302e29ef-71a9-4478-bab6-794e7a4d8313",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidates",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate ID": "={{ $('When Booking Starts').first().json.candidate['Candidate ID'] }}",
+            "Status": "Interview booked",
+            "Interview At": "={{ DateTime.fromISO($('Read Choice').first().json.slot.start).toFormat('yyyy-MM-dd HH:mm') }}",
+            "Meet Link": "={{ $json.hangoutLink || $json.htmlLink || \"\" }}",
+            "Notes": "={{ $('Read Choice').first().json.note }}"
+          },
+          "matchingColumns": [
+            "Candidate ID"
+          ],
+          "schema": [
+            {
+              "id": "Candidate ID",
+              "displayName": "Candidate ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Interview At",
+              "displayName": "Interview At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Meet Link",
+              "displayName": "Meet Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Log Booking",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2592,
+        1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "412d6560-6cd7-42a9-ad70-13bbab32a917",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('When Booking Starts').first().json.settings.hr_email }}",
+        "subject": "={{ 'Interview booked: ' + $('When Booking Starts').first().json.candidate.Name + ' · ' + $('When Booking Starts').first().json.candidate.Position + ' · ' + $('Read Choice').first().json.slot.label }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const { candidate: c } = $('When Booking Starts').first().json;\n  const ch = $('Read Choice').first().json;\n  const ev = $('Create Interview').first().json;\n  const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const list = t => '<ul>' + String(t || '').split('\\n').filter(Boolean).map(x => '<li>' + esc(x.replace(/^(- |\\d+\\. )/, '')) + '</li>').join('') + '</ul>';\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\"><p><b>' + esc(c.Name) + '</b> booked <b>' + esc(ch.slot.label) + '</b> for ' + esc(c.Position) + '.' +\n    (ev.hangoutLink ? ' <a href=\"' + esc(ev.hangoutLink) + '\">Google Meet</a>' : '') + (c.CV ? ' · <a href=\"' + esc(c.CV) + '\">CV</a>' : '') + '</p>' +\n    (ch.note ? '<p>Candidate note: ' + esc(ch.note) + '</p>' : '') +\n    '<p>AI score: <b>' + esc(c.Score) + '</b> · ' + esc(c['Must-haves']) + '</p><p>' + esc(c.Summary) + '</p>' +\n    '<h4>Strengths</h4>' + list(c.Strengths) + '<h4>Gaps to probe</h4>' + list(c.Gaps) + '<h4>Suggested questions</h4>' + list(c['Interview Questions']) +\n    '<p style=\"color:#666\">The score is a suggestion from an anonymized profile. Please judge the interview on its own.</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "={{ $('When Booking Starts').first().json.candidate.Interviewer || '' }}"
+        }
+      },
+      "name": "Email Interview Brief",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2816,
+        1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Briefing for HR, with the interviewer in copy."
+    },
+    {
+      "id": "29d4e4b3-48ea-4e19-8713-6da055405d49",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Candidates",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate ID": "={{ $('When Booking Starts').first().json.candidate['Candidate ID'] }}",
+            "Status": "={{ $json.status }}",
+            "Notes": "={{ $json.note }}"
+          },
+          "matchingColumns": [
+            "Candidate ID"
+          ],
+          "schema": [
+            {
+              "id": "Candidate ID",
+              "displayName": "Candidate ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Log Outcome",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1920,
+        1728
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Needs scheduling (no free time, or none of the times work) or No response."
+    },
+    {
+      "id": "ac85fc6b-4631-462d-8a63-4aaa15a5f402",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('When Booking Starts').first().json.settings.hr_email }}",
+        "subject": "={{ '[Action needed] ' + $('When Booking Starts').first().json.candidate.Name + ' · ' + $('When Booking Starts').first().json.candidate.Position + ' · ' + $json.Status }}",
+        "emailType": "text",
+        "message": "={{ $('When Booking Starts').first().json.candidate.Name + ' (' + $('When Booking Starts').first().json.candidate.Email + ($('When Booking Starts').first().json.candidate.Phone ? ', ' + $('When Booking Starts').first().json.candidate.Phone : '') + ') has no interview booked yet.\\n\\n' + $json.Notes + '\\n\\nPlease follow up personally, then update the Candidates tab.' }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email HR · Needs Action",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2144,
+        1728
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "9a04274f-fee6-4863-8024-ee8d9ea5fd23",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2064
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "a9b70300-7d6d-43e8-a04f-80dfbc697a98",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d8badacb-fe78-49d1-aa25-6f8dd1fbd2e5",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        2064
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "931e7349-c695-49bb-b062-63be74237c09",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8009f3b6-c5ee-43a2-9b9f-f7b774c1080e",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "cf83afea-3446-4d3f-b037-c604971c7654",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "c5e57e9b-c14e-45b1-aa31-3c091b1c4e4e",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "1c3326b2-f2ff-4164-a3db-ce84368fac46",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "4e9ac842-959d-4070-af0c-0a2e7b7d52bd",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "ac94577e-8c81-442a-8305-410af5e439fa",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "4d8df3e5-c15c-4a33-8b42-14019b93ce8a",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "56a67054-aa09-4228-9dac-7d6e1510b0b2",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "196cd8a4-161f-406d-83f6-f283dd093047",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f666dc50-a58f-43a3-a97d-cd0034c12c3e",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "40f78805-81f5-4302-9525-69a918644c5b",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c4704129-381e-4627-a345-9d8c5d94cf98",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "c1a6a8ed-734a-45d9-875b-6223ec82b3fa",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        2064
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "1cb86d88-7a9e-443b-bdb1-0559005864e0",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        2064
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "f55d7c44-8870-4e9b-b985-88cebc25d54d",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "31f40655-ecbc-4760-92b4-1964a8096cd6",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "03d02b26-b700-4284-911e-44f9415a57fe",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "409c4a9c-dd7c-404f-b090-d91b8afe0b90",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "5d959b5f-6fc3-41d2-923c-0a940ad393dc",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "8da32282-0ec0-4b88-977f-15700106c18f",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "07eb040a-d326-4f15-a0cd-17b6f02cde51",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "5586fd28-d48b-46e9-91ef-e1c55c817e8d",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "3d828646-6543-4bea-a905-f1693feeee66",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        2064
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "3e6981ab-356b-4274-af65-e33ebb62de9e",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        2064
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "Job Application Form": {
+      "main": [
+        [
+          {
+            "node": "Hiring Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Day at 08:00": {
+      "main": [
+        [
+          {
+            "node": "Hiring Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hiring Settings": {
+      "main": [
+        [
+          {
+            "node": "Route by Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read All Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Jobs": {
+      "main": [
+        [
+          {
+            "node": "Read Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Candidates": {
+      "main": [
+        [
+          {
+            "node": "Check Application",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Application": {
+      "main": [
+        [
+          {
+            "node": "Route Application",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Application": {
+      "main": [
+        [
+          {
+            "node": "Extract Profile",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Profile": {
+      "main": [
+        [
+          {
+            "node": "Is a Readable CV?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is a Readable CV?": {
+      "main": [
+        [
+          {
+            "node": "Score Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Keep CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Candidate": {
+      "main": [
+        [
+          {
+            "node": "Keep CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep CV": {
+      "main": [
+        [
+          {
+            "node": "Upload CV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload CV": {
+      "main": [
+        [
+          {
+            "node": "Build Candidate Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Candidate Row": {
+      "main": [
+        [
+          {
+            "node": "Save Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Candidate": {
+      "main": [
+        [
+          {
+            "node": "Invite Now?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invite Now?": {
+      "main": [
+        [
+          {
+            "node": "Start Interview Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read All Candidates": {
+      "main": [
+        [
+          {
+            "node": "Plan Daily Actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Daily Actions": {
+      "main": [
+        [
+          {
+            "node": "Route Daily Actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Daily Actions": {
+      "main": [
+        [
+          {
+            "node": "Start Booking · HR Picks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Rejections",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Daily Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Rejections": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Rejection": {
+      "main": [
+        [
+          {
+            "node": "Mark Rejection Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Rejection Sent": {
+      "main": [
+        [
+          {
+            "node": "Loop Rejections",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Booking Starts": {
+      "main": [
+        [
+          {
+            "node": "Mark Invited",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Invited": {
+      "main": [
+        [
+          {
+            "node": "Get Busy Times",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Busy Times": {
+      "main": [
+        [
+          {
+            "node": "Plan Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Slots": {
+      "main": [
+        [
+          {
+            "node": "Has Free Slots?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Free Slots?": {
+      "main": [
+        [
+          {
+            "node": "Offer Interview Times",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offer Interview Times": {
+      "main": [
+        [
+          {
+            "node": "Read Choice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Choice": {
+      "main": [
+        [
+          {
+            "node": "Picked a Time?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Picked a Time?": {
+      "main": [
+        [
+          {
+            "node": "Check Slot Still Free",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Slot Still Free": {
+      "main": [
+        [
+          {
+            "node": "Slot Still Free?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slot Still Free?": {
+      "main": [
+        [
+          {
+            "node": "Create Interview",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Busy Times",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Interview": {
+      "main": [
+        [
+          {
+            "node": "Log Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Booking": {
+      "main": [
+        [
+          {
+            "node": "Email Interview Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Outcome": {
+      "main": [
+        [
+          {
+            "node": "Email HR · Needs Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

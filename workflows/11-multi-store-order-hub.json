@@ -1,0 +1,1754 @@
+{
+  "name": "Sync orders and stock across Shopify, WooCommerce and marketplaces with Google Sheets and WhatsApp reports",
+  "nodes": [
+    {
+      "id": "19310b4f-6254-457b-a307-255c64c95bc0",
+      "parameters": {
+        "content": "## Sync orders and stock across Shopify, WooCommerce and marketplaces with Google Sheets and WhatsApp reports\n\n### How it works\n1. New orders arrive from Shopify, WooCommerce and a secured webhook for marketplaces, POS or aggregators.\n2. Each order is normalized, checked for SKUs, logged once in the Orders tab and written to a stock ledger.\n3. Current stock (start stock plus every movement) is pushed back to Shopify and WooCommerce, so all shops show the same quantity.\n4. When a SKU drops to its alert level you get an email and a WhatsApp message.\n5. Every evening a sales report goes out by email and as a WhatsApp summary.\n\n### Setup steps\n- [ ] Add **Shopify** (access token), **WooCommerce**, **Header Auth**, **Google Sheets**, **Gmail** and **WhatsApp** credentials.\n- [ ] Create the Data Table `hub_stock_moves` (sku, qty, order_key, channel, created_at, all *String*).\n- [ ] Create a spreadsheet with an `Inventory` tab (SKU, Name, Start Stock, Counted At, Low Stock At, Shopify Inventory Item ID, WooCommerce Product ID) and empty `Orders` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Get two WhatsApp templates approved and edit **Hub Settings** and **Report Settings**.\n\n### Customization\nAfter a stock count, update Start Stock and Counted At.",
+        "height": 768,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "aff4b270-abf3-4320-8ce0-2434496384ae",
+      "parameters": {
+        "content": "## Receive orders from every channel\nShopify, WooCommerce and a webhook for marketplaces.",
+        "height": 720,
+        "width": 1152,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "7bc8e652-5998-4b9a-9039-c185469e474d",
+      "parameters": {
+        "content": "## Log each order once\nRepeated webhooks are skipped.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        112
+      ]
+    },
+    {
+      "id": "8a81a69c-b2ea-4ece-8b4c-a88e90a2f80b",
+      "parameters": {
+        "content": "## Update the stock ledger\nOne movement per order line.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        464
+      ]
+    },
+    {
+      "id": "cdc08689-587d-4ce1-9021-7565cdab6a9a",
+      "parameters": {
+        "content": "## Sync stock to the shops\nSets the new quantity everywhere.",
+        "height": 528,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        208
+      ]
+    },
+    {
+      "id": "54d4638b-5724-4d7c-b2d6-300c0d196520",
+      "parameters": {
+        "content": "## Alert on low stock\nEmail and WhatsApp when a SKU crosses its level.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        784
+      ]
+    },
+    {
+      "id": "e113782e-0962-4893-9800-7186aaf987fb",
+      "parameters": {
+        "content": "## Build the daily report\nSales, best sellers and low stock.",
+        "height": 272,
+        "width": 1312,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1200
+      ]
+    },
+    {
+      "id": "2171f2ce-ea34-424c-8c58-ee117b9aafb7",
+      "parameters": {
+        "content": "## Send the report\nEmail first, then a WhatsApp summary.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1200
+      ]
+    },
+    {
+      "id": "4223ff85-b316-497f-9252-147eb477d546",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1584
+      ]
+    },
+    {
+      "id": "6b71ecad-ee5c-43e6-b2ea-d41099221ec8",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1584
+      ]
+    },
+    {
+      "id": "40b72fd4-111b-4eb1-8fa4-96499f7dd17f",
+      "parameters": {
+        "authentication": "accessToken",
+        "topic": "orders/create"
+      },
+      "name": "Shopify Order",
+      "type": "n8n-nodes-base.shopifyTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "7945cc93-dd99-49f9-b767-bd3dae5d5de0",
+      "notes": "Registers an orders/create webhook in your store and checks every call against the app secret."
+    },
+    {
+      "id": "7125e0e5-c33b-4094-8ae9-95b87e58fc18",
+      "parameters": {
+        "event": "order.created"
+      },
+      "name": "WooCommerce Order",
+      "type": "n8n-nodes-base.wooCommerceTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        224
+      ],
+      "webhookId": "c56b033a-1e93-4643-b36e-63ba129cc6e5",
+      "notes": "Registers an order.created webhook in WooCommerce and checks its signature."
+    },
+    {
+      "id": "112b78a4-68c9-4e05-a894-1668642f9aa5",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "marketplace-order",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {
+          "responseCode": {
+            "values": {
+              "responseCode": "customCode",
+              "customCode": 202
+            }
+          }
+        }
+      },
+      "name": "Marketplace Order",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        448
+      ],
+      "webhookId": "0072f2ab-599b-4bdb-a7a3-f8e7d8bb6e35",
+      "notes": "For Tokopedia, Shopee, TikTok Shop or a POS through an aggregator or Make/Zapier. JSON: {\"channel\",\"order_id\",\"created_at\",\"customer_name\",\"customer_phone\",\"currency\",\"total\",\"items\":[{\"sku\",\"name\",\"quantity\",\"price\"}]}."
+    },
+    {
+      "id": "f225c550-03ba-4e39-bae2-39d22658a1dc",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c52ee3bf-34e4-4658-ada8-5bc458e6e784",
+              "name": "currency",
+              "value": "IDR",
+              "type": "string"
+            },
+            {
+              "id": "b71a09b6-a0dc-4baf-9918-7df95b803297",
+              "name": "owner_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "795a48e3-05f2-4258-9867-1ec51ccbde6c",
+              "name": "whatsapp_phone_number_id",
+              "value": "REPLACE_WITH_PHONE_NUMBER_ID",
+              "type": "string"
+            },
+            {
+              "id": "81a1f852-6929-47b7-874c-c5ebefa4d78d",
+              "name": "owner_whatsapp",
+              "value": "6281234567890",
+              "type": "string"
+            },
+            {
+              "id": "b4b26727-0617-4ca8-b49a-e2baa69532ca",
+              "name": "low_stock_template",
+              "value": "low_stock_alert|id",
+              "type": "string"
+            },
+            {
+              "id": "a2dbef34-25ec-490f-9900-535e1e19cfb8",
+              "name": "shopify_shop",
+              "value": "your-store",
+              "type": "string"
+            },
+            {
+              "id": "cedaa0c0-a325-4e48-b2ff-8e6d7213ba93",
+              "name": "shopify_location_id",
+              "value": "REPLACE_WITH_LOCATION_ID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Hub Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        224
+      ],
+      "notes": "EDIT ME. low_stock_template is \"template_name|language\" of an approved WhatsApp template with one body variable. shopify_shop is the part before .myshopify.com."
+    },
+    {
+      "id": "7ff7b769-e305-4872-ad0d-73de4e1ff2b7",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// One order shape for every channel, plus validation.\nconst cfg = $('Hub Settings').first().json;\nconst s = v => (v === undefined || v === null ? '' : String(v).trim());\nconst n = v => { const x = Number(v); return Number.isFinite(x) ? x : 0; };\nlet o;\nif ($('Shopify Order').isExecuted) {\n  const r = $('Shopify Order').first().json;\n  o = { channel: 'Shopify', order_id: s(r.name || r.id), created_at: s(r.created_at), customer: [r.customer?.first_name, r.customer?.last_name].filter(Boolean).join(' ') || s(r.email),\n    contact: s(r.email || r.phone), currency: s(r.currency), total: n(r.total_price),\n    items: (r.line_items || []).map(l => ({ sku: s(l.sku), name: s(l.title), quantity: n(l.quantity), price: n(l.price) })) };\n} else if ($('WooCommerce Order').isExecuted) {\n  const r = $('WooCommerce Order').first().json;\n  o = { channel: 'WooCommerce', order_id: s(r.number || r.id), created_at: s(r.date_created), customer: [r.billing?.first_name, r.billing?.last_name].filter(Boolean).join(' '),\n    contact: s(r.billing?.email || r.billing?.phone), currency: s(r.currency), total: n(r.total),\n    items: (r.line_items || []).map(l => ({ sku: s(l.sku), name: s(l.name), quantity: n(l.quantity), price: n(l.price) })) };\n} else {\n  const r = $('Marketplace Order').first().json.body ?? {};\n  o = { channel: s(r.channel) || 'Marketplace', order_id: s(r.order_id), created_at: s(r.created_at), customer: s(r.customer_name),\n    contact: s(r.customer_phone || r.customer_email), currency: s(r.currency), total: n(r.total),\n    items: (Array.isArray(r.items) ? r.items : []).map(l => ({ sku: s(l.sku), name: s(l.name), quantity: n(l.quantity), price: n(l.price) })) };\n}\no.currency = o.currency || cfg.currency;\no.created_at = o.created_at || DateTime.now().toISO();\no.order_key = o.channel.toLowerCase() + ':' + o.order_id;\nconst problems = [];\nif (!o.order_id) problems.push('order_id is missing');\nif (!o.items.length) problems.push('the order has no items');\no.items.forEach((l, i) => {\n  if (!l.sku) problems.push('item ' + (i + 1) + ' (' + (l.name || 'no name') + ') has no SKU');\n  if (!(l.quantity > 0)) problems.push('item ' + (i + 1) + ' has quantity ' + l.quantity);\n});\nreturn [{ json: { ...o, valid: problems.length === 0, problems } }];"
+      },
+      "name": "Normalize Order",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        224
+      ],
+      "notes": "Every line needs a SKU: it is the key that links the channels to your Inventory tab."
+    },
+    {
+      "id": "26ee47e2-87df-42a0-befa-0941c9fd1009",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c03c051b-22f1-4a69-8465-1b4430b88280",
+              "leftValue": "={{ $json.valid === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Order Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        224
+      ]
+    },
+    {
+      "id": "87a5cad9-e7a7-4951-a2ee-074992c98661",
+      "parameters": {
+        "errorMessage": "={{ '[WARNING] ' + $json.channel + ' order ' + ($json.order_id || '(no id)') + ' was not processed: ' + $json.problems.join('; ') + '. Fix the product SKUs in that channel, then enter the sale manually.' }}"
+      },
+      "name": "Escalate · Invalid Order",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        448
+      ],
+      "notes": "The built-in error handler emails this. Stock is not touched for invalid orders."
+    },
+    {
+      "id": "9c75ead0-4d20-42e3-9a3d-485dc49b43a7",
+      "parameters": {
+        "operation": "removeItemsSeenInPreviousExecutions",
+        "logic": "removeItemsWithAlreadySeenKeyValues",
+        "dedupeValue": "={{ $json.order_key }}",
+        "options": {
+          "historySize": 50000
+        }
+      },
+      "name": "Skip Repeat Orders",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        224
+      ],
+      "notes": "Shops resend webhooks after timeouts. An order key already handled is never counted twice."
+    },
+    {
+      "id": "6cbbc585-537d-43f4-a24e-1f346dee60e6",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f6976895-489a-4848-951f-6a386922e1e9",
+              "name": "Order Key",
+              "value": "={{ $json.order_key }}",
+              "type": "string"
+            },
+            {
+              "id": "3fdd3be2-f425-4e26-a08d-c37fc85b5d40",
+              "name": "Channel",
+              "value": "={{ $json.channel }}",
+              "type": "string"
+            },
+            {
+              "id": "651db4eb-4e00-4c27-a501-08305bfb7705",
+              "name": "Order ID",
+              "value": "={{ $json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "0ea82bbe-8a32-4973-a61f-0c73ed5d695e",
+              "name": "Date",
+              "value": "={{ DateTime.fromISO($json.created_at).isValid ? DateTime.fromISO($json.created_at).toISO() : $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "b0c757e7-dbfd-4868-a4e3-ce03c1e118ba",
+              "name": "Customer",
+              "value": "={{ $json.customer }}",
+              "type": "string"
+            },
+            {
+              "id": "5cbdd8d5-89f0-4f8d-899c-eb1d4063e056",
+              "name": "Contact",
+              "value": "={{ $json.contact }}",
+              "type": "string"
+            },
+            {
+              "id": "534f5c8d-9ff5-4d31-85c2-299d9697e01f",
+              "name": "Items",
+              "value": "={{ $json.items.map(l => l.quantity + ' × ' + l.sku + ' ' + l.name).join('; ') }}",
+              "type": "string"
+            },
+            {
+              "id": "285a2574-eb5b-4b15-af11-1317eb2d7bd8",
+              "name": "Units",
+              "value": "={{ $json.items.reduce((s, l) => s + l.quantity, 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "081c1bb3-3a43-474d-88bb-d3f931fd8a36",
+              "name": "Total",
+              "value": "={{ $json.total }}",
+              "type": "number"
+            },
+            {
+              "id": "62bb5e37-e3a6-4925-aca8-ccb92801fb71",
+              "name": "Currency",
+              "value": "={{ $json.currency }}",
+              "type": "string"
+            },
+            {
+              "id": "5fc4204a-472f-4fe4-b8bb-8ad9523d9108",
+              "name": "Logged At",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Order Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1472,
+        224
+      ],
+      "notes": "Field names = Orders sheet headers."
+    },
+    {
+      "id": "b69b88bc-4464-4023-aa85-e58723e86c07",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Orders",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Log Order",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1696,
+        224
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "All channels in one tab: the dashboard for daily sales. Minimise API Calls is on, so the Sheets append API adds the row and two orders at the same moment never overwrite each other."
+    },
+    {
+      "id": "c0894ee4-7e54-4a69-9e1d-d4a89dc85807",
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "order_key, channel",
+        "options": {
+          "destinationFieldName": "line"
+        }
+      },
+      "name": "One Item per Line",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        576
+      ],
+      "notes": "Each order line becomes one item under \"line\", next to the order key and channel."
+    },
+    {
+      "id": "e9167337-0829-4d1e-83cc-fd6b68306655",
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "hub_stock_moves",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sku": "={{ $json.line.sku }}",
+            "qty": "={{ -Number($json.line.quantity) }}",
+            "order_key": "={{ $json.order_key }}",
+            "channel": "={{ $json.channel }}",
+            "created_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sku",
+              "displayName": "sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "qty",
+              "displayName": "qty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "order_key",
+              "displayName": "order_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "channel",
+              "displayName": "channel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Record Stock Move",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1696,
+        576
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "An append-only stock ledger: two orders at the same moment can never overwrite each other's stock change."
+    },
+    {
+      "id": "3d11e659-7d15-4fa9-b089-8157c6a7e433",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "hub_stock_moves",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "sku",
+              "condition": "eq",
+              "keyValue": "={{ $json.sku }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "name": "Get SKU Moves",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1920,
+        576
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Every movement of the SKUs in this order."
+    },
+    {
+      "id": "9ebc2c1e-ada7-4973-a1fe-179d2390d1b6",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Inventory",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Inventory",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2144,
+        576
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "Your master stock list: SKU, Name, Start Stock, Counted At, Low Stock At, Shopify Inventory Item ID, WooCommerce Product ID."
+    },
+    {
+      "id": "be0166fe-42e0-4788-be13-1f70607b666e",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Current stock = Start Stock + all movements after Counted At.\nconst inv = {};\nfor (const i of $('Read Inventory').all()) if (i.json.SKU) inv[String(i.json.SKU).trim()] = i.json;\nconst moves = new Map();\nfor (const i of $('Get SKU Moves').all()) moves.set(i.json.id, i.json);\nconst thisOrder = {};\nfor (const i of $('One Item per Line').all()) thisOrder[i.json.line.sku] = (thisOrder[i.json.line.sku] || 0) + Number(i.json.line.quantity || 0);\nreturn Object.entries(thisOrder).map(([sku, sold]) => {\n  const item = inv[sku];\n  const counted = item?.['Counted At'] ? DateTime.fromISO(String(item['Counted At'])) : null;\n  const delta = [...moves.values()].filter(m => m.sku === sku && (!counted || !counted.isValid || DateTime.fromISO(String(m.created_at)) > counted))\n    .reduce((s, m) => s + Number(m.qty || 0), 0);\n  const start = Number(item?.['Start Stock'] || 0);\n  const current = start + delta;\n  const previous = current + sold;\n  const threshold = Number(item?.['Low Stock At'] ?? 0);\n  return { json: {\n    sku, name: item?.Name || '', known: !!item, sold, current, previous, threshold,\n    crossed_low: !!item && previous > threshold && current <= threshold,\n    shopify_item_id: String(item?.['Shopify Inventory Item ID'] || ''),\n    woo_product_id: String(item?.['WooCommerce Product ID'] || ''),\n  } };\n});"
+      },
+      "name": "Compute Stock",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        576
+      ],
+      "notes": "One item per SKU of the order. crossed_low is true only on the order that pushes the stock to or below Low Stock At, so you get one alert, not one per order."
+    },
+    {
+      "id": "f58aa12c-21e2-4fd7-9ae6-3166118dc844",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9441f625-429c-4c6b-993f-b4992564f721",
+              "leftValue": "={{ $json.shopify_item_id !== '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Has Shopify Item?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        2656,
+        320
+      ]
+    },
+    {
+      "id": "201a1b1c-a8be-47c0-959b-125f8d3d7247",
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://' + $('Hub Settings').first().json.shopify_shop + '.myshopify.com/admin/api/2025-01/inventory_levels/set.json' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "shopifyAccessTokenApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ location_id: Number($('Hub Settings').first().json.shopify_location_id), inventory_item_id: Number($json.shopify_item_id), available: Math.max(0, $json.current) }) }}",
+        "options": {}
+      },
+      "name": "Set Shopify Stock",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2880,
+        320
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Sets the absolute quantity, so repeating it is harmless. Negative hub stock is sent as 0."
+    },
+    {
+      "id": "9a64bdc0-65c1-4eac-af01-c19ba8a87d6b",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "acf961ab-b721-4974-a920-20cd80fd6d52",
+              "leftValue": "={{ $json.woo_product_id !== '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Has WooCommerce Product?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        2656,
+        576
+      ]
+    },
+    {
+      "id": "c0c0d58a-3550-408e-82b3-88f98fafcc76",
+      "parameters": {
+        "resource": "product",
+        "operation": "update",
+        "productId": "={{ $json.woo_product_id }}",
+        "updateFields": {
+          "manageStock": true,
+          "stockQuantity": "={{ Math.max(0, $json.current) }}"
+        }
+      },
+      "name": "Set WooCommerce Stock",
+      "type": "n8n-nodes-base.wooCommerce",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        576
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Simple products. For variations, switch the resource to Product Variation."
+    },
+    {
+      "id": "9e18336a-42c3-4ab0-bdec-6a835e4b1a93",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c52b22f8-6027-4b8a-9047-4cfadda2b2b6",
+              "leftValue": "={{ $json.crossed_low === true || $json.known === false }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Crossed Low Stock?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        2656,
+        896
+      ],
+      "notes": "Also lets unknown SKUs through, so a missing Inventory row is noticed."
+    },
+    {
+      "id": "dfedb028-38b9-429e-9de3-488081885370",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Hub Settings').first().json.owner_email }}",
+        "subject": "={{ 'Stock alert · ' + $('Crossed Low Stock?').all().map(i => i.json.sku).join(', ') }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const rows = $('Crossed Low Stock?').all().map(i => i.json);\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\"><p>After order ' + esc($('Normalize Order').first().json.order_key) + ':</p><ul>' +\n    rows.map(r => r.known ? '<li><b>' + esc(r.sku) + '</b> ' + esc(r.name) + ': <b>' + r.current + '</b> left (alert at ' + r.threshold + ')' + (r.current <= 0 ? ' · <b style=\"color:#b00020\">out of stock</b>' : '') + '</li>'\n      : '<li><b>' + esc(r.sku) + '</b> is not in the Inventory tab, so its stock is not tracked. Add a row for it.</li>').join('') + '</ul></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Stock Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        896
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true
+    },
+    {
+      "id": "a173998a-c765-4707-ae80-65993631d533",
+      "parameters": {
+        "resource": "message",
+        "operation": "sendTemplate",
+        "phoneNumberId": "={{ $('Hub Settings').first().json.whatsapp_phone_number_id }}",
+        "recipientPhoneNumber": "={{ $('Hub Settings').first().json.owner_whatsapp }}",
+        "template": "={{ $('Hub Settings').first().json.low_stock_template }}",
+        "components": {
+          "component": [
+            {
+              "type": "body",
+              "bodyParameters": {
+                "parameter": [
+                  {
+                    "type": "text",
+                    "text": "={{ $('Crossed Low Stock?').all().filter(i => i.json.known).map(i => i.json.sku + ' ' + i.json.name + ': ' + i.json.current).join('; ').slice(0, 900) || 'unknown SKU, see email' }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "WhatsApp Stock Alert",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        3104,
+        896
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true,
+      "notes": "A WhatsApp template message, so it also reaches you outside the 24-hour window. Template body example: \"Stok menipis: {{1}}\"."
+    },
+    {
+      "id": "33e4f07a-90de-4abd-98bd-7c5099720895",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "name": "Every Day at 21:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        1312
+      ],
+      "notes": "Uses the workflow time zone."
+    },
+    {
+      "id": "f61e86c3-6413-40cd-bb4e-6b3fd78c4c1f",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "81a2b1bc-616d-4207-84cb-d542de097210",
+              "name": "owner_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "73af131d-7cb9-4db5-86de-ebc96a016822",
+              "name": "whatsapp_phone_number_id",
+              "value": "REPLACE_WITH_PHONE_NUMBER_ID",
+              "type": "string"
+            },
+            {
+              "id": "889d327e-bc02-4cb9-b318-b6911b4e2bdb",
+              "name": "owner_whatsapp",
+              "value": "6281234567890",
+              "type": "string"
+            },
+            {
+              "id": "ed88c9d1-5964-4f80-aea5-1dac9b610d05",
+              "name": "report_template",
+              "value": "daily_sales_report|id",
+              "type": "string"
+            },
+            {
+              "id": "acef14b2-d5d4-435d-9377-6c188df21fb2",
+              "name": "currency",
+              "value": "IDR",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Report Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1312
+      ],
+      "notes": "EDIT ME. report_template: an approved WhatsApp template with five body variables (date, revenue, orders, best seller, low stock)."
+    },
+    {
+      "id": "91579e98-3f36-4766-b6bf-d73dfd46cf45",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Orders",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Orders",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        1312
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "2dd32b8b-8e42-4d59-b6e6-98860654524b",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Inventory",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Load Inventory",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        1312
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "8bd5c5fe-92ee-4b39-9abc-9c77127cf6ff",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "hub_stock_moves",
+          "mode": "name"
+        },
+        "returnAll": true
+      },
+      "name": "Load Stock Moves",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        1312
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "565a0461-7c4c-47f1-aa0b-ab626bcae20f",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Today's sales per channel, best sellers and stock that needs attention.\nconst cur = $('Report Settings').first().json.currency;\nconst today = DateTime.now().startOf('day');\nconst orders = $('Read Orders').all().map(i => i.json).filter(o => o['Order Key'] && DateTime.fromISO(String(o.Date)).startOf('day').equals(today));\nconst revenue = orders.reduce((s, o) => s + (Number(o.Total) || 0), 0);\nconst byChannel = {};\nfor (const o of orders) { const c = (byChannel[o.Channel] ??= { orders: 0, revenue: 0 }); c.orders++; c.revenue += Number(o.Total) || 0; }\nconst units = {};\nfor (const o of orders) for (const part of String(o.Items || '').split('; ')) { const m = part.match(/^(\\d+) × (\\S+) ?(.*)$/); if (m) { units[m[2]] ??= { sku: m[2], name: m[3], qty: 0 }; units[m[2]].qty += Number(m[1]); } }\nconst best = Object.values(units).sort((a, b) => b.qty - a.qty).slice(0, 5);\nconst moves = $('Load Stock Moves').all().map(i => i.json);\nconst stock = $('Load Inventory').all().map(i => i.json).filter(r => r.SKU).map(r => {\n  const counted = r['Counted At'] ? DateTime.fromISO(String(r['Counted At'])) : null;\n  const delta = moves.filter(m => m.sku === String(r.SKU) && (!counted || !counted.isValid || DateTime.fromISO(String(m.created_at)) > counted)).reduce((s, m) => s + Number(m.qty || 0), 0);\n  return { sku: String(r.SKU), name: r.Name, current: Number(r['Start Stock'] || 0) + delta, threshold: Number(r['Low Stock At'] || 0) };\n});\nconst low = stock.filter(x => x.current <= x.threshold).sort((a, b) => a.current - b.current);\nconst money = v => Number(v).toLocaleString('id-ID') + ' ' + cur;\nreturn [{ json: {\n  date: today.toFormat('d LLL yyyy'), orders: orders.length, revenue, revenue_text: money(revenue), aov_text: orders.length ? money(Math.round(revenue / orders.length)) : '-',\n  by_channel: Object.entries(byChannel).map(([channel, v]) => ({ channel, ...v, revenue_text: money(v.revenue) })),\n  best, best_text: best[0] ? best[0].name + ' (' + best[0].qty + ')' : '-',\n  low, low_text: low.length ? low.slice(0, 5).map(x => x.sku + ': ' + x.current).join(', ') + (low.length > 5 ? ' +' + (low.length - 5) : '') : 'none',\n} }];"
+      },
+      "name": "Build Daily Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        1312
+      ],
+      "notes": "Totals are in the report currency; orders in another currency are counted as they are."
+    },
+    {
+      "id": "63679771-ce57-4375-881a-eaeb246d8f51",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Report Settings').first().json.owner_email }}",
+        "subject": "={{ 'Sales ' + $json.date + ': ' + $json.revenue_text + ' from ' + $json.orders + ' orders' }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const r = $json;\n  const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\"><p><b>' + esc(r.revenue_text) + '</b> from ' + r.orders + ' orders · average ' + esc(r.aov_text) + '</p>' +\n    '<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\"><tr><th align=\"left\">Channel</th><th align=\"right\">Orders</th><th align=\"right\">Revenue</th></tr>' +\n    r.by_channel.map(c => '<tr><td>' + esc(c.channel) + '</td><td align=\"right\">' + c.orders + '</td><td align=\"right\">' + esc(c.revenue_text) + '</td></tr>').join('') + '</table>' +\n    '<h4>Best sellers</h4><ol>' + r.best.map(b => '<li>' + esc(b.sku) + ' ' + esc(b.name) + ': ' + b.qty + '</li>').join('') + '</ol>' +\n    '<h4>Low stock</h4><ul>' + (r.low.length ? r.low.map(x => '<li>' + esc(x.sku) + ' ' + esc(x.name) + ': <b>' + x.current + '</b> (alert at ' + x.threshold + ')</li>').join('') : '<li>none</li>') + '</ul></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Daily Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        1312
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "88bfff3a-cfb8-4a90-984a-5098aea9fe20",
+      "parameters": {
+        "resource": "message",
+        "operation": "sendTemplate",
+        "phoneNumberId": "={{ $('Report Settings').first().json.whatsapp_phone_number_id }}",
+        "recipientPhoneNumber": "={{ $('Report Settings').first().json.owner_whatsapp }}",
+        "template": "={{ $('Report Settings').first().json.report_template }}",
+        "components": {
+          "component": [
+            {
+              "type": "body",
+              "bodyParameters": {
+                "parameter": [
+                  {
+                    "type": "text",
+                    "text": "={{ $('Build Daily Report').first().json.date }}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "={{ $('Build Daily Report').first().json.revenue_text }}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "={{ String($('Build Daily Report').first().json.orders) }}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "={{ $('Build Daily Report').first().json.best_text }}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "={{ $('Build Daily Report').first().json.low_text }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "WhatsApp Daily Report",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1632,
+        1312
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Template body example: \"Laporan {{1}}: omzet {{2}} dari {{3}} pesanan. Terlaris: {{4}}. Stok menipis: {{5}}.\" Sent after the email, so a template problem never blocks the email."
+    },
+    {
+      "id": "bf06e764-a49a-4c3a-9851-7232e8d0d5a2",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1696
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "88cf0d5d-e447-46f5-9c8d-2eebd16a2cb5",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4125f84-de13-4a66-9aad-5fa45c30a28d",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1696
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "e7c89a7f-5db6-46da-9d6b-ae9589167cae",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fabc9714-d632-424d-b340-d3428db271b7",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "1c2c1e4a-3d9f-42a8-ae2f-c3e697a239f1",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "be3ed7d3-6bb8-40f7-bfe9-6199f89d1a01",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "ba644209-c287-408d-a82c-965c40ccb004",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "2d183638-f55f-43b9-b0ee-645b5ba5de8c",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "31ef2313-b321-4513-afd1-34c786f63224",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "904a04a2-41dd-4ac1-80a8-b6bc6c78bd5b",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "20e18978-2c64-421a-92a3-ffe3fecddb99",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "d8b8c387-b4d8-494a-97d7-94e7f10dc5a7",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f1b39cb3-4bc1-4da2-803c-5552f4599efb",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "57710eb0-7530-48fe-bf50-66fb4c510708",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "def2cc3d-4f2f-4ffa-a814-95c9ecf1bcac",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "f170e411-931c-4761-870a-437599f91007",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        1696
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "4a965a02-6519-4b78-932d-80e0738c76f1",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        1696
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "3a81a7b2-715b-4ec7-8a32-f9e8c78eae79",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "38fbc7d4-37d9-4ad7-aa51-ac7a4afeebbd",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "750ca485-b020-42ac-acec-dce92c416050",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "0ca61c55-7588-4efb-8da3-c0530e8ae000",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "a9131f53-7fbf-4aad-82ee-4b06cb5c7556",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "4caf50a6-fe61-4065-ac54-603535811c71",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "7c66be80-47ac-4259-918f-df1e0a07206b",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "1e07cbba-a225-4402-b004-c43a84518109",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "33e08de4-4ba6-4af0-b53e-058a6ea01e55",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        1696
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "94e81ced-7ac8-4a10-934b-348b7e5fd5f6",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        1696
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "Shopify Order": {
+      "main": [
+        [
+          {
+            "node": "Hub Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WooCommerce Order": {
+      "main": [
+        [
+          {
+            "node": "Hub Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marketplace Order": {
+      "main": [
+        [
+          {
+            "node": "Hub Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hub Settings": {
+      "main": [
+        [
+          {
+            "node": "Normalize Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Order": {
+      "main": [
+        [
+          {
+            "node": "Order Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Valid?": {
+      "main": [
+        [
+          {
+            "node": "Skip Repeat Orders",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate · Invalid Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip Repeat Orders": {
+      "main": [
+        [
+          {
+            "node": "Build Order Row",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "One Item per Line",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Order Row": {
+      "main": [
+        [
+          {
+            "node": "Log Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One Item per Line": {
+      "main": [
+        [
+          {
+            "node": "Record Stock Move",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Stock Move": {
+      "main": [
+        [
+          {
+            "node": "Get SKU Moves",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get SKU Moves": {
+      "main": [
+        [
+          {
+            "node": "Read Inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Inventory": {
+      "main": [
+        [
+          {
+            "node": "Compute Stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Stock": {
+      "main": [
+        [
+          {
+            "node": "Has Shopify Item?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Has WooCommerce Product?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Crossed Low Stock?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Shopify Item?": {
+      "main": [
+        [
+          {
+            "node": "Set Shopify Stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has WooCommerce Product?": {
+      "main": [
+        [
+          {
+            "node": "Set WooCommerce Stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crossed Low Stock?": {
+      "main": [
+        [
+          {
+            "node": "Email Stock Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Stock Alert": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Stock Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Day at 21:00": {
+      "main": [
+        [
+          {
+            "node": "Report Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Settings": {
+      "main": [
+        [
+          {
+            "node": "Read Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Orders": {
+      "main": [
+        [
+          {
+            "node": "Load Inventory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Inventory": {
+      "main": [
+        [
+          {
+            "node": "Load Stock Moves",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Stock Moves": {
+      "main": [
+        [
+          {
+            "node": "Build Daily Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Daily Report": {
+      "main": [
+        [
+          {
+            "node": "Email Daily Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Daily Report": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Daily Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

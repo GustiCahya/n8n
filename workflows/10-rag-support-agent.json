@@ -1,0 +1,2221 @@
+{
+  "name": "Answer customer questions from your own docs with an OpenAI agent, Pinecone and automatic support tickets",
+  "nodes": [
+    {
+      "id": "982af5de-7b7d-444d-9971-e8d60c1922cb",
+      "parameters": {
+        "content": "## Answer customer questions from your own docs with an OpenAI agent, Pinecone and automatic support tickets\n\n### How it works\n1. Customers chat on a hosted n8n chat page or widget. The agent answers only from your documents in Pinecone and streams the reply.\n2. When it cannot answer, it logs a knowledge gap. Problems that need a person become a ticket in Google Sheets and an email to your team.\n3. Every hour, the Google Drive docs folder is checked; after any edit the whole knowledge base is rebuilt.\n4. Every Monday, AI groups the week's questions, complaints and gaps into an insights email.\n\n### Setup steps\n- [ ] Add **OpenAI**, **Pinecone**, **Google Drive**, **Google Sheets** and **Gmail** credentials.\n- [ ] Create a Pinecone index `support-kb` (1536 dimensions, cosine) and the Data Table `support_log` (session_id, kind, question, answer, created_at, all *String*).\n- [ ] Put your SOPs and FAQ in a Drive folder and set its ID in **List Knowledge Files**.\n- [ ] Create a spreadsheet with empty `Tickets` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit the two settings nodes, activate, and wait for the first hourly sync.\n\n### Customization\nAdjust tone and ticket rules in the **Support Agent** system message.",
+        "height": 784,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "701aef4a-a56c-458f-89db-7c913309d0d6",
+      "parameters": {
+        "content": "## Answer from your docs\nSearches the knowledge base, opens tickets, logs gaps.",
+        "height": 704,
+        "width": 1472,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "89253074-fe54-46dd-b1cf-aca967355b31",
+      "parameters": {
+        "content": "## Log the conversation\nFor the weekly insights.",
+        "height": 272,
+        "width": 240,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        -112
+      ]
+    },
+    {
+      "id": "0a8631e9-3be9-498d-ae72-4784a1283f05",
+      "parameters": {
+        "content": "## Ticket and gap tools\nRun when the agent calls them.",
+        "height": 496,
+        "width": 1376,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        720
+      ]
+    },
+    {
+      "id": "f1b8b27d-e800-4ef5-bdee-a8e073368cd7",
+      "parameters": {
+        "content": "## Watch the docs folder\nHourly, re-indexes only after a change.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1360
+      ]
+    },
+    {
+      "id": "add1a367-9f8a-4f15-bd13-ae1596b0d805",
+      "parameters": {
+        "content": "## Rebuild the knowledge base\nAll docs into Pinecone, then remember the state.",
+        "height": 480,
+        "width": 832,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1360
+      ]
+    },
+    {
+      "id": "8fbe3951-2a56-42df-bb46-0ca1902ef83d",
+      "parameters": {
+        "content": "## Collect the week\nQuestions, gaps and tickets of the last 7 days.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        2000
+      ]
+    },
+    {
+      "id": "87b710a9-4d62-43c7-b5a6-99b7ce4d1e75",
+      "parameters": {
+        "content": "## Weekly insights by AI\nTopics, complaints and doc updates by email.",
+        "height": 672,
+        "width": 704,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        2000
+      ]
+    },
+    {
+      "id": "1d230441-a849-420d-b967-263781796d14",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        2832
+      ]
+    },
+    {
+      "id": "b55794f5-369b-4cab-8589-27eec92d36b7",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        2832
+      ]
+    },
+    {
+      "id": "39ccb515-99f1-472b-ab04-9b88258ae9e3",
+      "parameters": {
+        "public": true,
+        "mode": "hostedChat",
+        "authentication": "none",
+        "initialMessages": "Hi! 👋 I am the support assistant. Ask me about orders, shipping, returns or our products.",
+        "options": {
+          "title": "Support",
+          "subtitle": "Answers from our help docs, 24/7",
+          "inputPlaceholder": "Type your question…",
+          "responseMode": "streaming",
+          "loadPreviousSession": "memory"
+        }
+      },
+      "name": "When Chat Message Received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "5f98b59d-6f53-4545-87e2-c3ec35793b4c",
+      "notes": "A hosted chat page (and an embeddable widget). Copy the chat URL from this node once the workflow is active."
+    },
+    {
+      "id": "d73da342-d6fb-4014-aa75-ab783d7e2c82",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "37a5d8ae-898c-46c4-8105-17219e6cad51",
+              "name": "business_name",
+              "value": "Your Store",
+              "type": "string"
+            },
+            {
+              "id": "87c26196-ead3-4eca-ac7f-371dd2d1c283",
+              "name": "support_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "f845bd7f-1c28-469c-be50-604638b7010c",
+              "name": "reply_language",
+              "value": "the customer's language",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Support Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        0
+      ],
+      "notes": "EDIT ME. support_email receives every new ticket."
+    },
+    {
+      "id": "5b53a585-e25b-4205-aa1c-b6a090ca8b65",
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When Chat Message Received').first().json.chatInput }}",
+        "options": {
+          "systemMessage": "=You are the customer support assistant of {{ $('Support Settings').first().json.business_name }}. Today is {{ $now.toFormat('cccc, d LLLL yyyy') }}.\n\n## How you answer\n- Call \"Search Knowledge Base\" for every question about products, prices, orders, shipping, returns, payments, accounts or how-tos. Answer only from what it returns, and keep prices, deadlines and policy terms exactly as written.\n- When the knowledge base has no answer, say so honestly, call \"Log Knowledge Gap\" with the question, and offer to open a ticket.\n- Reply in {{ $('Support Settings').first().json.reply_language }}, in 2 to 5 short sentences. Mention the source document when it helps.\n\n## Tickets\n- Call \"Create Support Ticket\" when the customer reports a problem a person must handle (complaint, refund, damaged or missing item, payment or account issue), asks for a human, or accepts your offer.\n- Before you call it, make sure you have the customer's name and email address; ask for them if missing.\n- Create at most one ticket per conversation, then give the customer the ticket ID it returns.\n\n## Never\n- Never invent policies, prices, stock, delivery dates or promises.\n- Never ask for passwords, full card numbers or verification codes.",
+          "maxIterations": 10
+        }
+      },
+      "name": "Support Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        0
+      ],
+      "notes": "Streams its answer to the chat. Tools: the knowledge base, ticket creation and gap logging."
+    },
+    {
+      "id": "ea6d2058-dc37-4633-b28e-d2795895da11",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low",
+          "maxRetries": 3,
+          "timeout": 60000
+        }
+      },
+      "name": "OpenAI · Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        256
+      ]
+    },
+    {
+      "id": "db323811-02ea-45f2-9ee8-6636507b0b42",
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When Chat Message Received').first().json.sessionId }}",
+        "contextWindowLength": 20
+      },
+      "name": "Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        256
+      ],
+      "notes": "The last 20 exchanges per chat session."
+    },
+    {
+      "id": "b119fed8-45e4-4282-b388-b06031b63dc4",
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the company knowledge base: SOPs, FAQ, policies, product and price lists. Use it for every question about products, prices, orders, shipping, returns, payments or how-tos. Input: a short search query with the key words of the question, in the language of the documents if you know it. Returns the most relevant passages with their source document. Search again with other words before deciding that something is not documented.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "support-kb",
+          "mode": "id"
+        },
+        "topK": 5,
+        "includeDocumentMetadata": true,
+        "useReranker": false,
+        "options": {
+          "pineconeNamespace": "support-docs"
+        }
+      },
+      "name": "Search Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        816,
+        256
+      ],
+      "notes": "Reads the namespace that \"Rebuild Knowledge Base\" fills. Same index, namespace and embedding model on both sides."
+    },
+    {
+      "id": "d5216c55-dc03-4555-8442-5148f2608bf5",
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "name": "Embeddings · Questions",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        448
+      ],
+      "notes": "Must be the same model as \"Embeddings · Documents\"."
+    },
+    {
+      "id": "c4853872-6d66-415d-b38e-80539a4928f0",
+      "parameters": {
+        "description": "Open a support ticket for a person on the team. Use it for complaints, refunds, damaged or missing items, payment or account problems, or when the customer asks for a human. Requires the customer's name and email. Returns the ticket ID to give to the customer. Call it once per conversation.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "ticket",
+            "session_id": "={{ $('When Chat Message Received').first().json.sessionId }}",
+            "business_name": "={{ $('Support Settings').first().json.business_name }}",
+            "support_email": "={{ $('Support Settings').first().json.support_email }}",
+            "customer_name": "={{ $fromAI('customer_name', 'Full name of the customer', 'string') }}",
+            "customer_email": "={{ $fromAI('customer_email', 'Email address of the customer, e.g. ana@example.com', 'string') }}",
+            "category": "={{ $fromAI('category', 'One of: order, shipping, return_refund, payment, product, account, other', 'string') }}",
+            "priority": "={{ $fromAI('priority', 'low, normal or urgent (urgent: angry customer, money lost, or legal threat)', 'string') }}",
+            "summary": "={{ $fromAI('summary', 'Two or three sentences for the support team: what happened, what the customer wants, order number if given', 'string') }}",
+            "question": ""
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "business_name",
+              "displayName": "business_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "support_email",
+              "displayName": "support_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "customer_email",
+              "displayName": "customer_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "question",
+              "displayName": "question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "name": "Create Support Ticket",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        256
+      ],
+      "notes": "Calls this same workflow (\"When Tool Is Called\"). The session ID is passed by the workflow, not by the AI."
+    },
+    {
+      "id": "665b75ba-1244-4510-87ec-5e3d1b4eda0f",
+      "parameters": {
+        "description": "Record a customer question that the knowledge base could not answer, so the team can add it to the docs. Input: the question in the customer's words. Returns a confirmation.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "action": "gap",
+            "session_id": "={{ $('When Chat Message Received').first().json.sessionId }}",
+            "business_name": "={{ $('Support Settings').first().json.business_name }}",
+            "support_email": "={{ $('Support Settings').first().json.support_email }}",
+            "customer_name": "",
+            "customer_email": "",
+            "category": "",
+            "priority": "",
+            "summary": "",
+            "question": "={{ $fromAI('question', 'The unanswered question, in the customer\\'s words', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "business_name",
+              "displayName": "business_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "support_email",
+              "displayName": "support_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "customer_email",
+              "displayName": "customer_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "question",
+              "displayName": "question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "name": "Log Knowledge Gap",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1296,
+        256
+      ],
+      "notes": "Feeds the \"knowledge gaps\" section of the weekly insights email."
+    },
+    {
+      "id": "165c073d-ab07-404a-8697-1c19ad77e010",
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "support_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('When Chat Message Received').first().json.sessionId }}",
+            "kind": "turn",
+            "question": "={{ $('When Chat Message Received').first().json.chatInput }}",
+            "answer": "={{ String($json.output ?? '').slice(0, 4000) }}",
+            "created_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "question",
+              "displayName": "question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "answer",
+              "displayName": "answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Log Conversation",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Runs after the answer is streamed. Logging never breaks the chat."
+    },
+    {
+      "id": "3ac1a6e6-e5df-405a-9ada-21a61bc85b97",
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "name": "session_id",
+              "type": "string"
+            },
+            {
+              "name": "business_name",
+              "type": "string"
+            },
+            {
+              "name": "support_email",
+              "type": "string"
+            },
+            {
+              "name": "customer_name",
+              "type": "string"
+            },
+            {
+              "name": "customer_email",
+              "type": "string"
+            },
+            {
+              "name": "category",
+              "type": "string"
+            },
+            {
+              "name": "priority",
+              "type": "string"
+            },
+            {
+              "name": "summary",
+              "type": "string"
+            },
+            {
+              "name": "question",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "When Tool Is Called",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        832
+      ],
+      "notes": "Entry point of the two workflow tools."
+    },
+    {
+      "id": "7ddf1927-3a7a-44a4-8951-458bca3d5977",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "623f870a-4621-4d88-ad69-fa0081f65523",
+                    "leftValue": "={{ $json.action === 'ticket' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ticket"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e627f7f9-9ab5-4659-a247-3e274dcc51c6",
+                    "leftValue": "={{ $json.action === 'gap' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Knowledge gap"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Route Tool Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        832
+      ]
+    },
+    {
+      "id": "2f083ea5-45b6-4b56-8596-f98c57f2b539",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f336f25e-deb8-4a3a-a93d-2ff34ff76239",
+              "name": "Ticket ID",
+              "value": "={{ 'TCK-' + $now.toFormat('yyMMdd') + '-' + $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "cb30f31a-cf1e-4ae0-82d3-fcfe33bb6cc0",
+              "name": "Created At",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "21139b06-e0fd-4e16-a50c-5292d69b3f48",
+              "name": "Session",
+              "value": "={{ $json.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "2bde62af-cf89-4ae5-b7e5-35217c744571",
+              "name": "Customer",
+              "value": "={{ $json.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b5960437-3338-419e-96ac-1376cf3a4d66",
+              "name": "Email",
+              "value": "={{ String($json.customer_email ?? '').trim().toLowerCase().replace(/[.,;:!?]+$/, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "dc95d9db-0977-4f4b-b6a5-0acb00524cd9",
+              "name": "Category",
+              "value": "={{ $json.category || 'other' }}",
+              "type": "string"
+            },
+            {
+              "id": "0a0cb195-b2d7-45bb-9d18-5eac99163a5f",
+              "name": "Priority",
+              "value": "={{ ['low', 'normal', 'urgent'].includes($json.priority) ? $json.priority : 'normal' }}",
+              "type": "string"
+            },
+            {
+              "id": "0cd993a7-10a2-4647-b8df-1efcc00db648",
+              "name": "Summary",
+              "value": "={{ $json.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "c0edc3e2-2b2d-4aeb-a05c-2ebc169573be",
+              "name": "Status",
+              "value": "Open",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Ticket",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        832
+      ],
+      "notes": "Field names = Tickets sheet headers."
+    },
+    {
+      "id": "4f25bdac-1b57-4555-a0d6-ab6838742f0d",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tickets",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Add Ticket",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        832
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Your team works the Tickets tab: change Status to \"Solved\" when done."
+    },
+    {
+      "id": "bf0dcb12-9353-460f-92b2-db2a969c5c4d",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('When Tool Is Called').first().json.support_email }}",
+        "subject": "={{ '[' + $('Build Ticket').first().json.Priority + '] ' + $('Build Ticket').first().json['Ticket ID'] + ' · ' + $('Build Ticket').first().json.Category + ' · ' + $('Build Ticket').first().json.Customer }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const t = $('Build Ticket').first().json;\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\"><p><b>' + esc(t.Customer) + '</b> &lt;' + esc(t.Email) + '&gt;</p><p>' + esc(t.Summary) + '</p>' +\n    '<p style=\"color:#666\">Chat session ' + esc(t.Session) + '. Reply to the customer by email, then set the ticket to Solved in the Tickets tab.</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false,
+          "replyTo": "={{ $('Build Ticket').first().json.Email }}"
+        }
+      },
+      "name": "Notify Support Team",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        832
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Reply-To is the customer, so answering this email goes straight to them."
+    },
+    {
+      "id": "5e86f040-079b-4e80-8e96-4487d0105615",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e250a276-3546-476b-8007-8436480faa12",
+              "name": "ticket_id",
+              "value": "={{ $('Build Ticket').first().json['Ticket ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e9cfdd7e-142b-4ee6-b0ca-a0cd1ff75ee5",
+              "name": "message",
+              "value": "={{ 'Ticket ' + $('Build Ticket').first().json['Ticket ID'] + ' created. The team will reply to ' + $('Build Ticket').first().json.Email + ' by email.' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Ticket Created",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        832
+      ],
+      "notes": "Returned to the agent."
+    },
+    {
+      "id": "c67fa4e7-2f2c-43b5-be41-aa3d83c4e2ca",
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "support_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $json.session_id }}",
+            "kind": "gap",
+            "question": "={{ $json.question }}",
+            "answer": "",
+            "created_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "kind",
+              "displayName": "kind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "question",
+              "displayName": "question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "answer",
+              "displayName": "answer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Log Gap",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        1056
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "2ec8c418-da9d-45b5-9cb9-7d908789ceca",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8abe8a17-730a-476a-b5bc-9e056e55c71e",
+              "name": "logged",
+              "value": "true",
+              "type": "boolean"
+            },
+            {
+              "id": "fff80bd1-22e2-4a07-9781-dc4f47bff808",
+              "name": "message",
+              "value": "Thanks, the question was passed to the team so the help docs can be updated.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Gap Logged",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        736,
+        1056
+      ],
+      "notes": "Returned to the agent."
+    },
+    {
+      "id": "5dabdc15-b9e5-4cfc-8de1-7cdebaed77e7",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1,
+              "triggerAtMinute": 15
+            }
+          ]
+        }
+      },
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        1472
+      ],
+      "notes": "Checks the folder hourly but only re-indexes when a document changed."
+    },
+    {
+      "id": "02381850-6d97-4a0e-85d5-426a7eb05013",
+      "parameters": {
+        "resource": "fileFolder",
+        "operation": "search",
+        "searchMethod": "name",
+        "queryString": "",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "REPLACE_WITH_FOLDER_ID",
+            "mode": "id"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name",
+            "mimeType",
+            "webViewLink",
+            "version"
+          ]
+        }
+      },
+      "name": "List Knowledge Files",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        224,
+        1472
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "notes": "The folder with your SOPs, FAQ and policies: Google Docs, PDFs, text or Markdown files, Google Sheets."
+    },
+    {
+      "id": "db72e15c-9856-4153-b258-9bebcb6c3544",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Re-index only when the folder changed. \"version\" grows with every edit of a file.\nconst SUPPORTED = /^(application\\/vnd\\.google-apps\\.(document|spreadsheet|presentation)|application\\/pdf|text\\/(plain|markdown|csv)|application\\/vnd\\.openxmlformats-officedocument\\.wordprocessingml\\.document)$/;\nconst files = $input.all().map(i => i.json).filter(f => f.id && SUPPORTED.test(f.mimeType || ''));\nconst fingerprint = files.map(f => f.id + ':' + f.version).sort().join('|');\nconst state = $getWorkflowStaticData('global');\nif (!files.length || state.kb_fingerprint === fingerprint) return [];\nreturn files.map(f => ({ json: { ...f, fingerprint } }));"
+      },
+      "name": "Docs Changed?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1472
+      ],
+      "notes": "Stores a fingerprint of the folder in the workflow static data (production runs only), so unchanged folders cost nothing."
+    },
+    {
+      "id": "8f08cc21-79f3-45c3-81a0-17700b220946",
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain",
+              "sheetsToFormat": "text/csv",
+              "slidesToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "name": "Download Files",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        736,
+        1472
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Google Docs as plain text, Sheets as CSV, Slides as PDF."
+    },
+    {
+      "id": "858b6405-32ae-4ea1-899f-c2313ec3890d",
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "support-kb",
+          "mode": "id"
+        },
+        "embeddingBatchSize": 200,
+        "options": {
+          "clearNamespace": true,
+          "pineconeNamespace": "support-docs"
+        }
+      },
+      "name": "Rebuild Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        960,
+        1472
+      ],
+      "notes": "Clears the namespace and inserts every document again, so edited or deleted docs never leave stale answers behind."
+    },
+    {
+      "id": "8f9a25ed-be9b-45b8-9780-d8f38910ce5a",
+      "parameters": {
+        "dataType": "binary",
+        "binaryMode": "allInputData",
+        "loader": "auto",
+        "textSplittingMode": "simple",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source",
+                "value": "={{ $('Docs Changed?').item.json.name }}"
+              },
+              {
+                "name": "link",
+                "value": "={{ $('Docs Changed?').item.json.webViewLink }}"
+              }
+            ]
+          }
+        }
+      },
+      "name": "Load Documents",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        1696
+      ],
+      "notes": "Detects PDF, text, CSV and Word files, and splits them into chunks of about 1,000 characters."
+    },
+    {
+      "id": "4e7408b7-7efe-40af-ad13-06d4818bdd68",
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "options": {}
+      },
+      "name": "Embeddings · Documents",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        1696
+      ],
+      "notes": "Must be the same model as \"Embeddings · Questions\"."
+    },
+    {
+      "id": "d362c38c-ee92-4c82-96f2-4331374d7df4",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Saved only after the insert succeeded, so a failed run is retried next hour.\nconst fingerprint = $('Docs Changed?').first().json.fingerprint;\n$getWorkflowStaticData('global').kb_fingerprint = fingerprint;\nreturn [{ json: { files: $('Docs Changed?').all().length, chunks: $input.all().length, synced_at: $now.toISO() } }];"
+      },
+      "name": "Remember Sync",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        1472
+      ]
+    },
+    {
+      "id": "80a6bb58-5ed6-4019-8abd-8b1de7c9c5c0",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "name": "Every Monday at 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        2112
+      ]
+    },
+    {
+      "id": "df4a4be6-781e-4b76-963a-9bffdeef5e8c",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65d26667-40aa-4c76-ab7b-6517b75c7f36",
+              "name": "business_name",
+              "value": "Your Store",
+              "type": "string"
+            },
+            {
+              "id": "f2e64fcd-d357-4134-af4f-b4dada6dee5f",
+              "name": "report_email",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Insights Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        2112
+      ],
+      "notes": "EDIT ME."
+    },
+    {
+      "id": "b7e34338-a960-4bc6-8037-e35208dbfc77",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "support_log",
+          "mode": "name"
+        },
+        "returnAll": true,
+        "orderBy": true,
+        "orderByColumn": "createdAt",
+        "orderByDirection": "DESC"
+      },
+      "name": "Get Support Log",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        2112
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true
+    },
+    {
+      "id": "2560e5b4-b4de-4426-ad8f-eae9adef81b7",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tickets",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Tickets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        2112
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "39e1ae27-0d35-46e3-8a59-45152400d156",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Last 7 days: chats, answers, knowledge gaps and tickets.\nconst since = DateTime.now().minus({ days: 7 });\nconst recent = r => { const d = DateTime.fromISO(String(r.created_at || r['Created At'] || '')); return d.isValid && d >= since; };\nconst log = $('Get Support Log').all().map(i => i.json).filter(recent);\nconst turns = log.filter(r => r.kind === 'turn');\nconst gaps = log.filter(r => r.kind === 'gap');\nconst tickets = $('Read Tickets').all().map(i => i.json).filter(r => r['Ticket ID'] && recent(r));\nreturn [{ json: {\n  conversations: new Set(turns.map(r => r.session_id)).size,\n  questions: turns.length,\n  gaps: gaps.length,\n  tickets: tickets.length,\n  urgent_tickets: tickets.filter(t => t.Priority === 'urgent').length,\n  sample_questions: turns.slice(0, 80).map(r => r.question),\n  gap_questions: gaps.map(r => r.question),\n  ticket_summaries: tickets.map(t => t.Category + ' · ' + t.Priority + ' · ' + t.Summary),\n} }];"
+      },
+      "name": "Summarize Week",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        2112
+      ]
+    },
+    {
+      "id": "e8b7bf04-5df1-49a7-90c0-2286b7f089e7",
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json, null, 1) }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You analyse one week of customer support for {{ $('Insights Settings').first().json.business_name }}: the questions customers asked the AI assistant, the questions it could not answer (gaps) and the tickets it opened.\nGroup similar items into topics. Count only what is in the data, use real examples, and do not invent numbers.\n- complaints: the problems behind the tickets, most frequent first, each with a concrete fix.\n- knowledge_gaps: what to add to the help docs, written as a question plus what the doc should explain.\n- actions: at most 5, specific and doable this week.\nReturn only JSON matching the schema."
+            }
+          ]
+        }
+      },
+      "name": "Analyze Week",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1184,
+        2112
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "If the AI call fails, the email still goes out with the numbers."
+    },
+    {
+      "id": "a78f0e2a-a058-476f-81e4-34c96ca6b5f2",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low",
+          "maxRetries": 3,
+          "timeout": 120000
+        }
+      },
+      "name": "OpenAI · Insights Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        2336
+      ]
+    },
+    {
+      "id": "fe6dad38-29d7-467a-821c-405c7d68f99a",
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"headline\": {\n      \"type\": \"string\"\n    },\n    \"sentiment\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"positive\",\n        \"mixed\",\n        \"negative\"\n      ]\n    },\n    \"top_topics\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"topic\": {\n            \"type\": \"string\"\n          },\n          \"count\": {\n            \"type\": \"integer\"\n          },\n          \"example\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"topic\",\n          \"count\",\n          \"example\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"complaints\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"issue\": {\n            \"type\": \"string\"\n          },\n          \"count\": {\n            \"type\": \"integer\"\n          },\n          \"example\": {\n            \"type\": \"string\"\n          },\n          \"suggested_fix\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"issue\",\n          \"count\",\n          \"example\",\n          \"suggested_fix\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"knowledge_gaps\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"question\": {\n            \"type\": \"string\"\n          },\n          \"doc_update\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"question\",\n          \"doc_update\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"actions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"required\": [\n    \"headline\",\n    \"sentiment\",\n    \"top_topics\",\n    \"complaints\",\n    \"knowledge_gaps\",\n    \"actions\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "name": "Insights Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1328,
+        2336
+      ]
+    },
+    {
+      "id": "ae67bfea-8c02-4538-8212-5d3a0c5c626b",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "maxRetries": 2,
+          "timeout": 60000
+        }
+      },
+      "name": "OpenAI · Insights Fixer",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1360,
+        2528
+      ],
+      "notes": "Repairs JSON that does not match Insights Schema. \"Use Responses API\" is off on purpose: the auto-fix step reads this model's reply as plain text."
+    },
+    {
+      "id": "b573c316-fc27-453c-b0e9-52b9bbe22d98",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Insights Settings').first().json.report_email }}",
+        "subject": "={{ 'Support insights · ' + $('Summarize Week').first().json.questions + ' questions, ' + $('Summarize Week').first().json.tickets + ' tickets, ' + $('Summarize Week').first().json.gaps + ' gaps' }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const s = $('Summarize Week').first().json;\n  const a = $json.output;\n  const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const auto = s.questions ? Math.round((1 - s.tickets / Math.max(1, s.conversations)) * 100) : 0;\n  let html = '<div style=\"font-family:Arial,sans-serif;font-size:14px\">' +\n    '<p>' + s.conversations + ' conversations · ' + s.questions + ' questions · ' + s.tickets + ' tickets (' + s.urgent_tickets + ' urgent) · ' + s.gaps + ' unanswered · about ' + auto + '% solved without a ticket</p>';\n  if (a) {\n    html += '<h3 style=\"margin:12px 0 4px\">' + esc(a.headline) + '</h3><p>Overall mood: ' + esc(a.sentiment) + '</p>' +\n      '<h4>Top topics</h4><ul>' + a.top_topics.map(t => '<li>' + esc(t.topic) + ' (' + t.count + ') · <i>' + esc(t.example) + '</i></li>').join('') + '</ul>' +\n      '<h4>Complaints</h4><ul>' + a.complaints.map(c => '<li><b>' + esc(c.issue) + '</b> (' + c.count + '): ' + esc(c.suggested_fix) + '</li>').join('') + '</ul>' +\n      '<h4>Add to the help docs</h4><ul>' + a.knowledge_gaps.map(g => '<li><b>' + esc(g.question) + '</b> · ' + esc(g.doc_update) + '</li>').join('') + '</ul>' +\n      '<h4>Actions</h4><ol>' + a.actions.map(x => '<li>' + esc(x) + '</li>').join('') + '</ol>';\n  } else {\n    html += '<h4>Unanswered questions</h4><ul>' + s.gap_questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ul><p style=\"color:#666\">The AI analysis failed this week; the numbers above are complete.</p>';\n  }\n  return html + '</div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Insights",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        2112
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true
+    },
+    {
+      "id": "2d4f1965-dcce-47f4-9dbf-ca881c88ae2b",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2944
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "057cde9c-eba3-4992-8a4e-c95c1c375e4f",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f91b2bed-5484-4046-be60-3ef674a660e8",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        2944
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "b6b900db-b8ff-4065-a4df-6daa78198c64",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a2e37627-82a1-4c91-85a3-da720070fc2f",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "76f35a3f-3dd0-475e-8f85-4325e8b6d8ca",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "05ef9015-49eb-45a2-965f-44cb4a012916",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "bb99d686-7613-4589-8018-85633aa06613",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a0c94428-9f9b-463f-b8e8-ef5de7ea6478",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "1dc1248f-846c-4a33-9de7-f610194d9ed5",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "2ed722e7-4ffe-441a-9427-77e83b91cb06",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "77790c20-b0da-431e-b005-017ab62dca6b",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "3c04685f-9d66-4468-b84e-0b7cb4101408",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "cad4d895-78c2-47f8-8ef0-a3620342ad11",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "ecc15583-393b-4b87-8426-f89dc8b51f67",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "6757260c-67be-4af4-b102-75df7edf611d",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "50140790-165b-4ee0-8bc2-37e0cb143806",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        2944
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "91ec539e-06a1-4651-8f26-b419290f5343",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        2944
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "dfa7b67d-dee7-4113-8e48-5dbe8de848e5",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3770aab3-1855-4457-8ab4-25b33c1c7196",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "d753e223-0a04-4c79-b649-04757ebc868e",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "f65cebe9-f37d-41dd-b583-aa803266862f",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "a839937d-95c7-458a-a907-748c76a2220b",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "58df8a81-9c08-4142-9a9b-9668ec4e77a7",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "05b988b6-b3f4-4321-9e1e-0a44796389d8",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "ff2b491f-a3b1-4c17-9791-19c6e6dbf0b8",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "0f5f9577-3363-4365-a778-605eb3a9eaa4",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        2944
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "b4698cd4-bacf-47b2-a7fd-f9b051d510af",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        2944
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "When Chat Message Received": {
+      "main": [
+        [
+          {
+            "node": "Support Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Support Settings": {
+      "main": [
+        [
+          {
+            "node": "Support Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Support Agent": {
+      "main": [
+        [
+          {
+            "node": "Log Conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Support Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Support Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "When Chat Message Received",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Support Ticket": {
+      "ai_tool": [
+        [
+          {
+            "node": "Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Knowledge Gap": {
+      "ai_tool": [
+        [
+          {
+            "node": "Support Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings · Questions": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Tool Is Called": {
+      "main": [
+        [
+          {
+            "node": "Route Tool Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Tool Action": {
+      "main": [
+        [
+          {
+            "node": "Build Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Gap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Ticket": {
+      "main": [
+        [
+          {
+            "node": "Add Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Ticket": {
+      "main": [
+        [
+          {
+            "node": "Notify Support Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Support Team": {
+      "main": [
+        [
+          {
+            "node": "Ticket Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Gap": {
+      "main": [
+        [
+          {
+            "node": "Gap Logged",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Hour": {
+      "main": [
+        [
+          {
+            "node": "List Knowledge Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Knowledge Files": {
+      "main": [
+        [
+          {
+            "node": "Docs Changed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Docs Changed?": {
+      "main": [
+        [
+          {
+            "node": "Download Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Files": {
+      "main": [
+        [
+          {
+            "node": "Rebuild Knowledge Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rebuild Knowledge Base": {
+      "main": [
+        [
+          {
+            "node": "Remember Sync",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Documents": {
+      "ai_document": [
+        [
+          {
+            "node": "Rebuild Knowledge Base",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings · Documents": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Rebuild Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Monday at 08:00": {
+      "main": [
+        [
+          {
+            "node": "Insights Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insights Settings": {
+      "main": [
+        [
+          {
+            "node": "Get Support Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Support Log": {
+      "main": [
+        [
+          {
+            "node": "Read Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Tickets": {
+      "main": [
+        [
+          {
+            "node": "Summarize Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Week": {
+      "main": [
+        [
+          {
+            "node": "Analyze Week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Week": {
+      "main": [
+        [
+          {
+            "node": "Email Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Insights Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analyze Week",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insights Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Analyze Week",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Insights Fixer": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Insights Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

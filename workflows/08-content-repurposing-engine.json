@@ -1,0 +1,1961 @@
+{
+  "name": "Turn YouTube videos and podcasts into 30 posts with OpenAI, Google Docs and a Sheets content calendar",
+  "nodes": [
+    {
+      "id": "7dcedc98-96a7-46f7-88b3-625893af778c",
+      "parameters": {
+        "content": "## Turn YouTube videos and podcasts into 30 posts with OpenAI, Google Docs and a Sheets content calendar\n\n### How it works\n1. Submit a YouTube, TikTok or podcast link in the form, or let new uploads from your YouTube feed start a pack.\n2. Supadata returns the transcript; long videos are polled until the job is done.\n3. OpenAI writes a content brief first, then a blog article and 30 social pieces from that brief.\n4. The article becomes a Google Doc, every piece gets a row and a publish slot in the Sheets content calendar, and you get an email.\n5. Approved LinkedIn posts publish at their slot; the other platforms get a morning reminder.\n\n### Setup steps\n- [ ] Add **Supadata** (Header Auth, name `x-api-key`), **OpenAI**, **Google Drive**, **Google Sheets**, **Gmail** and **LinkedIn** credentials.\n- [ ] Create a spreadsheet with empty `Content Calendar` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Repurpose Settings** and **Publishing Settings**, select your LinkedIn profile, then activate.\n- [ ] Optional: enable **New YouTube Video** with your channel ID.\n\n### Customization\nChange the publish cadence in **Build Calendar Rows** (SLOTS).",
+        "height": 720,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "daa0959c-aba5-4cdf-842c-7cdeda14f07c",
+      "parameters": {
+        "content": "## Receive a video or podcast\nA form, or new uploads from a YouTube feed.",
+        "height": 496,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "d49c4356-c58d-4ce3-84fd-831a24895b65",
+      "parameters": {
+        "content": "## Get the transcript\nSupadata, with polling for long videos.",
+        "height": 720,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        176
+      ]
+    },
+    {
+      "id": "46d7a4a1-ecff-4e50-954e-b6148e8a351b",
+      "parameters": {
+        "content": "## Write the content pack\nA brief first, then the article and 30 posts.",
+        "height": 672,
+        "width": 1536,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        -112
+      ]
+    },
+    {
+      "id": "be60d93c-e053-4b91-b8e4-3d97d7ce37f6",
+      "parameters": {
+        "content": "## Save and schedule\nGoogle Doc, calendar rows and an email.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3696,
+        -112
+      ]
+    },
+    {
+      "id": "d0e84301-5c33-4116-a2dc-18c1f5919f8a",
+      "parameters": {
+        "content": "## Find approved posts\nHourly check of the content calendar.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1040
+      ]
+    },
+    {
+      "id": "87719dae-14db-434b-95fc-acc5628fec98",
+      "parameters": {
+        "content": "## Publish to LinkedIn\nOne post at a time, then mark it published.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        1040
+      ]
+    },
+    {
+      "id": "90f40c7d-7c14-4bd5-a965-6588f9f6b0ac",
+      "parameters": {
+        "content": "## Remind about manual posts\nDaily email for the other platforms.",
+        "height": 336,
+        "width": 240,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        1360
+      ]
+    },
+    {
+      "id": "766f87e5-a178-4eb5-b7ce-4263eae3d699",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1872
+      ]
+    },
+    {
+      "id": "c317f872-f880-4c11-b3b4-82bdeb33418f",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1872
+      ]
+    },
+    {
+      "id": "6b187899-66bc-4765-8a5e-40aa382a71f3",
+      "parameters": {
+        "authentication": "none",
+        "formTitle": "Repurpose a video or podcast",
+        "formDescription": "Paste a YouTube, TikTok or Instagram link, or a direct audio or video file URL. No link? Paste the transcript instead. The content pack arrives by email in a few minutes.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Video or podcast URL",
+              "fieldName": "url",
+              "fieldType": "text",
+              "placeholder": "https://www.youtube.com/watch?v=..."
+            },
+            {
+              "fieldLabel": "Transcript (only when there is no URL)",
+              "fieldName": "transcript",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Target audience (optional)",
+              "fieldName": "audience",
+              "fieldType": "text"
+            },
+            {
+              "fieldLabel": "Call to action (optional)",
+              "fieldName": "cta",
+              "fieldType": "text"
+            },
+            {
+              "fieldLabel": "Write the posts in",
+              "fieldName": "language",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Same language as the video"
+                  },
+                  {
+                    "option": "English"
+                  },
+                  {
+                    "option": "Indonesian"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "path": "content-pack",
+          "appendAttribution": false,
+          "buttonLabel": "Create content pack",
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Got it! Your content pack will arrive by email in a few minutes."
+            }
+          }
+        }
+      },
+      "name": "Content Request Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "7029306f-2de0-4ac0-b8bc-71b7c1c3f242",
+      "notes": "Share this form with your team. Add Basic Auth in the node if it should not be public."
+    },
+    {
+      "id": "9c31fb5b-1ccf-49c7-b5b1-15809414675e",
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=REPLACE_WITH_CHANNEL_ID"
+      },
+      "name": "New YouTube Video",
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        224
+      ],
+      "notes": "Optional and disabled: enable it with your channel ID to turn every new upload into a content pack automatically.",
+      "disabled": true
+    },
+    {
+      "id": "e54c3f00-ba81-4669-ae8d-6b230b3b331b",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "155aa154-ba14-4820-b9f2-e570d20e4666",
+              "name": "brand_name",
+              "value": "Your Brand",
+              "type": "string"
+            },
+            {
+              "id": "d6b94463-bea7-4b3a-a924-8b5fb9d31100",
+              "name": "brand_voice",
+              "value": "Friendly expert. Practical, specific, no hype. Short sentences.",
+              "type": "string"
+            },
+            {
+              "id": "d330f4b7-518f-455c-a4ee-4a5f985e90b5",
+              "name": "default_audience",
+              "value": "Small business owners",
+              "type": "string"
+            },
+            {
+              "id": "e59afbbd-0069-4b62-afa1-79a2cb2720c2",
+              "name": "default_cta",
+              "value": "Follow for more practical tips",
+              "type": "string"
+            },
+            {
+              "id": "73432d7d-b989-4c65-b30d-45a7d25c4039",
+              "name": "output_language",
+              "value": "the language of the video",
+              "type": "string"
+            },
+            {
+              "id": "b5d735a2-ffd7-47c6-b74d-4788060f2e3c",
+              "name": "report_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "8623fbba-ce17-4ea6-aa9b-cab830e0afac",
+              "name": "schedule_start_in_days",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Repurpose Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "notes": "EDIT ME. brand_voice is used in every prompt. schedule_start_in_days: the first scheduled post is this many days after the pack is created."
+    },
+    {
+      "id": "3676d251-7c86-4282-87f0-7d55582d77bd",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7503406-b821-4fce-9cc5-fdb57919592d",
+              "name": "pack_id",
+              "value": "={{ 'PACK-' + $now.toFormat('yyyyMMdd-HHmm') + '-' + $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "8723c743-9552-42c1-8abd-ee29c9da2fdc",
+              "name": "source",
+              "value": "={{ $('Content Request Form').isExecuted ? 'Form' : 'YouTube feed' }}",
+              "type": "string"
+            },
+            {
+              "id": "faaf0a1c-22dd-4399-93e2-740b96ae07f3",
+              "name": "source_url",
+              "value": "={{ String($('Content Request Form').isExecuted ? ($('Content Request Form').first().json.url ?? '') : ($('New YouTube Video').first().json.link ?? '')).trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "c103e90b-4cb1-4d8a-af99-8b135379d254",
+              "name": "source_title",
+              "value": "={{ $('Content Request Form').isExecuted ? '' : ($('New YouTube Video').first().json.title ?? '') }}",
+              "type": "string"
+            },
+            {
+              "id": "e97efd73-59a9-4d43-b81a-35adb25f4f22",
+              "name": "pasted_transcript",
+              "value": "={{ $('Content Request Form').isExecuted ? String($('Content Request Form').first().json.transcript ?? '').trim() : '' }}",
+              "type": "string"
+            },
+            {
+              "id": "07136dc8-cf25-4fae-bc41-81ce791b931c",
+              "name": "audience",
+              "value": "={{ ($('Content Request Form').isExecuted && $('Content Request Form').first().json.audience) || $('Repurpose Settings').first().json.default_audience }}",
+              "type": "string"
+            },
+            {
+              "id": "5aae7a0a-d4e9-48bd-9eeb-3f92d8caabed",
+              "name": "cta",
+              "value": "={{ ($('Content Request Form').isExecuted && $('Content Request Form').first().json.cta) || $('Repurpose Settings').first().json.default_cta }}",
+              "type": "string"
+            },
+            {
+              "id": "609de267-e37c-46a5-b30f-01425b9b157a",
+              "name": "language",
+              "value": "={{ (() => { const l = $('Content Request Form').isExecuted ? $('Content Request Form').first().json.language : ''; return l && !l.startsWith('Same') ? l : $('Repurpose Settings').first().json.output_language; })() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Read Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "notes": "One shape for both triggers."
+    },
+    {
+      "id": "f27df626-6f9e-4c3a-a22b-fcd1027f66da",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "97fecec7-f51b-4c64-92a1-2d8e7a9b63d0",
+              "leftValue": "={{ $('Read Request').first().json.pasted_transcript.length >= 300 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Has Transcript?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "notes": "A pasted transcript skips the transcript API."
+    },
+    {
+      "id": "dce2edbb-8611-473f-836e-199aa4222935",
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.supadata.ai/v1/transcript",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $('Read Request').first().json.source_url }}"
+            },
+            {
+              "name": "text",
+              "value": "true"
+            },
+            {
+              "name": "mode",
+              "value": "auto"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "name": "Request Transcript",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        960,
+        288
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Supadata returns the transcript right away, or a job ID for long videos and audio files. Header Auth credential: name x-api-key."
+    },
+    {
+      "id": "5a84a38d-761c-48ad-a8e5-8968eb20faf4",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "161bf12a-3115-401f-b4d5-fa7222949a87",
+              "leftValue": "={{ typeof $json.content === 'string' && $json.content.trim() !== '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Transcript Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1184,
+        288
+      ],
+      "notes": "False: a job was started, poll it."
+    },
+    {
+      "id": "12f490bd-8cec-4238-aba9-296e6b6dd284",
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "name": "Wait for Transcript",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1408,
+        512
+      ],
+      "webhookId": "b5950d5d-fb91-4794-8e29-44b83f5575c6",
+      "notes": "Polls every 15 s."
+    },
+    {
+      "id": "6ae08161-bfb9-4b29-9f40-20bf71fed955",
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://api.supadata.ai/v1/transcript/' + $('Request Transcript').first().json.jobId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "name": "Check Transcript Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1632,
+        512
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "ccf8b6d6-d2b6-4df7-981a-c7fd5ae12a2e",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ca3bae5b-3c3f-4c8b-b9c5-bce2f75033c0",
+                    "leftValue": "={{ $json.status === 'completed' && typeof $json.content === 'string' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Done"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5f0eb328-753d-43a1-9bcb-9aaba093be79",
+                    "leftValue": "={{ $json.status === 'failed' || $runIndex >= 40 }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Failed"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Still running"
+        }
+      },
+      "name": "Job Status",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1856,
+        512
+      ],
+      "notes": "Gives up after 40 checks (about 10 minutes). $runIndex counts the loop, so it always ends."
+    },
+    {
+      "id": "44281ea7-cc8a-4331-a69e-02ba7badf490",
+      "parameters": {
+        "errorMessage": "={{ '[WARNING] No transcript for ' + ($('Read Request').first().json.source_url || 'an empty URL') + '. Supadata said: ' + String($json.error?.message ?? $json.error?.error ?? $json.error ?? $json.status ?? 'unknown').slice(0, 300) + '. Paste the transcript into the form instead.' }}"
+      },
+      "name": "Escalate · No Transcript",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        736
+      ],
+      "notes": "The built-in error handler emails this to you."
+    },
+    {
+      "id": "404b4b4e-7f06-4d82-97a6-084b9d807c2c",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "465f9118-21f9-41df-80c4-690ddf8e3f23",
+              "name": "transcript",
+              "value": "={{ (() => {\n  const pasted = $('Read Request').first().json.pasted_transcript;\n  if (pasted.length >= 300) return pasted.slice(0, 150000);\n  const src = $('Check Transcript Job').isExecuted ? $('Check Transcript Job').last().json : $('Request Transcript').first().json;\n  return String(src.content ?? '').slice(0, 150000);\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "47c957f5-e03c-4b2e-aede-7789b019e809",
+              "name": "transcript_language",
+              "value": "={{ $('Request Transcript').isExecuted ? ($('Check Transcript Job').isExecuted ? $('Check Transcript Job').last().json.lang : $('Request Transcript').first().json.lang) ?? '' : '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Use Transcript",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2176,
+        0
+      ],
+      "notes": "Pasted, immediate or polled transcript, capped at 150,000 characters (about 2.5 hours of speech)."
+    },
+    {
+      "id": "5945a224-eef0-442a-9104-4ee61dbd1b5c",
+      "parameters": {
+        "promptType": "define",
+        "text": "=Source: {{ $('Read Request').first().json.source_url || 'pasted transcript' }} {{ $('Read Request').first().json.source_title }}\n\nTranscript:\n{{ $json.transcript }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You are the content strategist of {{ $('Repurpose Settings').first().json.brand_name }}. Brand voice: {{ $('Repurpose Settings').first().json.brand_voice }}\nAudience: {{ $('Read Request').first().json.audience }}\n\nRead the transcript and extract the raw material for a content pack. Use only what the speaker actually says: no invented facts, numbers or stories. Quotes must be verbatim or very close, and short.\n- language: the language the pack must be written in. Rule: {{ $('Read Request').first().json.language }}.\n- key_ideas: 5 to 10 ideas in the order they appear, each with one supporting detail and a short quote.\nReturn only JSON matching the schema."
+            }
+          ]
+        }
+      },
+      "name": "Write Content Brief",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2464,
+        0
+      ],
+      "notes": "Condenses a long transcript once, so the next two steps work from a short, consistent brief."
+    },
+    {
+      "id": "12a99c8e-2069-46ad-ac04-9c0c922ba88d",
+      "parameters": {
+        "promptType": "define",
+        "text": "=Content brief:\n{{ JSON.stringify($('Write Content Brief').first().json.output, null, 1) }}\n\nCall to action: {{ $('Read Request').first().json.cta }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You write SEO blog articles for {{ $('Repurpose Settings').first().json.brand_name }}. Brand voice: {{ $('Repurpose Settings').first().json.brand_voice }}\nWrite in the brief's \"language\".\n- 900 to 1,300 words of Markdown: a hook intro, 4 to 6 \"##\" sections built from the key ideas, a short takeaways list, and the call to action at the end.\n- Use the quotes and facts from the brief; do not add statistics or claims that are not in it.\n- seo_title under 60 characters, meta_description under 155 characters, slug in lowercase-with-dashes.\nReturn only JSON matching the schema."
+            }
+          ]
+        }
+      },
+      "name": "Write Blog Post",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2848,
+        0
+      ],
+      "notes": "The article lands in Google Docs as a draft."
+    },
+    {
+      "id": "374271d7-3748-4cc6-bda0-850fb6a7dc01",
+      "parameters": {
+        "promptType": "define",
+        "text": "=Content brief:\n{{ JSON.stringify($('Write Content Brief').first().json.output, null, 1) }}\n\nCall to action: {{ $('Read Request').first().json.cta }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You are the social media editor of {{ $('Repurpose Settings').first().json.brand_name }}. Brand voice: {{ $('Repurpose Settings').first().json.brand_voice }}\nWrite everything in the brief's \"language\". Every piece must stand on its own and use one idea from the brief. No invented facts.\n- linkedin_posts: exactly 3. A strong first line, short paragraphs, 120 to 220 words, at most 3 hashtags at the end, no links.\n- x_thread: 6 to 10 tweets, each under 270 characters, the first one is the hook.\n- x_posts: exactly 3 standalone tweets under 270 characters.\n- instagram_captions: exactly 5, under 150 words, hashtags (5 to 10) in their own field without \"#\" duplicates in the caption.\n- facebook_posts: exactly 2, conversational, end with a question.\n- newsletter: one subject line and a 120 to 200 word body.\n- short_videos: exactly 10 ideas for Reels, TikTok or Shorts: a hook under 10 words, 3 to 5 beats, on-screen text, a caption, and the transcript quote the clip should use.\n- quote_cards: exactly 5 short quotes (under 20 words) from the speaker.\nReturn only JSON matching the schema."
+            }
+          ]
+        }
+      },
+      "name": "Write Social Pack",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        3232,
+        0
+      ],
+      "notes": "30 pieces in one call: 3 LinkedIn, 1 thread, 3 X posts, 5 Instagram, 2 Facebook, 1 newsletter, 10 short-video ideas, 5 quote cards."
+    },
+    {
+      "id": "770f2ce4-c9e3-4a3f-926a-9f7f5b0dc464",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low",
+          "maxRetries": 3,
+          "timeout": 180000
+        }
+      },
+      "name": "OpenAI · Content Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2464,
+        224
+      ],
+      "notes": "Shared by the three writing steps. Long outputs: timeout 3 minutes."
+    },
+    {
+      "id": "0d8caab6-f59d-49d0-a2ff-d1ef6d865170",
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"title\": {\n      \"type\": \"string\"\n    },\n    \"summary\": {\n      \"type\": \"string\"\n    },\n    \"language\": {\n      \"type\": \"string\"\n    },\n    \"audience\": {\n      \"type\": \"string\"\n    },\n    \"key_ideas\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"idea\": {\n            \"type\": \"string\"\n          },\n          \"detail\": {\n            \"type\": \"string\"\n          },\n          \"quote\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"idea\",\n          \"detail\",\n          \"quote\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"memorable_quotes\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"facts_and_numbers\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"stories\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"keywords\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"suggested_cta\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"title\",\n    \"summary\",\n    \"language\",\n    \"audience\",\n    \"key_ideas\",\n    \"memorable_quotes\",\n    \"facts_and_numbers\",\n    \"stories\",\n    \"keywords\",\n    \"suggested_cta\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "name": "Brief Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2608,
+        224
+      ]
+    },
+    {
+      "id": "15a48c01-33f2-4606-b661-10ea630ccd1f",
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"seo_title\": {\n      \"type\": \"string\"\n    },\n    \"meta_description\": {\n      \"type\": \"string\"\n    },\n    \"slug\": {\n      \"type\": \"string\"\n    },\n    \"markdown\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"seo_title\",\n    \"meta_description\",\n    \"slug\",\n    \"markdown\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "name": "Blog Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2992,
+        224
+      ]
+    },
+    {
+      "id": "0b201a6b-1a64-482e-9965-01a5d485be71",
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"linkedin_posts\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"hook\": {\n            \"type\": \"string\"\n          },\n          \"text\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"hook\",\n          \"text\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"x_thread\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"x_posts\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"instagram_captions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"caption\": {\n            \"type\": \"string\"\n          },\n          \"hashtags\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"required\": [\n          \"caption\",\n          \"hashtags\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"facebook_posts\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"newsletter\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"subject\": {\n          \"type\": \"string\"\n        },\n        \"body\": {\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"subject\",\n        \"body\"\n      ],\n      \"additionalProperties\": false\n    },\n    \"short_videos\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"hook\": {\n            \"type\": \"string\"\n          },\n          \"beats\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          },\n          \"on_screen_text\": {\n            \"type\": \"string\"\n          },\n          \"caption\": {\n            \"type\": \"string\"\n          },\n          \"source_quote\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"hook\",\n          \"beats\",\n          \"on_screen_text\",\n          \"caption\",\n          \"source_quote\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"quote_cards\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"required\": [\n    \"linkedin_posts\",\n    \"x_thread\",\n    \"x_posts\",\n    \"instagram_captions\",\n    \"facebook_posts\",\n    \"newsletter\",\n    \"short_videos\",\n    \"quote_cards\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "name": "Social Pack Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3376,
+        224
+      ]
+    },
+    {
+      "id": "2753175d-e1b9-4d8f-9bc5-1c6a17282751",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "maxRetries": 2,
+          "timeout": 120000
+        }
+      },
+      "name": "OpenAI · Fixer Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        3024,
+        416
+      ],
+      "notes": "Repairs JSON that does not match a schema, for all three parsers. \"Use Responses API\" is off on purpose: the auto-fix step reads this model's reply as plain text."
+    },
+    {
+      "id": "117a6812-abba-440f-b048-821036d0fd96",
+      "parameters": {
+        "resource": "file",
+        "operation": "createFromText",
+        "content": "={{ (() => { const b = $('Write Blog Post').first().json.output; return '# ' + b.seo_title + '\\n\\nMeta description: ' + b.meta_description + '\\nSlug: ' + b.slug + '\\n\\n' + b.markdown; })() }}",
+        "name": "={{ $('Write Blog Post').first().json.output.seo_title + ' · blog draft' }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {
+          "convertToGoogleDocument": true
+        }
+      },
+      "name": "Save Blog Draft",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3744,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "A Google Doc with the Markdown article. Pick another folder in \"Parent Folder\"."
+    },
+    {
+      "id": "14080e8c-0bcd-4321-afd7-27577711d161",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// One row per piece, with a publish slot. Edit SLOTS to change the cadence:\n// [first day after the start date, days between pieces, hour of day]\nconst SLOTS = {\n  'Blog post': [0, 0, 9], 'Newsletter': [2, 0, 10], 'LinkedIn post': [0, 2, 8], 'X thread': [1, 0, 12],\n  'X post': [2, 2, 12], 'Instagram caption': [0, 1, 18], 'Facebook post': [1, 3, 19], 'Short video': [0, 1, 17], 'Quote card': [1, 2, 20],\n};\nconst PLATFORM = {\n  'Blog post': 'Blog', 'Newsletter': 'Email', 'LinkedIn post': 'LinkedIn', 'X thread': 'X', 'X post': 'X',\n  'Instagram caption': 'Instagram', 'Facebook post': 'Facebook', 'Short video': 'Reels / TikTok / Shorts', 'Quote card': 'Instagram',\n};\nconst req = $('Read Request').first().json;\nconst brief = $('Write Content Brief').first().json.output;\nconst blog = $('Write Blog Post').first().json.output;\nconst pack = $('Write Social Pack').first().json.output;\nconst docUrl = 'https://docs.google.com/document/d/' + $input.first().json.id + '/edit';\nconst start = DateTime.now().startOf('day').plus({ days: Number($('Repurpose Settings').first().json.schedule_start_in_days) || 0 });\n\nconst pieces = [\n  { format: 'Blog post', hook: blog.seo_title, content: blog.meta_description + '\\n\\nFull article: ' + docUrl, notes: docUrl },\n  { format: 'Newsletter', hook: pack.newsletter.subject, content: pack.newsletter.body },\n  ...pack.linkedin_posts.map(p => ({ format: 'LinkedIn post', hook: p.hook, content: p.text })),\n  { format: 'X thread', hook: pack.x_thread[0] || '', content: pack.x_thread.map((t, i) => (i + 1) + '/ ' + t).join('\\n\\n') },\n  ...pack.x_posts.map(t => ({ format: 'X post', hook: t.slice(0, 80), content: t })),\n  ...pack.instagram_captions.map(c => ({ format: 'Instagram caption', hook: c.caption.split('\\n')[0].slice(0, 100), content: c.caption, hashtags: c.hashtags.map(h => '#' + h.replace(/^#/, '')).join(' ') })),\n  ...pack.facebook_posts.map(t => ({ format: 'Facebook post', hook: t.split('\\n')[0].slice(0, 100), content: t })),\n  ...pack.short_videos.map(v => ({ format: 'Short video', hook: v.hook, content: 'Hook: ' + v.hook + '\\nBeats:\\n- ' + v.beats.join('\\n- ') + '\\nOn-screen text: ' + v.on_screen_text + '\\nCaption: ' + v.caption + '\\nClip: \"' + v.source_quote + '\"' })),\n  ...pack.quote_cards.map(q => ({ format: 'Quote card', hook: q, content: q })),\n];\nconst seen = {};\nreturn pieces.map((p, i) => {\n  const [first, every, hour] = SLOTS[p.format];\n  const n = (seen[p.format] = (seen[p.format] ?? -1) + 1);\n  const when = start.plus({ days: first + n * every }).set({ hour, minute: 0 });\n  return { json: {\n    'Item ID': req.pack_id + '-' + String(i + 1).padStart(2, '0'),\n    'Pack ID': req.pack_id,\n    'Created At': DateTime.now().toISO(),\n    'Source': req.source_url || 'pasted transcript',\n    'Source Title': brief.title,\n    'Platform': PLATFORM[p.format],\n    'Format': p.format,\n    'Hook': p.hook,\n    'Content': String(p.content).slice(0, 45000),\n    'Hashtags': p.hashtags || '',\n    'Scheduled For': when.toISO(),\n    'Status': 'Draft',\n    'Post URL': '',\n    'Notes': p.notes || '',\n  } };\n});"
+      },
+      "name": "Build Calendar Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3968,
+        0
+      ],
+      "notes": "Builds the calendar rows and spreads them over the next days (see SLOTS). Times use the workflow time zone."
+    },
+    {
+      "id": "52e18438-b880-4a44-a291-cc049462732c",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Content Calendar",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Add to Content Calendar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4192,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "All pieces in one append. Change Status to \"Approved\" to publish (LinkedIn) or get a reminder (other platforms)."
+    },
+    {
+      "id": "9ba38756-bd42-41de-bbc5-f60994de663d",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Repurpose Settings').first().json.report_email }}",
+        "subject": "={{ 'Content pack ready: ' + $('Write Content Brief').first().json.output.title + ' (' + $('Build Calendar Rows').all().length + ' pieces)' }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const rows = $('Build Calendar Rows').all().map(i => i.json);\n  const count = {};\n  rows.forEach(r => { count[r.Format] = (count[r.Format] || 0) + 1; });\n  const first = rows.map(r => r['Scheduled For']).sort()[0], last = rows.map(r => r['Scheduled For']).sort().pop();\n  const doc = rows.find(r => r.Format === 'Blog post').Notes;\n  const list = (fmt) => rows.filter(r => r.Format === fmt).map(r => '<li>' + esc(r.Hook) + '</li>').join('');\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\">' +\n    '<p><b>' + esc($('Write Content Brief').first().json.output.summary) + '</b></p>' +\n    '<p><a href=\"' + doc + '\">Open the blog draft in Google Docs</a></p>' +\n    '<p>' + Object.entries(count).map(([k, v]) => v + ' × ' + esc(k)).join(' · ') + '</p>' +\n    '<p>Scheduled from ' + DateTime.fromISO(first).toFormat('ccc d LLL') + ' to ' + DateTime.fromISO(last).toFormat('ccc d LLL') + ' in the Content Calendar tab.</p>' +\n    '<h4>LinkedIn hooks</h4><ul>' + list('LinkedIn post') + '</ul><h4>Short-video ideas</h4><ul>' + list('Short video') + '</ul>' +\n    '<p style=\"color:#666\">Edit the drafts, then set Status to Approved. LinkedIn posts publish automatically at their time; for the other platforms you get a reminder on the morning they are due.</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Content Pack",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        4416,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true
+    },
+    {
+      "id": "63613968-f535-4145-8d78-73099869e701",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        1152
+      ],
+      "notes": "Runs only while the workflow is active."
+    },
+    {
+      "id": "c8b273e0-be73-4e52-a452-244be244496c",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a9896e3-dc06-4563-84c0-929630cc095c",
+              "name": "reminder_hour",
+              "value": 8,
+              "type": "number"
+            },
+            {
+              "id": "bd9bfa4c-a01a-45c1-8f6e-00c0f445dafa",
+              "name": "report_email",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Publishing Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1152
+      ],
+      "notes": "EDIT ME. The reminder for manual platforms goes out once a day at reminder_hour (workflow time zone)."
+    },
+    {
+      "id": "eef81c68-5403-46fe-8c86-8af0e7852fda",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Content Calendar",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Calendar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "5eef383c-ee16-4992-889c-a4843a8c9034",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// LinkedIn posts that are approved and due, plus (once a day) a reminder for the manual platforms.\nconst cfg = $('Publishing Settings').first().json;\nconst now = DateTime.now();\nconst rows = $input.all().map(i => i.json).filter(r => r['Item ID'] && r.Status === 'Approved');\nconst due = r => r['Scheduled For'] && DateTime.fromISO(r['Scheduled For']) <= now;\nconst out = rows.filter(r => r.Platform === 'LinkedIn' && due(r) && !r['Post URL']).map(row => ({ action: 'linkedin', row }));\nif (now.hour === Number(cfg.reminder_hour)) {\n  const today = rows.filter(r => r.Platform !== 'LinkedIn' && r['Scheduled For'] && DateTime.fromISO(r['Scheduled For']).hasSame(now, 'day'));\n  if (today.length) out.push({ action: 'reminder', rows: today });\n}\nreturn out.map(json => ({ json }));"
+      },
+      "name": "Plan Publishing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        1152
+      ],
+      "notes": "Only rows with Status = Approved are touched."
+    },
+    {
+      "id": "6a8bb903-4dd6-4864-bdd6-4504c87a37c4",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "64325a40-31da-47f4-9157-f1cc9ef42cea",
+                    "leftValue": "={{ $json.action === 'linkedin' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LinkedIn"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c56b498a-e246-4812-8012-c313ecaf46d4",
+                    "leftValue": "={{ $json.action === 'reminder' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reminder"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Route Publishing",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        1152
+      ]
+    },
+    {
+      "id": "49dbb5d6-5693-40c8-a112-119f6049241f",
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Loop LinkedIn Posts",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1184,
+        1152
+      ],
+      "notes": "One post per pass, so a retried post never repeats another one."
+    },
+    {
+      "id": "2a2cfb6b-8c97-4e38-addd-a9c8531a14bb",
+      "parameters": {
+        "authentication": "standard",
+        "resource": "post",
+        "operation": "create",
+        "postAs": "person",
+        "person": "REPLACE_WITH_LINKEDIN_PERSON_ID",
+        "text": "={{ $json.row.Content + ($json.row.Hashtags ? '\\n\\n' + $json.row.Hashtags : '') }}",
+        "shareMediaCategory": "NONE",
+        "additionalFields": {}
+      },
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Select your profile (or switch Post As to Organization) after adding the LinkedIn credential."
+    },
+    {
+      "id": "afabccfe-57b1-449e-af86-b3a466d09aec",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Content Calendar",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Item ID": "={{ $('Loop LinkedIn Posts').item.json.row['Item ID'] }}",
+            "Status": "Published",
+            "Post URL": "={{ 'https://www.linkedin.com/feed/update/' + $json.urn }}"
+          },
+          "matchingColumns": [
+            "Item ID"
+          ],
+          "schema": [
+            {
+              "id": "Item ID",
+              "displayName": "Item ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Post URL",
+              "displayName": "Post URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Mark Published",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1632,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "e2d72013-71f0-4909-a8a2-36629d4dbde1",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Publishing Settings').first().json.report_email }}",
+        "subject": "={{ 'Today: ' + $json.rows.length + ' posts to publish by hand' }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\n/g, '<br>');\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\">' + $json.rows.sort((a, b) => a['Scheduled For'].localeCompare(b['Scheduled For'])).map(r =>\n    '<h4 style=\"margin:16px 0 4px\">' + DateTime.fromISO(r['Scheduled For']).toFormat('HH:mm') + ' · ' + esc(r.Platform) + ' · ' + esc(r.Format) + '</h4><div style=\"background:#f6f6f6;padding:8px\">' + esc(r.Content) + (r.Hashtags ? '<br><br>' + esc(r.Hashtags) : '') + '</div>').join('') +\n    '<p style=\"color:#666\">Set Status to Published in the calendar once posted.</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Manual Posts",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        1536
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "95117cc7-b3f1-4d71-bd98-12e6a73bdbb4",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1984
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "fcdb404d-e765-468d-8a91-0132e156fffa",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "37ffa7ab-6d70-4669-8852-ca5d8775a4c8",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1984
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "161e1903-9727-4445-9c64-fc6a9a143055",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a6bed84b-7c0e-4f59-9085-22a05dee042b",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "c95a5953-ab17-4757-901a-58f64f380aae",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "8ba577c2-30cb-4765-9e64-1d853f9204e2",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "208d0ef8-e1f4-46ae-9264-06d5fda4f8e6",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "33ca3e95-8944-479d-8edf-87557ebdce04",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "35ab540f-4eb6-450c-9d1f-23f55191c3ee",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "da4ef670-2ccd-4d78-a63d-4d659bdcd0be",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "d5ef17e4-767e-4539-b6e0-14f56cfd7755",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "6b3d59c7-ab8e-4a60-b358-38f8c7c28b05",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "9b95e23b-9759-494a-832d-c5e3c63251ec",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "c0782116-4fdb-4eaa-93de-07c4861a7e8c",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "56dd15c6-869d-46ea-98e2-19ce32f219f3",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "be67a7c8-f6ac-48e3-9d09-27fa49f7f44a",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        1984
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "05e9e140-8062-4d78-ba29-2e141e3477a8",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        1984
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "d556d239-866a-446a-8eb6-133e3b929ffe",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8b7aa96a-127b-4c5f-9144-f934e33607fd",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ef1b7756-3999-4418-a439-b6f08c46ee94",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "21579a47-8974-4b33-a3ce-cfee382d309e",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "21f38f70-a25f-49a5-9a98-5ef5195dfda8",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "8911da85-31bd-4d78-8950-b4225a880883",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "0287623b-8a2a-47a7-b553-dde71902e0ec",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "873b2106-c9a4-4929-90e6-9003e39337e5",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "a79d4e3a-280b-421f-88e0-f6c5afa99ca9",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        1984
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "d6cd9b31-cd64-45d5-91ca-e975059120fe",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        1984
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "Content Request Form": {
+      "main": [
+        [
+          {
+            "node": "Repurpose Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New YouTube Video": {
+      "main": [
+        [
+          {
+            "node": "Repurpose Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Repurpose Settings": {
+      "main": [
+        [
+          {
+            "node": "Read Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Request": {
+      "main": [
+        [
+          {
+            "node": "Has Transcript?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Transcript?": {
+      "main": [
+        [
+          {
+            "node": "Use Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Request Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Transcript": {
+      "main": [
+        [
+          {
+            "node": "Transcript Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate · No Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcript Ready?": {
+      "main": [
+        [
+          {
+            "node": "Use Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Transcript": {
+      "main": [
+        [
+          {
+            "node": "Check Transcript Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Transcript Job": {
+      "main": [
+        [
+          {
+            "node": "Job Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Status": {
+      "main": [
+        [
+          {
+            "node": "Use Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate · No Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Use Transcript": {
+      "main": [
+        [
+          {
+            "node": "Write Content Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Content Brief": {
+      "main": [
+        [
+          {
+            "node": "Write Blog Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Blog Post": {
+      "main": [
+        [
+          {
+            "node": "Write Social Pack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Social Pack": {
+      "main": [
+        [
+          {
+            "node": "Save Blog Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Blog Draft": {
+      "main": [
+        [
+          {
+            "node": "Build Calendar Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Calendar Rows": {
+      "main": [
+        [
+          {
+            "node": "Add to Content Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Content Calendar": {
+      "main": [
+        [
+          {
+            "node": "Email Content Pack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Content Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Content Brief",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Blog Post",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Write Social Pack",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Brief Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Write Content Brief",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blog Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Write Blog Post",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Social Pack Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Write Social Pack",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Fixer Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Brief Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Blog Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Social Pack Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Hour": {
+      "main": [
+        [
+          {
+            "node": "Publishing Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publishing Settings": {
+      "main": [
+        [
+          {
+            "node": "Read Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Calendar": {
+      "main": [
+        [
+          {
+            "node": "Plan Publishing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Publishing": {
+      "main": [
+        [
+          {
+            "node": "Route Publishing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Publishing": {
+      "main": [
+        [
+          {
+            "node": "Loop LinkedIn Posts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Manual Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop LinkedIn Posts": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Mark Published",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Published": {
+      "main": [
+        [
+          {
+            "node": "Loop LinkedIn Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

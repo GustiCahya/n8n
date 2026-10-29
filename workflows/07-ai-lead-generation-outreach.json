@@ -1,0 +1,2174 @@
+{
+  "name": "Find Google Maps leads with SerpAPI, score them with OpenAI and send personal emails with Gmail",
+  "nodes": [
+    {
+      "id": "ab7ac87b-3590-44fc-9cb5-d1e899b31a38",
+      "parameters": {
+        "content": "## Find Google Maps leads with SerpAPI, score them with OpenAI and send personal emails with Gmail\n\n### How it works\n1. Every morning, each \"keyword | location\" line becomes a Google Maps search through SerpAPI.\n2. New businesses are deduplicated against the sheet, and their websites are read for emails, Instagram and what they do.\n3. OpenAI scores each lead against your ideal customer and finds a personal opening line. Leads are saved to Google Sheets and you get a summary.\n4. On weekdays, a few emails per hour go out from Gmail: first emails to the best new leads, follow-ups in the same thread.\n5. Replies stop the sequence, and \"stop\" replies mark the lead as opted out.\n\n### Setup steps\n- [ ] Add **SerpAPI**, **OpenAI**, **Google Sheets** and **Gmail** credentials.\n- [ ] Create a spreadsheet with empty `Leads` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Prospecting Settings** (searches, ideal customer, offer) and **Outreach Settings** (sender, volume).\n- [ ] Set the workflow time zone, then activate.\n\n### Customization\nChange the scoring rules in **Score Lead** and the email style in **Write Email**.",
+        "height": 704,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "80d07eb4-8bbd-4dfe-abad-5b9f9e8ec156",
+      "parameters": {
+        "content": "## Plan the searches\nKnown leads are loaded so nobody is found twice.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "f8052efe-172e-4ff2-9774-8faf512ddc18",
+      "parameters": {
+        "content": "## Find new businesses\nGoogle Maps via SerpAPI, then each website.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        -112
+      ]
+    },
+    {
+      "id": "c92896f9-b68a-46ad-9e08-713cc43a4219",
+      "parameters": {
+        "content": "## Score each lead with AI\nFit score, summary and an opening hook.",
+        "height": 672,
+        "width": 480,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1872,
+        -112
+      ]
+    },
+    {
+      "id": "8c4ff27a-7d12-4cc8-98a3-825492a3c27d",
+      "parameters": {
+        "content": "## Save and report\nAppends the leads and emails a summary.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        -112
+      ]
+    },
+    {
+      "id": "b4fbcdc9-7f89-4f8b-8f70-d89397e543c5",
+      "parameters": {
+        "content": "## Plan the hourly outreach\nReplies first, then follow-ups and new leads.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        720
+      ]
+    },
+    {
+      "id": "e99e9c6a-3b21-46d1-b2ff-d25e1ec16347",
+      "parameters": {
+        "content": "## Record replies\nStops the sequence for leads who answered.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        720
+      ]
+    },
+    {
+      "id": "8835da71-f3b4-4dda-b70f-28d86c0bef83",
+      "parameters": {
+        "content": "## Write the email with AI\nOne lead at a time, in the lead’s language.",
+        "height": 672,
+        "width": 768,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1040
+      ]
+    },
+    {
+      "id": "180c6547-2e6f-42b1-9599-c2348c7f6b64",
+      "parameters": {
+        "content": "## Send and track\nFollow-ups reply in the same thread.",
+        "height": 496,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        1040
+      ]
+    },
+    {
+      "id": "d70b8005-2330-44de-bf01-3b170ceaf59e",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1872
+      ]
+    },
+    {
+      "id": "9262f439-521a-46d1-837f-adb92853dc98",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        1872
+      ]
+    },
+    {
+      "id": "21801434-de55-4c3e-8264-0261ca5f88d3",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "name": "Every Day at 07:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "Uses the workflow time zone (Settings → Timezone)."
+    },
+    {
+      "id": "b29df1be-d4b5-4255-af3c-02c65486ce57",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f9ac0e8b-e4e4-4c13-b0f4-9c48d20718a3",
+              "name": "searches",
+              "value": "dental clinic | Jakarta Selatan\ncoffee roastery | Bandung\ninterior design studio | Surabaya",
+              "type": "string"
+            },
+            {
+              "id": "ce665d9c-539a-4497-85ce-92ef7e52efb6",
+              "name": "google_language",
+              "value": "id",
+              "type": "string"
+            },
+            {
+              "id": "38d5724c-609c-4e10-9bd1-6ffaae11a5f3",
+              "name": "google_country",
+              "value": "id",
+              "type": "string"
+            },
+            {
+              "id": "b40e3843-2cf7-441f-8b1a-27da0f74c914",
+              "name": "max_new_leads_per_run",
+              "value": 150,
+              "type": "number"
+            },
+            {
+              "id": "374c0012-a82b-4b89-a835-7e4d8b692e9b",
+              "name": "ideal_customer",
+              "value": "Owner-led small and medium businesses (5–50 people) that sell to consumers and still take orders or bookings by WhatsApp or phone.",
+              "type": "string"
+            },
+            {
+              "id": "70cd7065-aad5-4285-8476-1a53cf94eb1e",
+              "name": "offer",
+              "value": "We set up WhatsApp booking assistants that answer customers 24/7 and fill the calendar.",
+              "type": "string"
+            },
+            {
+              "id": "891ea246-bf21-4c46-9f31-cfe95a6b2b23",
+              "name": "min_fit_score",
+              "value": 60,
+              "type": "number"
+            },
+            {
+              "id": "cf63345a-3f77-4094-b30d-d178f7f4544e",
+              "name": "report_email",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Prospecting Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "notes": "EDIT ME. searches: one \"keyword | location\" per line; each line is one SerpAPI search with up to 20 businesses. Add more lines (for example per district) to find more leads. ideal_customer and offer drive the AI score and the emails."
+    },
+    {
+      "id": "3725b3d3-7182-4e39-9797-dd68c6a8c82c",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Lead Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "Every lead found so far. Used to skip businesses and domains that are already in the sheet."
+    },
+    {
+      "id": "62da746a-67f5-496c-a101-545eed2e4f58",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2751059a-7e6b-4084-a294-9e7ab544dd3f",
+              "name": "jobs",
+              "value": "={{ String($('Prospecting Settings').first().json.searches).split('\\n').map(l => l.split('|').map(s => s.trim())).filter(p => p[0]).map(([keyword, location]) => ({ q: location ? keyword + ' ' + location : keyword, keyword, location: location || '' })) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Search Jobs",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        0
+      ],
+      "executeOnce": true,
+      "notes": "One job per line of the searches setting."
+    },
+    {
+      "id": "4bdf2c0d-16c6-4566-ab8b-e8c0d9bb666b",
+      "parameters": {
+        "fieldToSplitOut": "jobs",
+        "include": "noOtherFields",
+        "options": {}
+      },
+      "name": "One Item per Search",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "id": "dbd8839b-bfd9-48fd-94b4-5721b1a7d367",
+      "parameters": {
+        "method": "GET",
+        "url": "https://serpapi.com/search.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "serpApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_maps"
+            },
+            {
+              "name": "type",
+              "value": "search"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json.q }}"
+            },
+            {
+              "name": "hl",
+              "value": "={{ $('Prospecting Settings').first().json.google_language }}"
+            },
+            {
+              "name": "gl",
+              "value": "={{ $('Prospecting Settings').first().json.google_country }}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1000
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "name": "Search Google Maps",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1184,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "One SerpAPI search per line (up to 20 places each), one per second. A failed search is counted in the daily summary instead of stopping the run. No Retry On Fail: n8n would repeat every search of the run, not just the failed one."
+    },
+    {
+      "id": "4064e940-b6ba-4482-a3ac-6e91df439771",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Flattens the SerpAPI results, removes duplicates and businesses already in the sheet.\nconst settings = $('Prospecting Settings').first().json;\n// (the Code node sandbox has no URL class, so domains are parsed with a regex)\nconst domainOf = url => String(url || '').trim().replace(/^[a-z]+:\\/\\//i, '').split(/[\\/?#:]/)[0].replace(/^www\\./i, '').toLowerCase();\nconst known = new Set();\nfor (const row of $('Read Lead Sheet').all()) {\n  const r = row.json;\n  if (r['Lead ID']) known.add(String(r['Lead ID']));\n  if (r.Website) known.add(domainOf(r.Website));\n}\n\nconst places = [];\nfor (const item of $input.all()) {\n  const res = item.json;\n  if (!Array.isArray(res.local_results)) continue;\n  for (const p of res.local_results) {\n    const id = p.place_id || p.data_id;\n    if (!id || known.has(id)) continue;\n    const website = p.website ? String(p.website).split('?')[0] : '';\n    const domain = website ? domainOf(website) : '';\n    if (domain && known.has(domain)) continue;\n    known.add(id);\n    if (domain) known.add(domain);\n    places.push({\n      lead_id: id,\n      name: p.title || '',\n      category: p.type || (p.types || [])[0] || '',\n      address: p.address || '',\n      phone: p.phone || '',\n      website,\n      domain,\n      rating: p.rating ?? '',\n      reviews: p.reviews ?? '',\n      maps_url: 'https://www.google.com/maps/place/?q=place_id:' + (p.place_id || ''),\n      search: res.search_parameters?.q || '',\n    });\n  }\n}\nreturn places.slice(0, Number(settings.max_new_leads_per_run) || 150).map(p => ({ json: p }));"
+      },
+      "name": "Collect New Places",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        0
+      ],
+      "notes": "Dedupes by Google place ID and by website domain, inside this run and against the sheet. Caps the run at max_new_leads_per_run."
+    },
+    {
+      "id": "2898b3fc-6bf5-485c-9884-d219de151439",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Fetches each website in code, so the raw HTML never lands in the execution log\n// (it would make every run tens of MB). Keeps emails, socials and a text excerpt.\nconst helpers = this.helpers;\nconst BAD = /\\.(png|jpe?g|gif|svg|webp|css|js)$|example\\.(com|org)|sentry|wixpress|godaddy|yourdomain|domain\\.com|@email\\.com/i;\nconst decode = s => s.replace(/&amp;/g, '&').replace(/&#0?64;|&commat;/g, '@').replace(/&quot;/g, '\"').replace(/&#0?39;/g, \"'\").replace(/&nbsp;/g, ' ');\n\nasync function get(url) {\n  try {\n    const body = await helpers.httpRequest({ method: 'GET', url, timeout: 12000, json: false, headers: { 'User-Agent': 'Mozilla/5.0 (compatible; lead-research)', 'Accept-Language': 'id,en;q=0.8' } });\n    return typeof body === 'string' ? body.slice(0, 500000) : '';\n  } catch (e) {\n    return null;\n  }\n}\nfunction read(html, domain) {\n  const clean = decode(html);\n  const text = decode(html.replace(/<(script|style|noscript)[\\s\\S]*?<\\/\\1>/gi, ' ').replace(/<[^>]+>/g, ' ')).replace(/\\s+/g, ' ').trim();\n  const found = new Set();\n  for (const m of clean.matchAll(/mailto:([^\"'?>\\s]+)/gi)) found.add(m[1].toLowerCase());\n  for (const m of text.matchAll(/[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}/gi)) found.add(m[0].toLowerCase());\n  const emails = [...found].filter(e => !BAD.test(e))\n    .sort((a, b) => Number(b.endsWith('@' + domain)) - Number(a.endsWith('@' + domain)));\n  const pick = re => (clean.match(re) || [])[0] || '';\n  const contact = (clean.match(/href=[\"']([^\"']*(contact|kontak|hubungi)[^\"']*)[\"']/i) || [])[1] || '';\n  return {\n    title: ((html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i) || [])[1] || '').trim().slice(0, 200),\n    description: (clean.match(/<meta[^>]+name=[\"']description[\"'][^>]*content=[\"']([^\"']*)/i) || [])[1] || '',\n    emails,\n    instagram: pick(/https?:\\/\\/(www\\.)?instagram\\.com\\/[A-Za-z0-9_.]+/i),\n    linkedin: pick(/https?:\\/\\/(www\\.)?linkedin\\.com\\/company\\/[A-Za-z0-9_-]+/i),\n    excerpt: text.slice(0, 2500),\n    contact,\n  };\n}\n\nconst items = $input.all();\nconst out = [];\nfor (let i = 0; i < items.length; i += 5) {\n  const chunk = items.slice(i, i + 5);\n  const done = await Promise.all(chunk.map(async item => {\n    const p = item.json;\n    if (!p.website) return { ...p, site_ok: false, site: { emails: [], excerpt: '' } };\n    const html = await get(p.website);\n    if (html === null) return { ...p, site_ok: false, site: { emails: [], excerpt: '' } };\n    let site = read(html, p.domain);\n    if (!site.emails.length && site.contact) {\n      const origin = (p.website.match(/^https?:\\/\\/[^\\/?#]+/i) || [''])[0];\n      const link = /^https?:/i.test(site.contact) ? site.contact : origin + (site.contact.startsWith('/') ? '' : '/') + site.contact;\n      const extra = await get(link);\n      if (extra) site.emails = read(extra, p.domain).emails;\n    }\n    return { ...p, site_ok: true, site };\n  }));\n  done.forEach((json, k) => out.push({ json, pairedItem: { item: i + k } }));\n}\nreturn out;"
+      },
+      "name": "Read Websites",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        0
+      ],
+      "notes": "Five sites at a time, 12 s timeout each. When the homepage has no email it tries the first contact page it links to."
+    },
+    {
+      "id": "537e95bf-3df1-4a46-a99c-a897e1e05df3",
+      "parameters": {
+        "promptType": "define",
+        "text": "=Business: {{ $json.name }} ({{ $json.category }})\nAddress: {{ $json.address }}\nGoogle rating: {{ $json.rating || 'n/a' }} from {{ $json.reviews || 0 }} reviews\nWebsite: {{ $json.website || 'none' }} {{ $json.site_ok ? '' : '(not readable)' }}\nWebsite title: {{ $json.site.title || '' }}\nWebsite description: {{ $json.site.description || '' }}\nEmails found: {{ $json.site.emails.join(', ') || 'none' }}\nWebsite text (excerpt): {{ $json.site.excerpt || 'none' }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You qualify B2B leads for this offer: {{ $('Prospecting Settings').first().json.offer }}\nIdeal customer: {{ $('Prospecting Settings').first().json.ideal_customer }}\n\nScore how well the business fits (0 = clearly not a fit, 100 = perfect fit). Judge only from the facts given; when the website is missing, be conservative.\n- personalization_hook: one concrete, verifiable detail from the website or the listing to open an email with (a service, a location, a claim). Empty when there is none. Never invent details.\n- best_email: the best address from \"Emails found\" to contact the owner or manager, or \"\" when none fits. Prefer named or generic business addresses on the company domain over personal webmail.\n- email_language: the language of the website, \"Indonesian\" or \"English\".\nReturn only JSON matching the schema."
+            }
+          ]
+        },
+        "batching": {
+          "batchSize": 5,
+          "delayBetweenBatches": 0
+        }
+      },
+      "name": "Score Lead",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1920,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "One short AI call per new lead, five in parallel. A failed call gives the lead score 0 and the reason, so it is still saved."
+    },
+    {
+      "id": "d16167ce-1dd2-4199-aa2c-34ee321bf45c",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low",
+          "maxRetries": 3,
+          "timeout": 90000
+        }
+      },
+      "name": "OpenAI · Scoring Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1920,
+        224
+      ],
+      "notes": "Low reasoning effort is enough for scoring. Max Retries handles 429 / 5xx."
+    },
+    {
+      "id": "2c6d1741-e338-4a06-876b-01fabc98b586",
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"fit_score\": {\n      \"type\": \"integer\",\n      \"minimum\": 0,\n      \"maximum\": 100\n    },\n    \"fit_reason\": {\n      \"type\": \"string\",\n      \"description\": \"One sentence\"\n    },\n    \"segment\": {\n      \"type\": \"string\",\n      \"description\": \"Two to four words, e.g. \\\"dental clinic, 2 branches\\\"\"\n    },\n    \"company_summary\": {\n      \"type\": \"string\",\n      \"description\": \"One or two sentences\"\n    },\n    \"personalization_hook\": {\n      \"type\": \"string\"\n    },\n    \"best_email\": {\n      \"type\": \"string\"\n    },\n    \"email_language\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"Indonesian\",\n        \"English\"\n      ]\n    }\n  },\n  \"required\": [\n    \"fit_score\",\n    \"fit_reason\",\n    \"segment\",\n    \"company_summary\",\n    \"personalization_hook\",\n    \"best_email\",\n    \"email_language\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "name": "Lead Score Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2064,
+        224
+      ],
+      "notes": "autoFix repairs malformed JSON once with the fixer model."
+    },
+    {
+      "id": "d0776dc2-c4f4-4cda-b6f5-4a446a903472",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "maxRetries": 2,
+          "timeout": 60000
+        }
+      },
+      "name": "OpenAI · Scoring Fixer",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2096,
+        416
+      ],
+      "notes": "Only called when the model returns JSON that does not match Lead Score Schema. \"Use Responses API\" is off on purpose: the auto-fix step reads this model's reply as plain text."
+    },
+    {
+      "id": "66c450e4-5529-4aee-9772-1fa54122e808",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ed8ed60-af8f-42f2-8a77-46cffd0768cc",
+              "name": "Lead ID",
+              "value": "={{ $('Read Websites').item.json.lead_id }}",
+              "type": "string"
+            },
+            {
+              "id": "d59e1cdb-fb1a-4389-924a-087c3f7b6dab",
+              "name": "Found At",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "6077002f-3c61-457b-9220-809113167a89",
+              "name": "Name",
+              "value": "={{ $('Read Websites').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "a923ba89-52cb-4612-bce2-6c6001afaeb0",
+              "name": "Category",
+              "value": "={{ $('Read Websites').item.json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "7a381436-347f-430e-b1a6-67a784c8324e",
+              "name": "Address",
+              "value": "={{ $('Read Websites').item.json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "ee0f8948-2f67-4701-86f2-45687faf7f8f",
+              "name": "Phone",
+              "value": "={{ $('Read Websites').item.json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "a898019e-8a18-48f5-be46-9cf50293c910",
+              "name": "Website",
+              "value": "={{ $('Read Websites').item.json.website }}",
+              "type": "string"
+            },
+            {
+              "id": "9f8a89a7-8f77-4502-ae01-47ce46bfd59c",
+              "name": "Email",
+              "value": "={{ (() => { const o = $json.output; const found = $('Read Websites').item.json.site.emails; return o?.best_email && found.includes(o.best_email.toLowerCase()) ? o.best_email.toLowerCase() : (found[0] || ''); })() }}",
+              "type": "string"
+            },
+            {
+              "id": "ff5328fb-bdfd-472b-b624-2592d73da83b",
+              "name": "Other Emails",
+              "value": "={{ $('Read Websites').item.json.site.emails.slice(1, 4).join(', ') }}",
+              "type": "string"
+            },
+            {
+              "id": "12732c19-4a4c-4edd-8c3a-e8c8f6d2ac33",
+              "name": "Instagram",
+              "value": "={{ $('Read Websites').item.json.site.instagram || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "e3be530a-5436-41c7-847a-a5b9dc0ce2e7",
+              "name": "Rating",
+              "value": "={{ $('Read Websites').item.json.rating }}",
+              "type": "string"
+            },
+            {
+              "id": "2786d0e2-4f63-40cd-af91-58989eca3422",
+              "name": "Reviews",
+              "value": "={{ $('Read Websites').item.json.reviews }}",
+              "type": "string"
+            },
+            {
+              "id": "0d3cabe2-bf0b-4529-9ae5-f6b22723d19c",
+              "name": "Maps URL",
+              "value": "={{ $('Read Websites').item.json.maps_url }}",
+              "type": "string"
+            },
+            {
+              "id": "9ffd4107-ebab-4754-bc78-d5406371bca8",
+              "name": "Fit Score",
+              "value": "={{ $json.output?.fit_score ?? 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "5ceb2b41-fc1e-4b0b-8065-0eed09ee2a1f",
+              "name": "Fit Reason",
+              "value": "={{ $json.output?.fit_reason ?? ('Scoring failed: ' + String($json.error ?? 'no output').slice(0, 150)) }}",
+              "type": "string"
+            },
+            {
+              "id": "fefe80df-e958-4cab-90b1-fdb29d3dbafd",
+              "name": "Segment",
+              "value": "={{ $json.output?.segment ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "354f5081-a0a5-4867-a776-bae11098a4b4",
+              "name": "Summary",
+              "value": "={{ $json.output?.company_summary ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "de61ae77-886f-4984-8f84-9f8b2f81f735",
+              "name": "Hook",
+              "value": "={{ $json.output?.personalization_hook ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "554e08c5-fe92-4d64-99dd-06a68f11792d",
+              "name": "Language",
+              "value": "={{ $json.output?.email_language ?? 'English' }}",
+              "type": "string"
+            },
+            {
+              "id": "9df9b80d-9847-4b0c-a82d-4bf29ff2bd78",
+              "name": "Status",
+              "value": "={{ (() => {\n  const score = $json.output?.fit_score ?? 0;\n  const found = $('Read Websites').item.json.site.emails;\n  if (score < $('Prospecting Settings').first().json.min_fit_score) return 'Low fit';\n  return found.length ? 'New' : 'No email';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "550a0061-6f9d-4c92-a567-062c36ffd0d9",
+              "name": "Contacted At",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "15e68fb3-3027-4718-9eca-622932d47397",
+              "name": "Follow-ups",
+              "value": "0",
+              "type": "number"
+            },
+            {
+              "id": "ffe013cf-1b47-4262-aee7-4449c6e27054",
+              "name": "Thread ID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "039ca974-6763-4b71-b74a-1359a8a01c19",
+              "name": "Message ID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "9d757a69-2987-4c4f-8f1e-016e66d74df8",
+              "name": "Last Step",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "76f6c904-34be-4859-8333-4c43b08646d8",
+              "name": "Search",
+              "value": "={{ $('Read Websites').item.json.search }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Lead Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        0
+      ],
+      "notes": "Field names = Leads sheet headers. Only \"New\" leads (fit and an email) are emailed. The email must be one the website actually shows, so the AI cannot invent an address."
+    },
+    {
+      "id": "f7a9d2fb-fc81-41a3-8d79-31ef48e5284c",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Save Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2656,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "One append call for all new leads. Headers are created on an empty tab."
+    },
+    {
+      "id": "8341ea1e-c320-4439-816a-c69e0ad8aeb6",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Prospecting Settings').first().json.report_email }}",
+        "subject": "={{ 'Lead finder · ' + $('Build Lead Row').all().filter(i => i.json.Status === 'New').length + ' new leads ready for outreach' }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const rows = $('Build Lead Row').all().map(i => i.json);\n  const searches = $('Search Google Maps').all();\n  const failed = searches.filter(i => !Array.isArray(i.json.local_results)).length;\n  const count = s => rows.filter(r => r.Status === s).length;\n  const top = rows.filter(r => r.Status === 'New').sort((a, b) => b['Fit Score'] - a['Fit Score']).slice(0, 10);\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\">' +\n    '<p>' + searches.length + ' searches' + (failed ? ' (<b>' + failed + ' failed</b>, check the SerpAPI quota)' : '') + ' · ' + rows.length + ' new businesses · ' +\n    count('New') + ' ready for outreach · ' + count('No email') + ' without email · ' + count('Low fit') + ' low fit</p>' +\n    (top.length ? '<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\"><tr><th align=\"left\">Score</th><th align=\"left\">Business</th><th align=\"left\">Why</th></tr>' +\n      top.map(r => '<tr><td>' + r['Fit Score'] + '</td><td><a href=\"' + esc(r['Maps URL']) + '\">' + esc(r.Name) + '</a><br><small>' + esc(r.Segment) + '</small></td><td>' + esc(r['Fit Reason']) + '</td></tr>').join('') + '</table>' : '') +\n    '<p style=\"color:#666\">Outreach sends these on weekdays, a few per hour.</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Daily Summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true,
+      "notes": "Runs only when the run found new businesses."
+    },
+    {
+      "id": "9ce0a836-f99d-4cad-8006-7720246dee5f",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "5 9-16 * * 1-5"
+            }
+          ]
+        }
+      },
+      "name": "Every Weekday Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        832
+      ],
+      "notes": "Weekdays at 09:05–16:05 (workflow time zone). Small hourly batches look like a person writing, not a blast."
+    },
+    {
+      "id": "479c0822-0ffc-4461-8ced-20bf5e329ef3",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7586bc4-31b5-4adb-8f66-5e778c519256",
+              "name": "emails_per_hour",
+              "value": 5,
+              "type": "number"
+            },
+            {
+              "id": "c7f4771e-424b-4e41-b01d-18a5ee44dd2c",
+              "name": "followup_after_days",
+              "value": 4,
+              "type": "number"
+            },
+            {
+              "id": "ad1d07d6-2596-4174-88a3-9b5240cc26bb",
+              "name": "max_followups",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "7df68f39-0dcd-4cdc-8973-2cae844fe285",
+              "name": "min_fit_score",
+              "value": 60,
+              "type": "number"
+            },
+            {
+              "id": "590bfe2e-f4c2-4be0-beeb-7f9326073173",
+              "name": "sender_name",
+              "value": "Your Name",
+              "type": "string"
+            },
+            {
+              "id": "2151f221-6d87-42de-aa74-a87fc3f81eaa",
+              "name": "sender_company",
+              "value": "Your Company",
+              "type": "string"
+            },
+            {
+              "id": "2b39b1f7-6896-45f1-9a6d-b15a1c939b94",
+              "name": "offer",
+              "value": "We set up WhatsApp booking assistants that answer customers 24/7 and fill the calendar.",
+              "type": "string"
+            },
+            {
+              "id": "a8f76e51-698d-4052-a64e-6a61d0e2ea84",
+              "name": "call_to_action",
+              "value": "Would a 15-minute call next week be useful?",
+              "type": "string"
+            },
+            {
+              "id": "37271f8b-8c0e-4248-a5b4-e42099d819d1",
+              "name": "booking_link",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "b8e34f23-0bf9-462c-bb9d-bdd3b01f973a",
+              "name": "stop_words",
+              "value": "stop,unsubscribe,remove me,not interested,no thanks,berhenti,tidak tertarik,jangan kirim",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Outreach Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        832
+      ],
+      "notes": "EDIT ME. 5 emails per hour × 8 hours = up to 40 per weekday per Gmail account, a safe volume for a warm mailbox. booking_link is optional."
+    },
+    {
+      "id": "43ca515e-84f3-4739-8c5a-f3a4167ddd7e",
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 200,
+        "simple": true,
+        "filters": {
+          "q": "in:inbox newer_than:30d -from:me",
+          "readStatus": "both"
+        }
+      },
+      "name": "Find Replies",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        832
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "notes": "Inbox mail of the last 30 days. Replies stop the sequence; stop words mark the lead as opted out."
+    },
+    {
+      "id": "f63204b2-e194-486a-9d66-a62d128f0602",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        832
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "The whole lead list. Fine for a few thousand rows; archive old rows beyond that."
+    },
+    {
+      "id": "4ef0b5ee-1857-4c5e-bb0c-80877f6f2aaf",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Decides, per lead, whether to record a reply, send a first email or send a follow-up.\nconst cfg = $('Outreach Settings').first().json;\nconst stopWords = String(cfg.stop_words).split(',').map(s => s.trim().toLowerCase()).filter(Boolean);\nconst replies = new Map();\nfor (const m of $('Find Replies').all()) {\n  const from = String(m.json.From ?? m.json.from ?? '');\n  const email = ((from.match(/<([^>]+)>/) || [])[1] || from).trim().toLowerCase();\n  if (email) replies.set(email, String(m.json.snippet ?? '').toLowerCase());\n}\nconst leads = $input.all().map(i => i.json).filter(r => r['Lead ID']);\nconst out = [];\nfor (const lead of leads) {\n  const email = String(lead.Email || '').toLowerCase();\n  if (['Contacted', 'Followed up'].includes(lead.Status) && replies.has(email)) {\n    const snippet = replies.get(email);\n    out.push({ action: 'reply', status: stopWords.some(w => snippet.includes(w)) ? 'Opted out' : 'Replied', lead });\n  }\n}\nconst now = DateTime.now();\nconst followups = leads.filter(l => l.Status === 'Contacted' && !replies.has(String(l.Email).toLowerCase())\n  && Number(l['Follow-ups'] || 0) < cfg.max_followups && l['Message ID']\n  && l['Contacted At'] && now.diff(DateTime.fromISO(l['Contacted At']), 'days').days >= cfg.followup_after_days);\nconst firsts = leads.filter(l => l.Status === 'New' && l.Email && Number(l['Fit Score']) >= cfg.min_fit_score)\n  .sort((a, b) => Number(b['Fit Score']) - Number(a['Fit Score']));\nlet budget = Number(cfg.emails_per_hour) || 5;\nfor (const lead of followups) { if (budget-- <= 0) break; out.push({ action: 'followup', lead }); }\nfor (const lead of firsts) { if (budget-- <= 0) break; out.push({ action: 'first', lead }); }\nreturn out.map(json => ({ json }));"
+      },
+      "name": "Plan Outreach",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        832
+      ],
+      "notes": "Follow-ups go first, then the best-scoring new leads, within emails_per_hour. Leads that replied are never emailed again."
+    },
+    {
+      "id": "27da141f-50af-4503-a611-4f926adad6df",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c06d8160-702a-4690-b3fd-bd853a3aa9a4",
+                    "leftValue": "={{ $json.action === 'reply' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reply received"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "568206bc-e9e1-45fc-9bc3-9c665bd1283d",
+                    "leftValue": "={{ $json.action === 'first' || $json.action === 'followup' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Send email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Route by Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        832
+      ]
+    },
+    {
+      "id": "24d2f17d-f0f1-47e3-b120-28dbdf52868a",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $json.lead['Lead ID'] }}",
+            "Status": "={{ $json.status }}",
+            "Last Step": "={{ $json.status + ' ' + $now.toFormat('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [
+            "Lead ID"
+          ],
+          "schema": [
+            {
+              "id": "Lead ID",
+              "displayName": "Lead ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Step",
+              "displayName": "Last Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Mark Replied",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        832
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Replied leads are yours to answer in Gmail; the workflow stops emailing them."
+    },
+    {
+      "id": "e8510d80-7b46-40c6-81af-fb9e9b950756",
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Loop Over Leads",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1408,
+        1152
+      ],
+      "notes": "One lead per pass: a retried Gmail send then only repeats that lead, never the whole batch."
+    },
+    {
+      "id": "65843ffb-216b-4b82-82de-45e2ca7546e5",
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.action === 'followup' ? 'Write a FOLLOW-UP to the email below that got no reply.' : 'Write the FIRST cold email to this business.' }}\n\nBusiness: {{ $json.lead.Name }} ({{ $json.lead.Segment || $json.lead.Category }})\nSummary: {{ $json.lead.Summary }}\nPersonalization hook: {{ $json.lead.Hook || 'none' }}\nWhy they fit: {{ $json.lead['Fit Reason'] }}\nLanguage: {{ $json.lead.Language || 'English' }}\n{{ $json.action === 'followup' ? 'Earlier email subject: ' + $json.lead['Last Step'] : '' }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You write short, personal B2B emails for {{ $('Outreach Settings').first().json.sender_name }} from {{ $('Outreach Settings').first().json.sender_company }}.\nOffer: {{ $('Outreach Settings').first().json.offer }}\n\nRules:\n- Write in the requested language. Plain text, no markdown, no emojis, no links except {{ $('Outreach Settings').first().json.booking_link || 'none (do not add links)' }}.\n- First email: subject under 7 words, body 60–110 words. Open with the personalization hook in your own words (skip it if it is \"none\"), connect it to one problem the offer solves, end with this call to action: {{ $('Outreach Settings').first().json.call_to_action }}\n- Follow-up: body 25–50 words, friendly, adds one new reason, same call to action. Subject is ignored (it is sent as a reply in the same thread).\n- Never claim to have used their product, never invent facts, numbers or clients.\n- Sign with {{ $('Outreach Settings').first().json.sender_name }}, {{ $('Outreach Settings').first().json.sender_company }}.\n- Add one last line saying they can reply \"stop\" and you will not email again (in the same language).\nReturn only JSON matching the schema."
+            }
+          ]
+        }
+      },
+      "name": "Write Email",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1696,
+        1152
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Writes both first emails and follow-ups. A failed call skips that lead this hour (no email is sent)."
+    },
+    {
+      "id": "95408530-a0eb-49d1-aa63-db6329e082d1",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low",
+          "maxRetries": 3,
+          "timeout": 90000
+        }
+      },
+      "name": "OpenAI · Writing Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1696,
+        1376
+      ],
+      "notes": "Max Retries handles 429 / 5xx."
+    },
+    {
+      "id": "2848687b-e159-4fb3-96a9-1037dadfc6df",
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"subject\": {\n      \"type\": \"string\"\n    },\n    \"body\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"subject\",\n    \"body\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "name": "Email Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1840,
+        1376
+      ],
+      "notes": "Subject and plain-text body."
+    },
+    {
+      "id": "0f1228b5-0ef8-485e-9f8d-6cacd176712f",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "maxRetries": 2,
+          "timeout": 60000
+        }
+      },
+      "name": "OpenAI · Writing Fixer",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1872,
+        1568
+      ],
+      "notes": "Only called when the model returns JSON that does not match Email Schema. \"Use Responses API\" is off on purpose: the auto-fix step reads this model's reply as plain text."
+    },
+    {
+      "id": "2f4ea514-52bc-4954-bcdc-6ae8716a6049",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6c69d41f-6957-4a2a-815b-0afd9705e4b9",
+              "leftValue": "={{ !!$json.output?.body && !!$('Loop Over Leads').item.json.lead.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Email Written?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2208,
+        1152
+      ],
+      "notes": "Skips leads whose email could not be written this hour; they are picked again next hour."
+    },
+    {
+      "id": "b4f9a4e5-c82b-4b2b-87ae-1ca32a2c1f93",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e58a4871-c3db-40c2-abbe-60b1c7cc20d0",
+              "leftValue": "={{ $('Loop Over Leads').item.json.action === 'followup' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Is Follow-up?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2432,
+        1152
+      ]
+    },
+    {
+      "id": "011ad5da-d261-415f-a2f5-ed1376e2f435",
+      "parameters": {
+        "resource": "thread",
+        "operation": "reply",
+        "threadId": "={{ $('Loop Over Leads').item.json.lead['Thread ID'] }}",
+        "messageId": "={{ $('Loop Over Leads').item.json.lead['Message ID'] }}",
+        "emailType": "text",
+        "message": "={{ $json.output.body }}",
+        "options": {
+          "replyToRecipientsOnly": true,
+          "senderName": "={{ $('Outreach Settings').first().json.sender_name }}"
+        }
+      },
+      "name": "Send Follow-up",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2656,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Replies in the thread of the first email. \"Reply to recipients only\" keeps your own address out of the To field."
+    },
+    {
+      "id": "af9aae78-008f-4e4a-a09d-6fa12571dac0",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Loop Over Leads').item.json.lead.Email }}",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.body }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ $('Outreach Settings').first().json.sender_name }}"
+        }
+      },
+      "name": "Send First Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2656,
+        1376
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Plain text, no tracking pixel: it reads like a personal email."
+    },
+    {
+      "id": "1b1947e2-a008-4b2f-bc19-1f86e098d2ab",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $('Loop Over Leads').item.json.lead['Lead ID'] }}",
+            "Follow-ups": "={{ Number($('Loop Over Leads').item.json.lead['Follow-ups'] || 0) + 1 }}",
+            "Status": "={{ Number($('Loop Over Leads').item.json.lead['Follow-ups'] || 0) + 1 >= $('Outreach Settings').first().json.max_followups ? 'Followed up' : 'Contacted' }}"
+          },
+          "matchingColumns": [
+            "Lead ID"
+          ],
+          "schema": [
+            {
+              "id": "Lead ID",
+              "displayName": "Lead ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Follow-ups",
+              "displayName": "Follow-ups",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Mark Followed Up",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2880,
+        1152
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "\"Followed up\" ends the sequence once max_followups is reached; a reply still marks the lead Replied."
+    },
+    {
+      "id": "db0134bd-4bb1-4df0-a82e-7fd6aba4f731",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead ID": "={{ $('Loop Over Leads').item.json.lead['Lead ID'] }}",
+            "Status": "Contacted",
+            "Contacted At": "={{ $now.toISO() }}",
+            "Thread ID": "={{ $json.threadId }}",
+            "Message ID": "={{ $json.id }}",
+            "Last Step": "={{ $('Write Email').item.json.output.subject }}"
+          },
+          "matchingColumns": [
+            "Lead ID"
+          ],
+          "schema": [
+            {
+              "id": "Lead ID",
+              "displayName": "Lead ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Contacted At",
+              "displayName": "Contacted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thread ID",
+              "displayName": "Thread ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message ID",
+              "displayName": "Message ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Step",
+              "displayName": "Last Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Mark Contacted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2880,
+        1376
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Stores the Gmail message ID so the follow-up lands in the same thread."
+    },
+    {
+      "id": "1c77426e-8b03-4576-b312-6b40dd9e3b08",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1984
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "255db750-7357-4ecc-aa21-73a7371b96c7",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93cca48b-97e2-4e66-affa-cf73ab216fc8",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1984
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "c2838d33-167c-40b4-88a0-0c88583169de",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf885060-510d-472a-9c80-ee53a31f35cf",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "a645f5b7-1661-44a0-a9a4-2c44b74ebe12",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "2dbbaa77-0cc4-4df2-b2f7-2ada7821fd98",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "80711a26-f81f-4a58-808e-d997477f6956",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "41bc901e-6b28-4f2c-90c2-55302210e771",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "9e6d0535-11fa-45ff-87a2-8008222fa202",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "119b6ccc-6cbd-4380-baca-223ac4f1f9ea",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "04d79ac0-758c-4509-88d2-1a8958d86d33",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "d034719c-dc55-42cd-af51-d73461b8098a",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "567ad4fc-35e3-4e1b-b9de-140b8d118b6f",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "6ca888b1-526b-4fe4-a339-2b36488be13e",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "91568549-25a8-4a0b-933d-36441b9b39d9",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "0b5d3b0d-407d-4ada-8925-6c7ea3841698",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        1984
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "5610dea2-60c7-4254-8e16-54d0908b948c",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        1984
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "28d6f93c-6d1b-4aaa-8072-aac7c4f019cd",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6b433492-646a-41fa-b739-b741fa9567ce",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "bee8a972-5426-4551-8a96-0ba77fad3cb7",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "b0be5bfd-4f33-4815-8d95-6613bb9985be",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "5dec8263-66b4-44f3-a5b3-d0ea1248aad5",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "e5a60b58-3b32-444a-a0a3-dc06d3e089ce",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "08914a84-d675-4d36-ae27-fd34e0b66904",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "a56e785e-de60-493f-87f8-78644e18a854",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "acd272e0-5537-4acb-a72b-a19e5736e006",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        1984
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "84601642-77bf-4422-af4c-deec09cab9ad",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        1984
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "Every Day at 07:00": {
+      "main": [
+        [
+          {
+            "node": "Prospecting Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prospecting Settings": {
+      "main": [
+        [
+          {
+            "node": "Read Lead Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Lead Sheet": {
+      "main": [
+        [
+          {
+            "node": "Build Search Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Search Jobs": {
+      "main": [
+        [
+          {
+            "node": "One Item per Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One Item per Search": {
+      "main": [
+        [
+          {
+            "node": "Search Google Maps",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Google Maps": {
+      "main": [
+        [
+          {
+            "node": "Collect New Places",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect New Places": {
+      "main": [
+        [
+          {
+            "node": "Read Websites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Websites": {
+      "main": [
+        [
+          {
+            "node": "Score Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Lead": {
+      "main": [
+        [
+          {
+            "node": "Build Lead Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Lead Row": {
+      "main": [
+        [
+          {
+            "node": "Save Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Leads": {
+      "main": [
+        [
+          {
+            "node": "Email Daily Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Scoring Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Score Lead",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Score Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Score Lead",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Scoring Fixer": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead Score Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Weekday Hour": {
+      "main": [
+        [
+          {
+            "node": "Outreach Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outreach Settings": {
+      "main": [
+        [
+          {
+            "node": "Find Replies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Replies": {
+      "main": [
+        [
+          {
+            "node": "Read Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Leads": {
+      "main": [
+        [
+          {
+            "node": "Plan Outreach",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Outreach": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Mark Replied",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Leads": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Write Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Writing Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Write Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Writing Fixer": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Email": {
+      "main": [
+        [
+          {
+            "node": "Email Written?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Written?": {
+      "main": [
+        [
+          {
+            "node": "Is Follow-up?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Follow-up?": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send First Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Mark Followed Up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send First Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Contacted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Followed Up": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Contacted": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

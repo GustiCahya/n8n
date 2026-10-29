@@ -1,0 +1,3721 @@
+{
+  "name": "Answer WhatsApp sales chats with an AI agent, a Google Sheets catalog and lead capture",
+  "nodes": [
+    {
+      "id": "65f72156-ff8f-47ca-a9ba-a50fdb93e7c9",
+      "parameters": {
+        "content": "## Answer WhatsApp sales chats with an AI agent, a Google Sheets catalog and lead capture\n\n### How it works\n1. The WhatsApp trigger receives each customer message. Repeats are skipped and voice notes are transcribed.\n2. Messages sent in quick succession are grouped, so the customer gets one answer.\n3. An OpenAI agent reads the chat history, searches your Google Sheets catalog and replies like a sales assistant.\n4. Every reply updates the lead row in Google Sheets. Confirmed orders go to an Orders tab and to your team by email.\n5. Complaints or requests for a person hand the chat to your team, who reply from a protected n8n form.\n6. Quiet warm leads get one follow-up before the 24-hour WhatsApp window closes.\n\n### Setup steps\n- [ ] Add **WhatsApp OAuth** (trigger), **WhatsApp API**, **OpenAI**, **Google Sheets**, **Gmail** and **Basic Auth** credentials.\n- [ ] Create Data Tables `wa_messages` (phone, message_id, direction, text, status, received_at) and `wa_contacts` (phone, name, phone_number_id, stage, mode, human_until, last_inbound_at, followup_sent), all *String*.\n- [ ] Create a spreadsheet with a `Products` tab (SKU, Name, Category, Price, Stock, Description, Link) and empty `Leads`, `Orders` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Edit **Sales Settings**, save, then activate.\n\n### Customization\nChange the selling rules in the **Sales Agent** system message.",
+        "height": 736,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "00e96a2f-bf14-43d6-8684-bb26039fdf0f",
+      "parameters": {
+        "content": "## Receive WhatsApp messages\nDrops status updates and repeated deliveries.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "1b42ae61-8763-48b1-abfa-95158337d8e8",
+      "parameters": {
+        "content": "## Route by message type\nText goes on, voice notes get transcribed.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        -112
+      ]
+    },
+    {
+      "id": "8816a914-6fff-420f-8487-92cfea077150",
+      "parameters": {
+        "content": "## Transcribe voice notes\nOther media gets a polite text reply.",
+        "height": 496,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        176
+      ]
+    },
+    {
+      "id": "af90fcdc-82d2-4120-a4a9-f6f724066de2",
+      "parameters": {
+        "content": "## Wait for message bursts\nSeveral quick messages get one answer.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        -112
+      ]
+    },
+    {
+      "id": "86f68f05-c5ef-4edb-9f12-d47bd2692a72",
+      "parameters": {
+        "content": "## Claim the waiting messages\nSkips the AI while a person handles the chat.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3248,
+        -112
+      ]
+    },
+    {
+      "id": "f6a2fb20-0b86-4bfd-a476-64e759d12ee7",
+      "parameters": {
+        "content": "## Alert staff in human mode\nForwards new messages by email.",
+        "height": 336,
+        "width": 240,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4144,
+        224
+      ]
+    },
+    {
+      "id": "cd634b40-73b7-473a-a730-34677ec0fff1",
+      "parameters": {
+        "content": "## Load the chat history\nEarlier turns from the Data Table.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4208,
+        -112
+      ]
+    },
+    {
+      "id": "9a39c2cf-c3d8-4364-b06d-971949f9c401",
+      "parameters": {
+        "content": "## Reply with the AI agent\nSearches the catalog and returns a reply plus lead data.",
+        "height": 672,
+        "width": 624,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4704,
+        -112
+      ]
+    },
+    {
+      "id": "6eefc781-ec2c-415b-bc3e-cdc674e4857e",
+      "parameters": {
+        "content": "## Send the reply\nFalls back to a safe reply if the AI fails.",
+        "height": 496,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5360,
+        -112
+      ]
+    },
+    {
+      "id": "d545fbed-252c-4677-80a7-5a577bb36a64",
+      "parameters": {
+        "content": "## Save the conversation\nLogs the reply and updates the chat state.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6096,
+        -112
+      ]
+    },
+    {
+      "id": "d5c3d1bf-a41e-4f29-b7c9-17a6c565d19a",
+      "parameters": {
+        "content": "## Update the lead sheet\nOne row per customer in Google Sheets.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6832,
+        -112
+      ]
+    },
+    {
+      "id": "07580448-d3b6-45d0-90f9-2da5556f3ee9",
+      "parameters": {
+        "content": "## Notify staff\nEmails handoffs and new orders.",
+        "height": 272,
+        "width": 416,
+        "color": 7
+      },
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        7344,
+        -112
+      ]
+    },
+    {
+      "id": "14614287-b37d-4412-81c7-7d961431cc2e",
+      "parameters": {
+        "content": "## Record confirmed orders\nAdds the order to the Orders sheet.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        7344,
+        208
+      ]
+    },
+    {
+      "id": "b13b5994-8b17-43c1-9343-ec3322189564",
+      "parameters": {
+        "content": "## Staff replies from a form\nLinked from every staff email.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note14",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        848
+      ]
+    },
+    {
+      "id": "e579df00-c847-44ce-bdf7-92d1b3c8366c",
+      "parameters": {
+        "content": "## Send the staff reply\nPauses the AI or hands the chat back.",
+        "height": 720,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        848
+      ]
+    },
+    {
+      "id": "0342ffd3-cd2a-4432-a769-24b75f646767",
+      "parameters": {
+        "content": "## Find chats to follow up\nWarm leads quiet for 20 hours.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1744
+      ]
+    },
+    {
+      "id": "3dc3d038-50e9-43d2-a5e1-df083bc637f2",
+      "parameters": {
+        "content": "## Send one follow-up\nBefore the 24-hour window closes.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note17",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        1744
+      ]
+    },
+    {
+      "id": "35fe5fb0-56f5-451b-885a-7236da9a7556",
+      "parameters": {
+        "content": "## Search the product catalog\nThe tool the agent calls for products.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note18",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        2128
+      ]
+    },
+    {
+      "id": "7dfe9099-6454-432c-a1f4-a04490088c77",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note19",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        2512
+      ]
+    },
+    {
+      "id": "f7b4aef1-2e35-490b-b03e-7c8bdecc199f",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note20",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        2512
+      ]
+    },
+    {
+      "id": "a0931f3d-7fc6-452f-9426-c28e6a7c91a4",
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {
+          "messageStatusUpdates": []
+        }
+      },
+      "name": "WhatsApp Trigger",
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "44f4fd7e-dfbd-40f5-8ea1-74fd540a2ea3",
+      "notes": "Receives customer messages from the WhatsApp Business Cloud API. \"Message status updates\" is empty, so sent/delivered/read callbacks never start an execution. Meta allows one webhook URL per app: use a Meta app dedicated to this workflow."
+    },
+    {
+      "id": "7a6cda15-aee1-4474-a4ff-b2483f66446f",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e2d9f70d-fbb5-4dd1-8b41-bf80bc240b84",
+              "name": "phone",
+              "value": "={{ $json.messages?.[0]?.from ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f0586f7c-0a62-4fe1-ba38-97cf122af665",
+              "name": "name",
+              "value": "={{ $json.contacts?.[0]?.profile?.name ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "766ce2ea-a65b-4a2b-a0c3-52ea28e642ab",
+              "name": "message_id",
+              "value": "={{ $json.messages?.[0]?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "f71cb95f-537a-46b8-8399-1df39cde04c0",
+              "name": "type",
+              "value": "={{ $json.messages?.[0]?.type ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c3aac56d-6bfa-44a7-b01a-5057222a4473",
+              "name": "text",
+              "value": "={{ (() => {\n  const m = $json.messages?.[0] ?? {};\n  if (m.type === 'text') return String(m.text?.body ?? '').trim();\n  if (m.type === 'button') return String(m.button?.text ?? '').trim();\n  if (m.type === 'interactive') return String(m.interactive?.button_reply?.title ?? m.interactive?.list_reply?.title ?? '').trim();\n  return '';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "9ac66ebe-c69d-4074-84e9-783224d2f7db",
+              "name": "media_id",
+              "value": "={{ $json.messages?.[0]?.audio?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "5f45301d-de76-4ac9-90e7-66289a01d923",
+              "name": "phone_number_id",
+              "value": "={{ $json.metadata?.phone_number_id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "0d4f96fb-9b8e-4c5c-ba1c-0941f25a6671",
+              "name": "received_at",
+              "value": "={{ $json.messages?.[0]?.timestamp ? DateTime.fromSeconds(Number($json.messages[0].timestamp)).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Read Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "notes": "One message per webhook call (WhatsApp sends them one by one). Buttons and list replies are read as text."
+    },
+    {
+      "id": "c2d369a7-f8dd-4455-8c44-485ef0a3f83f",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "51f4d7e6-4e92-4eef-9d05-f788c2b638fc",
+              "leftValue": "={{ !!$json.message_id && !!$json.phone && !!$json.phone_number_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Is Customer Message?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "notes": "Drops webhook events without a customer message (for example account or error notifications)."
+    },
+    {
+      "id": "7d83b61f-8216-42d5-8371-d1370d133d13",
+      "parameters": {
+        "operation": "removeItemsSeenInPreviousExecutions",
+        "logic": "removeItemsWithAlreadySeenKeyValues",
+        "dedupeValue": "={{ $json.message_id }}",
+        "options": {
+          "historySize": 10000
+        }
+      },
+      "name": "Skip Duplicates",
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "notes": "Meta re-delivers a webhook when it is not acknowledged in time. Message IDs already handled in an earlier execution are dropped here, so a customer never gets two answers."
+    },
+    {
+      "id": "fffc5f5d-aa84-4b9e-9799-aaa8f697517a",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "861175c8-645b-4827-b5c0-1f6f9f4c42fb",
+              "name": "business_name",
+              "value": "Your Store",
+              "type": "string"
+            },
+            {
+              "id": "1dea48f1-f1ca-4d78-8089-fea2aeba766f",
+              "name": "assistant_name",
+              "value": "Ayu",
+              "type": "string"
+            },
+            {
+              "id": "c2f4f601-2f49-488d-a46f-a13c4e722a71",
+              "name": "reply_language",
+              "value": "the customer's language (Indonesian when unsure)",
+              "type": "string"
+            },
+            {
+              "id": "8a59b23e-68d7-4044-be02-4f678caa255b",
+              "name": "currency",
+              "value": "IDR",
+              "type": "string"
+            },
+            {
+              "id": "e7cb854e-504e-4e33-83f4-37cfe5c3f3eb",
+              "name": "business_info",
+              "value": "Opening hours: Monday–Saturday 09:00–18:00 (WIB).\nShipping: from Jakarta with JNE or J&T, 1–3 days within Java.\nPayment: bank transfer or QRIS. Our admin confirms every order and sends the payment details.\nReturns: within 7 days for unused items with the receipt.",
+              "type": "string"
+            },
+            {
+              "id": "555e5d64-b3cb-40b8-a05c-dea407ccae70",
+              "name": "debounce_seconds",
+              "value": 8,
+              "type": "number"
+            },
+            {
+              "id": "9400ef7a-fedf-4a43-9d1f-1ef9c36c677a",
+              "name": "history_messages",
+              "value": 20,
+              "type": "number"
+            },
+            {
+              "id": "8e3e8a00-520e-42d0-9cc3-415cb05326ee",
+              "name": "human_pause_hours",
+              "value": 12,
+              "type": "number"
+            },
+            {
+              "id": "933dca34-d5b1-4169-87f7-eef610c1a332",
+              "name": "staff_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "f805d07f-e6d8-47b7-a893-1b8ffb072e12",
+              "name": "staff_reply_form_url",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "907cab56-67da-438d-9542-6b944b0ffefd",
+              "name": "unsupported_reply",
+              "value": "Thank you! I can read text and voice messages only. Could you type your question? 🙏",
+              "type": "string"
+            },
+            {
+              "id": "55141f51-fc0f-4f4d-9d8e-670487768d58",
+              "name": "fallback_reply",
+              "value": "Sorry, I have a small technical problem. A team member will reply to you shortly 🙏",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Sales Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        0
+      ],
+      "notes": "EDIT ME. business_info is the only shop knowledge besides the catalog, so keep it accurate. debounce_seconds groups messages sent in quick succession. human_pause_hours: how long the AI stays silent after a handoff. staff_reply_form_url: leave empty to use this n8n instance's form URL. Translate the two canned replies to your customers' language."
+    },
+    {
+      "id": "2d221a61-5974-4ae9-a853-b70e7bc47963",
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5d401e2f-a7fb-40e3-8b2f-563f0b7673c3",
+                    "leftValue": "={{ ['text', 'button', 'interactive'].includes($('Read Message').first().json.type) && $('Read Message').first().json.text !== '' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "38ce695d-b497-47c1-bdcc-b2cecfcba8b2",
+                    "leftValue": "={{ $('Read Message').first().json.type === 'audio' && $('Read Message').first().json.media_id !== '' }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice note"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Other media"
+        }
+      },
+      "name": "Route by Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        0
+      ],
+      "notes": "Text, buttons and list replies go straight on. Voice notes are transcribed first. Images, stickers, documents and locations get a polite text reply."
+    },
+    {
+      "id": "9ac3958f-db36-4b82-9e14-658892a0f85e",
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $('Read Message').first().json.media_id }}"
+      },
+      "name": "Get Voice Note URL",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        288
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Media URLs from Meta are short-lived and need the access token, so the file is downloaded right away."
+    },
+    {
+      "id": "c3831c06-ba8f-4e0a-8e7a-4e595257593d",
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "name": "Download Voice Note",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1696,
+        288
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Uses the WhatsApp API credential for the Authorization header."
+    },
+    {
+      "id": "af43bf27-d8c6-4673-8438-135470428131",
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "binaryPropertyName": "data",
+        "options": {}
+      },
+      "name": "Transcribe Voice Note",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        288
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Whisper detects the language. The transcript is stored like a typed message, prefixed with 🎤."
+    },
+    {
+      "id": "061aed0a-e9c2-4732-ad60-e9086e48df58",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "={{ $('Read Message').first().json.phone_number_id }}",
+        "recipientPhoneNumber": "={{ $('Read Message').first().json.phone }}",
+        "messageType": "text",
+        "textBody": "={{ $('Sales Settings').first().json.unsupported_reply }}",
+        "additionalFields": {}
+      },
+      "name": "Reply · Unsupported Type",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        512
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Best effort: a failed courtesy reply is not worth an alert."
+    },
+    {
+      "id": "e393c5d5-beb5-4426-b45e-9f3fbb610890",
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $('Read Message').first().json.phone }}",
+            "message_id": "={{ $('Read Message').first().json.message_id }}",
+            "direction": "in",
+            "text": "={{ $('Transcribe Voice Note').isExecuted ? '🎤 ' + String($('Transcribe Voice Note').first().json.text ?? '').trim() : $('Read Message').first().json.text }}",
+            "status": "pending",
+            "received_at": "={{ $('Read Message').first().json.received_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Store Incoming Message",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2336,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Every message is stored as pending first. That is what lets several quick messages be answered together."
+    },
+    {
+      "id": "9f812982-e5c0-4525-894c-655c0bd287e3",
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": "={{ $('Sales Settings').first().json.debounce_seconds }}",
+        "unit": "seconds"
+      },
+      "name": "Wait for More Messages",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2560,
+        0
+      ],
+      "webhookId": "bef22e1e-aa9d-444d-9b04-241bce9fb439",
+      "notes": "Customers often send \"hi\", \"I want to ask\" and the question as three messages. Waits stay in memory below 65 s."
+    },
+    {
+      "id": "833e1c41-6ec6-4aaf-b528-9daba1f6e4c7",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Read Message').first().json.phone }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "pending"
+            }
+          ]
+        },
+        "limit": 1,
+        "orderBy": true,
+        "orderByColumn": "createdAt",
+        "orderByDirection": "DESC"
+      },
+      "name": "Get Newest Pending",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2784,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "notes": "Newest unanswered message of this customer."
+    },
+    {
+      "id": "3ddffedf-df99-4f26-a5a6-c8d0989646ee",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cf78a1c2-bb38-4d92-b8f5-485b2cf41e06",
+              "leftValue": "={{ $json.message_id === $('Read Message').first().json.message_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Newest Message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3008,
+        0
+      ],
+      "notes": "False: a newer message arrived while waiting. Its own execution answers all pending messages together, so this one stops quietly."
+    },
+    {
+      "id": "b5f690f9-75eb-44fb-8e5f-2f9b7785df2c",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Read Message').first().json.phone }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "pending"
+            }
+          ]
+        },
+        "returnAll": true,
+        "orderBy": true,
+        "orderByColumn": "createdAt",
+        "orderByDirection": "ASC"
+      },
+      "name": "Get Pending Messages",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3296,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "All unanswered messages of this customer, oldest first."
+    },
+    {
+      "id": "77dec010-63db-45a6-9854-f25b455d3f19",
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "message_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.message_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "taken"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Claim Messages",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3520,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Marks each collected message by its ID, so a message that arrives a second later is not swallowed by this batch."
+    },
+    {
+      "id": "da19ad25-ad80-48e6-82d2-8686c057ea38",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_contacts",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Read Message').first().json.phone }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "name": "Get Contact",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3744,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "New customers have no row yet; Always Output Data passes an empty item instead."
+    },
+    {
+      "id": "d8c02838-534e-4de0-bd38-9242fa586b89",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cfe66054-dbc0-4c83-b70c-08fe375dfc11",
+              "leftValue": "={{ !($json.mode === 'human' && !!$json.human_until && DateTime.fromISO($json.human_until) > $now) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "AI Should Reply?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3968,
+        0
+      ],
+      "notes": "False while a team member handles the chat (handoff), until human_until passes."
+    },
+    {
+      "id": "5395ae71-7012-4864-be58-1bfc5dae3a8c",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Sales Settings').first().json.staff_email }}",
+        "subject": "=WhatsApp · {{ $('Read Message').first().json.name || '+' + $('Read Message').first().json.phone }} wrote again while you handle the chat",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const m = $('Read Message').first().json;\n  const texts = $('Get Pending Messages').all().map(i => '<li>' + esc(i.json.text) + '</li>').join('');\n  const base = $('Sales Settings').first().json.staff_reply_form_url || ($execution.resumeUrl.split('/webhook-waiting/')[0] + '/form/wa-staff-reply');\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\">' +\n    '<p><b>' + esc(m.name || 'Customer') + '</b> (+' + esc(m.phone) + ') sent:</p><ul>' + texts + '</ul>' +\n    '<p>The AI assistant stays silent for this customer until ' + esc(DateTime.fromISO($('Get Contact').first().json.human_until).toFormat('d LLL HH:mm')) + '.</p>' +\n    '<p><a href=\"' + base + '?phone=' + m.phone + '\">Reply from the n8n form</a> · <a href=\"https://wa.me/' + m.phone + '\">Open in WhatsApp</a></p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Alert Staff · New Message",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        4192,
+        400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only while a person handles the chat. The messages stay marked \"taken\" so the AI does not answer them later."
+    },
+    {
+      "id": "8432f2c7-ac39-4276-97cf-245677a51a05",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Read Message').first().json.phone }}"
+            }
+          ]
+        },
+        "limit": 60,
+        "orderBy": true,
+        "orderByColumn": "createdAt",
+        "orderByDirection": "DESC"
+      },
+      "name": "Get Chat History",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4256,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "The conversation is stored in a Data Table instead of chat memory, so it survives restarts and staff replies are part of it."
+    },
+    {
+      "id": "7f379482-995f-4cf9-be2d-eb353689f8b6",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ea75c94-bb75-41ea-8405-3a6279dccf9f",
+              "name": "customer_name",
+              "value": "={{ $('Get Contact').first().json.name || $('Read Message').first().json.name || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "b79b2a4a-da38-4b72-845b-58920f2cba32",
+              "name": "stage",
+              "value": "={{ $('Get Contact').first().json.stage || 'new' }}",
+              "type": "string"
+            },
+            {
+              "id": "3c0f75b3-1d5e-4433-97db-b6346fd09d54",
+              "name": "new_messages",
+              "value": "={{ $('Get Pending Messages').all().map(i => i.json.text).filter(Boolean).join('\\n') }}",
+              "type": "string"
+            },
+            {
+              "id": "a617a6b9-1263-44eb-99eb-8ee0ee2d7aae",
+              "name": "history",
+              "value": "={{ (() => {\n  const batch = new Set($('Get Pending Messages').all().map(i => i.json.message_id));\n  const who = { in: 'Customer', out: 'You', staff: 'Team member' };\n  return $('Get Chat History').all().map(i => i.json)\n    .filter(r => r.text && r.direction && !batch.has(r.message_id))\n    .reverse()\n    .slice(-$('Sales Settings').first().json.history_messages)\n    .map(r => (who[r.direction] ?? r.direction) + ': ' + String(r.text).replace(/\\s+/g, ' ').slice(0, 600))\n    .join('\\n');\n})() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Agent Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4480,
+        0
+      ],
+      "executeOnce": true,
+      "notes": "Earlier turns (customer, AI and staff) plus the new message batch. Execute Once: the history arrives as one item per row, the agent must run once."
+    },
+    {
+      "id": "3a0362d8-3ec3-4ef7-b57b-59cb6ce10941",
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customer: {{ $json.customer_name || 'name unknown' }} (WhatsApp +{{ $('Read Message').first().json.phone }})\nCurrent sales stage: {{ $json.stage }}\n\nConversation so far (oldest first):\n{{ $json.history || '(no earlier messages)' }}\n\nNew message(s) from the customer:\n{{ $json.new_messages }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are {{ $('Sales Settings').first().json.assistant_name }}, the WhatsApp sales assistant of {{ $('Sales Settings').first().json.business_name }}. You answer customers, recommend products from the catalog and help them place an order.\n\nToday is {{ $now.toFormat('cccc, d LLLL yyyy, HH:mm') }}.\n\n## Language and style\n- Reply in {{ $('Sales Settings').first().json.reply_language }}.\n- Write like a friendly, competent shop assistant on WhatsApp: short paragraphs, at most 3 of them or a short list. No headings, no tables, no links you did not get from the catalog. Use *single asterisks* for bold and at most one emoji.\n- Ask at most one question per message. Never greet again in the middle of a conversation.\n\n## Business information (facts you may use)\n{{ $('Sales Settings').first().json.business_info }}\n\n## Products\n- Call \"Search Product Catalog\" before you mention any product, price or stock. Never invent products, prices, discounts, stock or delivery dates.\n- Recommend at most 3 products with name, price in {{ $('Sales Settings').first().json.currency }} and one reason why it fits. Say when stock is low or zero.\n- If nothing fits, say so and ask one clarifying question (budget, size, use).\n\n## Selling\n- Understand the need first (use, budget, quantity, city) before pushing a product.\n- When the customer wants to buy, collect product and quantity, recipient name and the full delivery address. Then repeat the order with item prices and the subtotal and ask the customer to confirm it.\n- Set order.confirmed_by_customer to true only after the customer explicitly confirmed that summary. Then tell them our admin will confirm the shipping cost and payment details shortly. You never collect payments and never confirm shipping costs.\n\n## Hand over to a person (handoff = true) when\n- the customer asks for a human, admin or owner,\n- there is a complaint, refund, return, damaged item, late delivery or payment problem,\n- they ask for a discount, custom order or bulk deal the business information does not cover,\n- the customer is upset, or you are not sure about the answer.\nWhen you hand over, tell the customer that a team member will continue the chat. Do not promise a time.\n\n## Output\nReturn JSON matching the schema, no markdown fences. \"reply\" is the exact WhatsApp message to send. Use \"\" or [] for unknown values, never omit a field.",
+          "maxIterations": 8
+        }
+      },
+      "name": "Sales Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        4768,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "On error the item continues with { error }: the customer gets the fallback reply and the chat goes to a person."
+    },
+    {
+      "id": "df34a896-e38b-4d95-8436-411239cce5d3",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low",
+          "maxRetries": 3,
+          "timeout": 60000
+        }
+      },
+      "name": "OpenAI · Sales Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        4752,
+        224
+      ],
+      "notes": "Low reasoning effort keeps replies fast. Max Retries handles 429 / 5xx inside the OpenAI client."
+    },
+    {
+      "id": "d6c3866c-9e10-4862-972e-6229583a7292",
+      "parameters": {
+        "description": "Search the product catalog. Call it before you mention any product, price or stock. Returns up to 8 products (sku, name, category, price, stock, description, link), best match first, and found = 0 when nothing matches. Search again with other words before telling the customer a product does not exist.",
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query', 'Product search words: type, feature, size, colour or use. Example: \"black sneakers size 42\"', 'string') }}",
+            "max_price": "={{ $fromAI('max_price', 'Maximum unit price in the shop currency, or 0 when the customer gave no budget', 'number') }}",
+            "category": "={{ $fromAI('category', 'Product category if the customer named one, otherwise an empty string', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "max_price",
+              "displayName": "max_price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "name": "Search Product Catalog",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        4896,
+        224
+      ],
+      "notes": "Calls this same workflow (\"When Catalog Is Searched\"), so the template stays one file. The workflow must be saved once before the first test."
+    },
+    {
+      "id": "c15a587f-dbc9-44fe-8916-56377b658cd3",
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"reply\": {\n      \"type\": \"string\",\n      \"description\": \"The WhatsApp message to send now\"\n    },\n    \"stage\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"new\",\n        \"browsing\",\n        \"interested\",\n        \"ready_to_buy\",\n        \"order_confirmed\",\n        \"support\",\n        \"not_interested\"\n      ]\n    },\n    \"handoff\": {\n      \"type\": \"boolean\"\n    },\n    \"handoff_reason\": {\n      \"type\": \"string\"\n    },\n    \"lead\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"name\": {\n          \"type\": \"string\"\n        },\n        \"city\": {\n          \"type\": \"string\"\n        },\n        \"interest\": {\n          \"type\": \"string\"\n        },\n        \"budget\": {\n          \"type\": \"string\"\n        },\n        \"notes\": {\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"name\",\n        \"city\",\n        \"interest\",\n        \"budget\",\n        \"notes\"\n      ],\n      \"additionalProperties\": false\n    },\n    \"order\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"confirmed_by_customer\": {\n          \"type\": \"boolean\"\n        },\n        \"items\": {\n          \"type\": \"array\",\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"sku\": {\n                \"type\": \"string\"\n              },\n              \"product\": {\n                \"type\": \"string\"\n              },\n              \"quantity\": {\n                \"type\": \"integer\",\n                \"minimum\": 1\n              },\n              \"unit_price\": {\n                \"type\": \"number\",\n                \"minimum\": 0\n              }\n            },\n            \"required\": [\n              \"sku\",\n              \"product\",\n              \"quantity\",\n              \"unit_price\"\n            ],\n            \"additionalProperties\": false\n          }\n        },\n        \"recipient_name\": {\n          \"type\": \"string\"\n        },\n        \"address\": {\n          \"type\": \"string\"\n        },\n        \"notes\": {\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"confirmed_by_customer\",\n        \"items\",\n        \"recipient_name\",\n        \"address\",\n        \"notes\"\n      ],\n      \"additionalProperties\": false\n    }\n  },\n  \"required\": [\n    \"reply\",\n    \"stage\",\n    \"handoff\",\n    \"handoff_reason\",\n    \"lead\",\n    \"order\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": true
+      },
+      "name": "Reply Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        5040,
+        224
+      ],
+      "notes": "The agent returns the reply plus structured lead, stage, handoff and order data. autoFix repairs malformed JSON once with the fixer model."
+    },
+    {
+      "id": "c920c91a-9cbf-47d0-b221-aa9f1d63161c",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {
+          "maxRetries": 2,
+          "timeout": 60000
+        }
+      },
+      "name": "OpenAI · Fixer Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        5072,
+        416
+      ],
+      "notes": "Only called when the agent returns JSON that does not match Reply Schema. \"Use Responses API\" is off on purpose: the auto-fix step reads this model's reply as plain text, and Responses API replies arrive as content blocks."
+    },
+    {
+      "id": "9ea8adf7-4a1d-48a7-81b0-74858a97acf8",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bdb0fe6c-b73d-45ec-a428-7ca4acb071f0",
+              "name": "ok",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok; })() }}",
+              "type": "boolean"
+            },
+            {
+              "id": "3c38c51b-9e92-4049-8393-926706ef55fb",
+              "name": "reply",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok ? o.reply.trim().slice(0, 4000) : $('Sales Settings').first().json.fallback_reply; })() }}",
+              "type": "string"
+            },
+            {
+              "id": "79588aeb-7f61-468f-b374-ed2874ccac8a",
+              "name": "handoff",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok ? o.handoff === true : true; })() }}",
+              "type": "boolean"
+            },
+            {
+              "id": "341e22b5-3d09-40df-8e4c-09d79ad2a6d9",
+              "name": "handoff_reason",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok ? (o.handoff_reason || '') : 'The AI agent failed: ' + String($json.error ?? 'no structured output').slice(0, 300); })() }}",
+              "type": "string"
+            },
+            {
+              "id": "86639f39-f23a-47dc-b156-1c25fdd37df0",
+              "name": "stage",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok ? o.stage : $('Build Agent Input').first().json.stage; })() }}",
+              "type": "string"
+            },
+            {
+              "id": "ff78144a-42b3-4b0b-8155-48fbeb92b253",
+              "name": "lead",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok ? o.lead : {}; })() }}",
+              "type": "object"
+            },
+            {
+              "id": "40ad0f1b-82c9-4ee2-9ef6-114ec0e37106",
+              "name": "order",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok ? o.order : {}; })() }}",
+              "type": "object"
+            },
+            {
+              "id": "1094fd78-7304-41f1-9d2c-5df69da7bc25",
+              "name": "order_ready",
+              "value": "={{ (() => { const o = $json.output; const ok = !!o && typeof o.reply === 'string' && o.reply.trim() !== ''; return ok && o.order?.confirmed_by_customer === true && (o.order.items ?? []).length > 0 && String(o.order.address ?? '').trim() !== ''; })() }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Finalize Reply",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5408,
+        0
+      ],
+      "notes": "Fail-safe: when the agent failed or returned nothing usable, the customer gets the fallback reply and the chat is handed to a person."
+    },
+    {
+      "id": "f9539ed2-f278-4357-bfab-c27804ad803b",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "={{ $('Read Message').first().json.phone_number_id }}",
+        "recipientPhoneNumber": "={{ $('Read Message').first().json.phone }}",
+        "messageType": "text",
+        "textBody": "={{ $json.reply }}",
+        "additionalFields": {}
+      },
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        5632,
+        0
+      ],
+      "onError": "continueErrorOutput",
+      "notes": "A failure goes to the error output and raises a CRITICAL alert with the customer number: the customer got no answer. No Retry On Fail: n8n skips retries on this node type when On Error routes to an output."
+    },
+    {
+      "id": "40b68edd-6b1f-4704-9ff1-bd400436b235",
+      "parameters": {
+        "errorMessage": "={{ '[CRITICAL] WhatsApp refused the reply to +' + $('Read Message').first().json.phone + ' (' + ($('Read Message').first().json.name || 'unknown') + '). The customer got no answer. Their message: ' + $('Build Agent Input').first().json.new_messages.slice(0, 300) + ' | Planned reply: ' + $('Finalize Reply').first().json.reply.slice(0, 300) }}"
+      },
+      "name": "Escalate · Reply Not Sent",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        5856,
+        224
+      ],
+      "notes": "The built-in error handler emails this with the customer number, so someone can answer by hand."
+    },
+    {
+      "id": "356448b9-5a9b-41aa-be7a-9d7c0614f662",
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $('Read Message').first().json.phone }}",
+            "message_id": "={{ $json.messages?.[0]?.id ?? '' }}",
+            "direction": "out",
+            "text": "={{ $('Finalize Reply').first().json.reply }}",
+            "status": "sent",
+            "received_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Log Reply",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        6144,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "The sent reply becomes part of the history the agent reads next time."
+    },
+    {
+      "id": "27abcd42-1fef-4605-a584-75ba23026c75",
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Read Message').first().json.phone }}"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "taken"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "done"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Close Batch",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        6368,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Answered messages leave the pending queue."
+    },
+    {
+      "id": "7b2e73f5-932d-44a9-bcc4-b76ee59e9ce1",
+      "parameters": {
+        "resource": "row",
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_contacts",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Read Message').first().json.phone }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $('Read Message').first().json.phone }}",
+            "name": "={{ $('Finalize Reply').first().json.lead?.name || $('Build Agent Input').first().json.customer_name }}",
+            "phone_number_id": "={{ $('Read Message').first().json.phone_number_id }}",
+            "stage": "={{ $('Finalize Reply').first().json.stage }}",
+            "mode": "={{ $('Finalize Reply').first().json.handoff ? 'human' : 'bot' }}",
+            "human_until": "={{ $('Finalize Reply').first().json.handoff ? $now.plus({ hours: $('Sales Settings').first().json.human_pause_hours }).toISO() : '' }}",
+            "last_inbound_at": "={{ $('Read Message').first().json.received_at }}",
+            "followup_sent": "no"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone_number_id",
+              "displayName": "phone_number_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "stage",
+              "displayName": "stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "human_until",
+              "displayName": "human_until",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_inbound_at",
+              "displayName": "last_inbound_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "followup_sent",
+              "displayName": "followup_sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Save Contact",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        6592,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true,
+      "notes": "Chat state per customer: sales stage, bot or human mode, and the follow-up flag (reset by every new message). Execute Once: Close Batch returns one item per closed message."
+    },
+    {
+      "id": "85aabb4b-684d-4a6b-87b0-9999a295789e",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5251164a-b4d8-4c6a-846e-446e04dceee4",
+              "name": "Phone",
+              "value": "={{ $('Read Message').first().json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "fba8b4e5-5aa2-4b59-a53e-917304e9f736",
+              "name": "Name",
+              "value": "={{ $('Save Contact').first().json.name ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "3394af87-9953-487a-8490-b835904e5b5b",
+              "name": "City",
+              "value": "={{ $('Finalize Reply').first().json.lead?.city ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "8ac4e48b-f271-4c41-bbc1-007e386bac28",
+              "name": "Interest",
+              "value": "={{ $('Finalize Reply').first().json.lead?.interest ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "d9bec7e7-e58d-4e0c-bd62-c95d6a297233",
+              "name": "Budget",
+              "value": "={{ $('Finalize Reply').first().json.lead?.budget ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "29ead294-a191-40cb-be5f-084ac24fec87",
+              "name": "Stage",
+              "value": "={{ $('Finalize Reply').first().json.stage }}",
+              "type": "string"
+            },
+            {
+              "id": "bd3f05d7-ebd9-4fa7-94f1-d55f820b9b44",
+              "name": "Notes",
+              "value": "={{ $('Finalize Reply').first().json.lead?.notes ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "56aeb8c6-96dd-4df0-b532-80b8b680261d",
+              "name": "Needs Person",
+              "value": "={{ $('Finalize Reply').first().json.handoff ? 'YES: ' + $('Finalize Reply').first().json.handoff_reason : '' }}",
+              "type": "string"
+            },
+            {
+              "id": "78dc56dc-e9d7-4c76-b547-da14b85c66b9",
+              "name": "Last Message",
+              "value": "={{ $('Build Agent Input').first().json.new_messages.slice(0, 500) }}",
+              "type": "string"
+            },
+            {
+              "id": "f13a5b29-da00-4d24-b5e6-af977de650a1",
+              "name": "Updated At",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Lead Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6880,
+        0
+      ],
+      "notes": "Field names = Leads sheet headers. Cell format RAW stores the phone number as text, so it keeps its digits."
+    },
+    {
+      "id": "9dfe63b4-c448-4c03-9b92-605556650e5c",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Upsert Lead",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        7104,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "One row per customer, updated after every reply. Headers are created on an empty tab."
+    },
+    {
+      "id": "219161d6-47ad-4fbd-a537-dadd59d6ff1d",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8595937c-781a-4c26-82b0-ff96e8940f3a",
+              "leftValue": "={{ $('Finalize Reply').first().json.order_ready === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Only Confirmed Orders",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        7392,
+        320
+      ],
+      "notes": "Passes only when the customer confirmed the order summary in this turn."
+    },
+    {
+      "id": "4f56d33a-9613-41bc-b109-b6e486169e62",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4add6be1-28ed-4009-beab-5c27de6bf977",
+              "name": "Order ID",
+              "value": "={{ 'WA-' + $now.toFormat('yyyyMMdd') + '-' + $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7e98800b-22e3-45be-8a4f-25e39b547ac3",
+              "name": "Created At",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "ac6927cd-29e0-4a8a-948b-29e35f4a83f1",
+              "name": "Phone",
+              "value": "={{ $('Read Message').first().json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "d5fb3bf2-3e0f-42b1-8508-b1f027cef26f",
+              "name": "Customer",
+              "value": "={{ $('Save Contact').first().json.name ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "052f8d96-804b-4305-bcb8-e27177c491ac",
+              "name": "Recipient",
+              "value": "={{ $('Finalize Reply').first().json.order.recipient_name }}",
+              "type": "string"
+            },
+            {
+              "id": "5ca33340-2cde-41c6-87a2-b33ca1c17784",
+              "name": "Address",
+              "value": "={{ $('Finalize Reply').first().json.order.address }}",
+              "type": "string"
+            },
+            {
+              "id": "c8701a9e-dd9c-47ad-b3a3-ebea86c45c76",
+              "name": "Items",
+              "value": "={{ $('Finalize Reply').first().json.order.items.map(i => i.quantity + ' × ' + i.product + (i.sku ? ' [' + i.sku + ']' : '') + ' @ ' + i.unit_price).join('; ') }}",
+              "type": "string"
+            },
+            {
+              "id": "3bdb9e45-5d56-4b6d-85c1-439c083f40a5",
+              "name": "Subtotal",
+              "value": "={{ $('Finalize Reply').first().json.order.items.reduce((s, i) => s + i.quantity * i.unit_price, 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "35af0d04-cf68-453e-8b19-0c49afbced9b",
+              "name": "Notes",
+              "value": "={{ $('Finalize Reply').first().json.order.notes }}",
+              "type": "string"
+            },
+            {
+              "id": "11d4c67d-0b39-4aab-9449-2ea834ef6120",
+              "name": "Status",
+              "value": "Pending confirmation",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Order Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7616,
+        320
+      ],
+      "notes": "Field names = Orders sheet headers. The Order ID is derived from the execution, so the staff email shows the same ID."
+    },
+    {
+      "id": "8071c39a-5e6b-451f-a14a-cb5aa5e01ba6",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Orders",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Save Order",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        7840,
+        320
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Your team confirms shipping cost and payment, then updates Status."
+    },
+    {
+      "id": "e6b1a68a-189b-4ab8-97f1-9c9ed8a47504",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "446527c4-968d-4221-81d8-928d20d68abf",
+              "leftValue": "={{ $('Finalize Reply').first().json.handoff || $('Finalize Reply').first().json.order_ready }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Notify Staff?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        7392,
+        0
+      ],
+      "notes": "Handoffs and confirmed orders need a person."
+    },
+    {
+      "id": "5335ee9b-a7a0-4445-b6f9-4128f055466e",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Sales Settings').first().json.staff_email }}",
+        "subject": "={{ $('Finalize Reply').first().json.order_ready ? '[New order] ' : '[Handoff] ' }}{{ $('Save Contact').first().json.name || '+' + $('Read Message').first().json.phone }} on WhatsApp",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const f = $('Finalize Reply').first().json;\n  const a = $('Build Agent Input').first().json;\n  const m = $('Read Message').first().json;\n  const base = $('Sales Settings').first().json.staff_reply_form_url || ($execution.resumeUrl.split('/webhook-waiting/')[0] + '/form/wa-staff-reply');\n  let html = '<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">';\n  if (f.order_ready) {\n    const total = f.order.items.reduce((s, i) => s + i.quantity * i.unit_price, 0);\n    html += '<h3 style=\"margin:0 0 8px\">Order WA-' + $now.toFormat('yyyyMMdd') + '-' + $execution.id + ' to confirm</h3><table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">' +\n      f.order.items.map(i => '<tr><td>' + i.quantity + ' ×</td><td>' + esc(i.product) + '</td><td>' + esc(i.sku) + '</td><td>' + i.unit_price + '</td></tr>').join('') +\n      '<tr><td colspan=\"3\"><b>Subtotal</b></td><td><b>' + total + '</b></td></tr></table>' +\n      '<p><b>Recipient:</b> ' + esc(f.order.recipient_name) + '<br><b>Address:</b> ' + esc(f.order.address) + (f.order.notes ? '<br><b>Notes:</b> ' + esc(f.order.notes) : '') + '</p>' +\n      '<p>Confirm shipping cost and payment with the customer, then update the Orders sheet.</p>';\n  }\n  if (f.handoff) html += '<h3 style=\"margin:16px 0 8px\">The AI handed this chat to you</h3><p><b>Reason:</b> ' + esc(f.handoff_reason) + '</p><p>The AI stays silent for this customer for ' + $('Sales Settings').first().json.human_pause_hours + ' hours.</p>';\n  html += '<h4 style=\"margin:16px 0 4px\">Latest messages</h4><pre style=\"white-space:pre-wrap;background:#f6f6f6;padding:8px\">' +\n    esc((a.history ? a.history.split('\\n').slice(-6).join('\\n') + '\\n' : '') + 'Customer: ' + a.new_messages + '\\nYou: ' + f.reply) + '</pre>';\n  html += '<p><a href=\"' + base + '?phone=' + m.phone + '\">Reply from the n8n form</a> · <a href=\"https://wa.me/' + m.phone + '\">Open in WhatsApp</a></p></div>';\n  return html;\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Staff",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        7616,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Contains the order, the handoff reason, the latest messages and a link to the staff reply form with the phone number filled in."
+    },
+    {
+      "id": "3deff6c2-fcc5-4c67-9d68-a60d8ba578ef",
+      "parameters": {
+        "authentication": "basicAuth",
+        "formTitle": "Reply to a WhatsApp customer",
+        "formDescription": "Sends your message from the business WhatsApp number. WhatsApp only delivers it within 24 hours of the customer’s last message.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Customer phone (country code + number, digits only)",
+              "fieldName": "phone",
+              "fieldType": "text",
+              "placeholder": "6281234567890",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Message",
+              "fieldName": "message",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "After sending",
+              "fieldName": "after",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Keep the AI paused for 12 hours"
+                  },
+                  {
+                    "option": "Keep the AI paused for 24 hours"
+                  },
+                  {
+                    "option": "Hand the chat back to the AI"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "path": "wa-staff-reply",
+          "appendAttribution": false,
+          "buttonLabel": "Send on WhatsApp"
+        }
+      },
+      "name": "Staff Reply Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        960
+      ],
+      "webhookId": "08da1f08-3ff4-4d34-87df-9ee9c8fbfa06",
+      "notes": "Protected with Basic Auth: anyone with access could message your customers. The staff emails link here with ?phone= filled in."
+    },
+    {
+      "id": "a9e1abf0-dcec-4e0d-9e41-7909f3d227dc",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_contacts",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ String($json.phone ?? '').replace(/\\D/g, '') }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "name": "Find Customer",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        960
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "notes": "Only customers who wrote to you before can get a reply (WhatsApp rule)."
+    },
+    {
+      "id": "3d775dae-2a7d-4e4b-b55d-b665087463eb",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "be90b235-4ddb-4410-a56e-18becbbfecd8",
+              "leftValue": "={{ !!$json.phone && !!$json.phone_number_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Known Customer?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        960
+      ]
+    },
+    {
+      "id": "2c3f7010-2c3c-4c58-b762-720d9ca7e409",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "={{ $json.phone_number_id }}",
+        "recipientPhoneNumber": "={{ $json.phone }}",
+        "messageType": "text",
+        "textBody": "={{ $('Staff Reply Form').first().json.message }}",
+        "additionalFields": {}
+      },
+      "name": "Send Staff Reply",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        960
+      ],
+      "onError": "continueErrorOutput",
+      "notes": "Error output: usually the 24-hour customer service window has closed."
+    },
+    {
+      "id": "9fb58650-c5a1-405e-9bc0-e37ea92f028e",
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $('Find Customer').first().json.phone }}",
+            "message_id": "={{ $json.messages?.[0]?.id ?? '' }}",
+            "direction": "staff",
+            "text": "={{ $('Staff Reply Form').first().json.message }}",
+            "status": "sent",
+            "received_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Log Staff Reply",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        960
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Staff replies are part of the history, so the AI knows what was promised when it takes over again."
+    },
+    {
+      "id": "9df6adb2-3508-4f3f-aea3-7138e30bf12a",
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_contacts",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Find Customer').first().json.phone }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "mode": "={{ $('Staff Reply Form').first().json.after.startsWith('Hand') ? 'bot' : 'human' }}",
+            "human_until": "={{ (() => { const a = $('Staff Reply Form').first().json.after; if (a.startsWith('Hand')) return ''; return $now.plus({ hours: a.includes('24') ? 24 : 12 }).toISO(); })() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "human_until",
+              "displayName": "human_until",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Update Chat Mode",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        960
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Pauses the AI for 12 or 24 hours, or hands the chat back right away."
+    },
+    {
+      "id": "bb6a7dfc-3521-4a32-8060-27e8c3aeaad8",
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "text",
+        "completionTitle": "Sent ✓",
+        "completionMessage": "={{ 'Your message was delivered to WhatsApp. ' + ($('Staff Reply Form').first().json.after.startsWith('Hand') ? 'The AI assistant answers this customer again.' : 'The AI assistant stays paused for this customer.') }}",
+        "options": {}
+      },
+      "name": "Form · Sent",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        1408,
+        960
+      ],
+      "webhookId": "ab723b65-6522-4c4f-83d3-362eb920ec79"
+    },
+    {
+      "id": "2bac40db-e664-47c1-9051-aeb3dc63d8cb",
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "text",
+        "completionTitle": "Not sent",
+        "completionMessage": "WhatsApp refused the message. Free-form replies are only allowed within 24 hours of the customer’s last message. Ask the customer to write again, or use an approved template.",
+        "options": {}
+      },
+      "name": "Form · Not Sent",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        1184
+      ],
+      "webhookId": "85314bef-ad43-4cbc-81e4-70832aacab36"
+    },
+    {
+      "id": "bf0570f7-cb5b-4934-997f-2d57455e4183",
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "text",
+        "completionTitle": "Unknown number",
+        "completionMessage": "This number has not written to your WhatsApp number yet. Check the country code (for example 62 for Indonesia) and the digits.",
+        "options": {}
+      },
+      "name": "Form · Unknown Customer",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        736,
+        1408
+      ],
+      "webhookId": "6b8f287f-cbaf-4ce3-9390-ed0f431ede6e"
+    },
+    {
+      "id": "a7e04aef-2dde-450a-a5f3-1c89bbb32da9",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1,
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        1856
+      ],
+      "notes": "Runs only while the workflow is active."
+    },
+    {
+      "id": "195caf1e-086a-4c23-acbb-3048ad278edc",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "61711faa-dd93-41a4-a19a-fb7e4cadfe2d",
+              "name": "followup_after_hours",
+              "value": 20,
+              "type": "number"
+            },
+            {
+              "id": "429922d1-610c-4af5-a3d3-d8152cdd6f9f",
+              "name": "followup_stages",
+              "value": "browsing,interested,ready_to_buy",
+              "type": "string"
+            },
+            {
+              "id": "ab5e175e-051c-4470-99fa-da82bc70f1f9",
+              "name": "followup_text",
+              "value": "Hi {name} 👋 just checking in. Do you still need help choosing? Reply here and I will help you right away.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Follow-up Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1856
+      ],
+      "notes": "EDIT ME. WhatsApp allows free-form messages only within 24 hours of the customer’s last message, so keep followup_after_hours below 23. {name} is replaced with the customer’s name."
+    },
+    {
+      "id": "71b6643c-6b74-4469-9cfe-95efb2c3bf1f",
+      "parameters": {
+        "resource": "row",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_contacts",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "mode",
+              "condition": "eq",
+              "keyValue": "bot"
+            },
+            {
+              "keyName": "followup_sent",
+              "condition": "eq",
+              "keyValue": "no"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "name": "Get Follow-up Candidates",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        1856
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Contacts in AI mode that have not had a follow-up since their last message."
+    },
+    {
+      "id": "cae76fe1-fc71-4c84-a4f5-e06953a61cac",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "704de5ff-8f22-4b72-83bc-921bab63e0c5",
+              "leftValue": "={{ (() => {\n  const cfg = $('Follow-up Settings').first().json;\n  const stages = String(cfg.followup_stages).split(',').map(s => s.trim());\n  if (!stages.includes($json.stage) || !$json.last_inbound_at) return false;\n  const hours = $now.diff(DateTime.fromISO($json.last_inbound_at), 'hours').hours;\n  return hours >= cfg.followup_after_hours && hours < 23.5;\n})() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Due for Follow-up?",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        1856
+      ],
+      "notes": "Warm leads that went quiet for followup_after_hours, while the 24-hour window is still open."
+    },
+    {
+      "id": "21bcbf7a-4f6a-4b6d-8104-dbec1bf74a64",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "phoneNumberId": "={{ $json.phone_number_id }}",
+        "recipientPhoneNumber": "={{ $json.phone }}",
+        "messageType": "text",
+        "textBody": "={{ $('Follow-up Settings').first().json.followup_text.replace('{name}', ($json.name || '').split(' ')[0] || 'there') }}",
+        "additionalFields": {}
+      },
+      "name": "Send Follow-up",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        1856
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "One follow-up per silence. A failure is skipped: the window may just have closed."
+    },
+    {
+      "id": "5189fd7d-1eb9-4a51-9102-6ef949b067fb",
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_contacts",
+          "mode": "name"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "phone",
+              "condition": "eq",
+              "keyValue": "={{ $('Due for Follow-up?').item.json.phone }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "followup_sent": "yes"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "followup_sent",
+              "displayName": "followup_sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Mark Follow-up Sent",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        1856
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Set even when sending failed, so a closed window is not retried every hour."
+    },
+    {
+      "id": "a762ca65-83f0-469d-8058-ca154ffadd05",
+      "parameters": {
+        "resource": "row",
+        "operation": "insert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wa_messages",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $('Due for Follow-up?').item.json.phone }}",
+            "message_id": "={{ $('Send Follow-up').item.json.messages?.[0]?.id ?? '' }}",
+            "direction": "out",
+            "text": "={{ $('Send Follow-up').item.json.messages?.[0]?.id ? $('Follow-up Settings').first().json.followup_text.replace('{name}', ($('Due for Follow-up?').item.json.name || '').split(' ')[0] || 'there') : '' }}",
+            "status": "sent",
+            "received_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message_id",
+              "displayName": "message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "direction",
+              "displayName": "direction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Log Follow-up",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1408,
+        1856
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Logged with an empty text when sending failed, so it never shows up in the AI history."
+    },
+    {
+      "id": "172f65a8-1621-4b3d-a46e-c724371dd261",
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query",
+              "type": "string"
+            },
+            {
+              "name": "max_price",
+              "type": "number"
+            },
+            {
+              "name": "category",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "name": "When Catalog Is Searched",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        2240
+      ],
+      "notes": "Entry point of the \"Search Product Catalog\" tool. Runs as a separate, short execution per search."
+    },
+    {
+      "id": "993af904-b5f4-4555-aa73-53af6008dee6",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Products",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Product Catalog",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        2240
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "notes": "Columns: SKU, Name, Category, Price, Stock, Description, Link. Edit the sheet any time; the next search sees the change."
+    },
+    {
+      "id": "ee27999a-9386-4cd7-8c83-164c97574ba3",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Scores every catalog row against the search words and returns the best 8.\nconst input = $('When Catalog Is Searched').first().json;\nconst norm = s => String(s ?? '').toLowerCase().normalize('NFKD').replace(/[^\\p{L}\\p{N}\\s]/gu, ' ');\nconst words = norm(input.query).split(/\\s+/).filter(w => w.length > 1);\nconst maxPrice = Number(input.max_price) > 0 ? Number(input.max_price) : Infinity;\nconst category = norm(input.category).trim();\nconst toNumber = v => {\n  if (typeof v === 'number') return v;\n  const n = Number(String(v ?? '').replace(/[^\\d.,-]/g, '').replace(/[.,](?=\\d{3}(\\D|$))/g, '').replace(',', '.'));\n  return Number.isFinite(n) ? n : null;\n};\n\nconst rows = $input.all().map(i => i.json).filter(r => r && (r.Name || r.name));\nconst scored = rows.map(r => {\n  const p = {\n    sku: String(r.SKU ?? r.sku ?? ''),\n    name: String(r.Name ?? r.name ?? ''),\n    category: String(r.Category ?? r.category ?? ''),\n    price: toNumber(r.Price ?? r.price),\n    stock: toNumber(r.Stock ?? r.stock),\n    description: String(r.Description ?? r.description ?? '').slice(0, 300),\n    link: String(r.Link ?? r.link ?? ''),\n  };\n  const name = norm(p.name), cat = norm(p.category), desc = norm(p.description);\n  let score = 0;\n  for (const w of words) {\n    if (name.includes(w)) score += 3;\n    if (cat.includes(w)) score += 2;\n    if (desc.includes(w)) score += 1;\n  }\n  if (category && cat.includes(category)) score += 2;\n  if (p.stock !== null && p.stock <= 0) score -= 1;\n  return { p, score };\n}).filter(x => (x.p.price === null || x.p.price <= maxPrice) && (words.length === 0 || x.score > 0));\n\nscored.sort((a, b) => b.score - a.score);\nconst products = scored.slice(0, 8).map(x => x.p);\nreturn [{ json: { found: products.length, total_in_catalog: rows.length, products } }];"
+      },
+      "name": "Rank Products",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2240
+      ],
+      "notes": "Plain keyword scoring: name 3, category 2, description 1 point per word, out-of-stock last, price capped by max_price. Swap in a vector store for very large catalogs."
+    },
+    {
+      "id": "54729454-1a4d-4804-a95a-d5a94f6f942b",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2624
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "8b06520b-2689-4a20-9f4c-ac3c6d3194f4",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc729048-b629-4478-bc9d-646d667573b4",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        2624
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "1b87fa33-e2f9-44ba-ba30-237d8b03050c",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0a0b9b3d-bf28-4651-888d-e9d82e356257",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "1e98f048-f41e-4963-bc8e-c8062a4b845b",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "1080869d-37a3-4aa9-8bfe-3e657e2beb1f",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "2c0cf7ed-a070-4420-8ca9-54fdac21deed",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "76e27e55-a92a-4ed0-af9c-5aea9a7d1129",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "486cfa79-de44-4c63-9f2e-c630c1a7a6f3",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "bee964fb-64a6-47fc-b0e2-953cf2a4c183",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "ce572807-7dfc-4b15-ac04-6ec9eb7d933e",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "630158bb-77cb-4387-ab81-7cc7ffd1c4d0",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "4155bc8b-dd29-4845-a690-1abde1963d02",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "6df62cd5-1565-4443-a440-e04f995c9a5e",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "3917d99e-03c4-4087-8525-e3e954b7d9a2",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "d3ef3a72-246c-4a99-bdd5-050938f44488",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        2624
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "e7498711-3eb9-4c0f-9035-cb2dfad3afe0",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        2624
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "1fda6605-e9ea-46d8-ba79-8c28577c37cd",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cd16a3df-0f11-46ed-9584-fe0bea96308e",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c9dfd215-8c42-4766-8495-a04912f98308",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "e5208e7d-3c12-4e33-99f4-e4a577a33e9d",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "547231bf-ef5c-44b8-810b-e8d61d7e77a6",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "97e38d78-e009-4867-8a6b-fc93a29ad7d6",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "36cecb6e-e458-4c3c-93f8-d0efe5e635a7",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "0ce1364a-5b31-4108-bc12-68a46c27b1fc",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "40c7c7a2-14a5-4a99-b9e4-5a36811826da",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        2624
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "e612bb12-e742-4363-80b1-0e0daaa8550b",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        2624
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Message": {
+      "main": [
+        [
+          {
+            "node": "Is Customer Message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Customer Message?": {
+      "main": [
+        [
+          {
+            "node": "Skip Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Sales Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Settings": {
+      "main": [
+        [
+          {
+            "node": "Route by Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Type": {
+      "main": [
+        [
+          {
+            "node": "Store Incoming Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Voice Note URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply · Unsupported Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voice Note URL": {
+      "main": [
+        [
+          {
+            "node": "Download Voice Note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice Note": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Voice Note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Voice Note": {
+      "main": [
+        [
+          {
+            "node": "Store Incoming Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Incoming Message": {
+      "main": [
+        [
+          {
+            "node": "Wait for More Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for More Messages": {
+      "main": [
+        [
+          {
+            "node": "Get Newest Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Newest Pending": {
+      "main": [
+        [
+          {
+            "node": "Newest Message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Newest Message?": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Messages": {
+      "main": [
+        [
+          {
+            "node": "Claim Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim Messages": {
+      "main": [
+        [
+          {
+            "node": "Get Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contact": {
+      "main": [
+        [
+          {
+            "node": "AI Should Reply?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Should Reply?": {
+      "main": [
+        [
+          {
+            "node": "Get Chat History",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Staff · New Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chat History": {
+      "main": [
+        [
+          {
+            "node": "Build Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Agent Input": {
+      "main": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Agent": {
+      "main": [
+        [
+          {
+            "node": "Finalize Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize Reply": {
+      "main": [
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Sales Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Product Catalog": {
+      "ai_tool": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Fixer Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Reply Schema",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reply": {
+      "main": [
+        [
+          {
+            "node": "Log Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate · Reply Not Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Reply": {
+      "main": [
+        [
+          {
+            "node": "Close Batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Close Batch": {
+      "main": [
+        [
+          {
+            "node": "Save Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Contact": {
+      "main": [
+        [
+          {
+            "node": "Build Lead Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Lead Row": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Lead": {
+      "main": [
+        [
+          {
+            "node": "Notify Staff?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Only Confirmed Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only Confirmed Orders": {
+      "main": [
+        [
+          {
+            "node": "Build Order Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Order Row": {
+      "main": [
+        [
+          {
+            "node": "Save Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Staff?": {
+      "main": [
+        [
+          {
+            "node": "Email Staff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Staff Reply Form": {
+      "main": [
+        [
+          {
+            "node": "Find Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Customer": {
+      "main": [
+        [
+          {
+            "node": "Known Customer?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known Customer?": {
+      "main": [
+        [
+          {
+            "node": "Send Staff Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form · Unknown Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Staff Reply": {
+      "main": [
+        [
+          {
+            "node": "Log Staff Reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form · Not Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Staff Reply": {
+      "main": [
+        [
+          {
+            "node": "Update Chat Mode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Chat Mode": {
+      "main": [
+        [
+          {
+            "node": "Form · Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Hour": {
+      "main": [
+        [
+          {
+            "node": "Follow-up Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Follow-up Settings": {
+      "main": [
+        [
+          {
+            "node": "Get Follow-up Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Follow-up Candidates": {
+      "main": [
+        [
+          {
+            "node": "Due for Follow-up?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Due for Follow-up?": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Mark Follow-up Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Follow-up Sent": {
+      "main": [
+        [
+          {
+            "node": "Log Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Catalog Is Searched": {
+      "main": [
+        [
+          {
+            "node": "Read Product Catalog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Product Catalog": {
+      "main": [
+        [
+          {
+            "node": "Rank Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

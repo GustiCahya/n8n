@@ -1,0 +1,2102 @@
+{
+  "name": "Read invoices and receipts with OpenAI, track them in Google Sheets and send payment reminders with Gmail",
+  "nodes": [
+    {
+      "id": "f7608fdf-d17b-4e9b-ab9b-169126d07b8f",
+      "parameters": {
+        "content": "## Read invoices and receipts with OpenAI, track them in Google Sheets and send payment reminders with Gmail\n\n### How it works\n1. Invoices and receipts arrive as labelled Gmail attachments or through a protected upload form.\n2. OpenAI reads each PDF or photo into structured data, and the file is archived in Google Drive.\n3. Totals, dates and confidence are checked, duplicates are skipped, and rows go to the Transactions tab. You get a summary by email.\n4. Your own unpaid sales invoices join the Invoices tab, and clients get up to three polite reminders after the due date.\n5. Every Monday you receive a cash-flow report with an AI note.\n\n### Setup steps\n- [ ] Add **Gmail**, **OpenAI**, **Google Drive**, **Google Sheets** and **Basic Auth** credentials.\n- [ ] Create a spreadsheet with empty `Transactions` and `Error Log` tabs and an `Invoices` tab with the headers Invoice No, Client, Client Email, Issue Date, Due Date, Amount, Currency, Status, Reminders Sent, Last Reminder At, Notes. Select it in every Google Sheets node.\n- [ ] Create the Gmail label `Finance`, pick a Drive folder in **Save to Drive** and edit the three settings nodes.\n\n### Customization\nChange the categories in **Finance Settings** and the reminder texts in **Reminder Settings**.",
+        "height": 752,
+        "width": 480
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -112
+      ]
+    },
+    {
+      "id": "845d3b24-f375-4ca9-9f71-c0f10306883f",
+      "parameters": {
+        "content": "## Collect invoices and receipts\nGmail attachments or the upload form.",
+        "height": 496,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -112
+      ]
+    },
+    {
+      "id": "2485c9a1-de9c-4237-957e-e5be4ed6c9b8",
+      "parameters": {
+        "content": "## Check and save\nValidation, duplicates, then Google Sheets.",
+        "height": 720,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        -112
+      ]
+    },
+    {
+      "id": "b903e722-28f9-4203-8bf4-2573f06ffd99",
+      "parameters": {
+        "content": "## Read one file with AI\nPDF or photo, then archived in Google Drive.",
+        "height": 496,
+        "width": 1312,
+        "color": 7
+      },
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        752
+      ]
+    },
+    {
+      "id": "6d9bcafa-863f-4219-a93f-e3008d8a8228",
+      "parameters": {
+        "content": "## Chase late payments\nThree polite stages after the due date.",
+        "height": 272,
+        "width": 864,
+        "color": 7
+      },
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1392
+      ]
+    },
+    {
+      "id": "6e39f8b7-38f8-4a03-aecf-74d5dd79aa3a",
+      "parameters": {
+        "content": "## Send the reminders\nOne email at a time.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        1392
+      ]
+    },
+    {
+      "id": "5cd9a179-90e3-4425-9ccc-a98850262679",
+      "parameters": {
+        "content": "## Weekly cash flow report\nLast week vs the week before.",
+        "height": 272,
+        "width": 1088,
+        "color": 7
+      },
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        1776
+      ]
+    },
+    {
+      "id": "12eeeaaa-1ed5-4523-afcd-afd4eebd6495",
+      "parameters": {
+        "content": "## Write and send the report\nA short AI note on top of the numbers.",
+        "height": 480,
+        "width": 544,
+        "color": 7
+      },
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        1776
+      ]
+    },
+    {
+      "id": "ac0a5ccd-afbc-4669-8c35-d85a79740b51",
+      "parameters": {
+        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        2384
+      ]
+    },
+    {
+      "id": "dd55d734-00f3-4cb1-a745-9061ef5d14b4",
+      "parameters": {
+        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
+        "height": 272,
+        "width": 640,
+        "color": 7
+      },
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        2384
+      ]
+    },
+    {
+      "id": "082dabf0-397e-4095-90a9-538aab2a8c33",
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "label:finance has:attachment",
+          "readStatus": "both"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "name": "New Finance Email",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "Polls every 5 minutes for mail with the \"Finance\" label and an attachment. Create a Gmail filter that labels supplier invoices, or forward them to an address with that label."
+    },
+    {
+      "id": "7db6a089-5c48-4259-9954-3c5c4d14e4df",
+      "parameters": {
+        "authentication": "basicAuth",
+        "formTitle": "Add invoices and receipts",
+        "formDescription": "PDF or photos (JPG, PNG, WEBP). Several files at once are fine.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Files",
+              "fieldName": "files",
+              "fieldType": "file",
+              "multipleFiles": true,
+              "acceptFileTypes": ".pdf,.jpg,.jpeg,.png,.webp",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What are they?",
+              "fieldName": "type",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Let the AI decide"
+                  },
+                  {
+                    "option": "Expenses (we paid or must pay)"
+                  },
+                  {
+                    "option": "Sales invoices we issued"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Note (optional)",
+              "fieldName": "note",
+              "fieldType": "text"
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "path": "finance-upload",
+          "appendAttribution": false,
+          "buttonLabel": "Upload",
+          "respondWithOptions": {
+            "values": {
+              "respondWith": "text",
+              "formSubmittedText": "Thanks! The files are being read. You will get a summary by email."
+            }
+          }
+        }
+      },
+      "name": "Upload Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        224
+      ],
+      "webhookId": "d6f6b38e-14c8-4ebe-bb94-a8713d6578bf",
+      "notes": "Snap receipts with your phone and upload them here. Protected with Basic Auth."
+    },
+    {
+      "id": "ad62ffef-757b-4352-bbbb-9025b0a3fc5b",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4f73132-172d-4d9b-a98c-390939a7a69b",
+              "name": "business_name",
+              "value": "Your Business",
+              "type": "string"
+            },
+            {
+              "id": "1b6c431e-75e1-4b2a-88e6-17c7c7fc82a0",
+              "name": "owner_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "ce9efa53-2af1-4bf9-a041-ae87f19e5f59",
+              "name": "default_currency",
+              "value": "IDR",
+              "type": "string"
+            },
+            {
+              "id": "b162a2b8-7bbb-49d2-808d-96408bc0a0f4",
+              "name": "categories",
+              "value": "Cost of goods, Rent, Utilities, Salaries, Marketing, Software, Transport, Meals, Office supplies, Professional services, Taxes and fees, Sales, Other",
+              "type": "string"
+            },
+            {
+              "id": "69d73829-dde2-4135-9f66-50a2ea233aaf",
+              "name": "review_below_confidence",
+              "value": 0.75,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Finance Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "notes": "EDIT ME. business_name tells the AI whether a document is a sale (you are the seller) or an expense. Documents below review_below_confidence are saved as \"Needs review\"."
+    },
+    {
+      "id": "4a714ccb-78ae-4b12-8b08-40c3d2a30746",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// One item per supported file. Small images in emails (logos, signatures) are skipped.\nconst settings = $('Finance Settings').first().json;\nconst ALLOWED = /^(application\\/pdf|image\\/(jpeg|png|webp))$/i;\nconst bytes = s => { const m = String(s || '').match(/([\\d.]+)\\s*(B|kB|KB|MB|GB)/); if (!m) return 0; return Number(m[1]) * ({ B: 1, kB: 1e3, KB: 1e3, MB: 1e6, GB: 1e9 })[m[2]]; };\nconst fromEmail = $('New Finance Email').isExecuted;\nconst out = [];\n// read the trigger items: the Set node before this one does not pass files on\nconst source = fromEmail ? $('New Finance Email').all() : $('Upload Form').all();\nfor (const item of source) {\n  const j = item.json;\n  const meta = fromEmail\n    ? { source: 'Email from ' + (j.from?.text ?? j.from ?? ''), subject: j.subject ?? '', type_hint: 'auto', note: '' }\n    : { source: 'Upload form', subject: '', type_hint: String(j.type ?? 'auto'), note: String(j.note ?? '') };\n  for (const bin of Object.values(item.binary ?? {})) {\n    if (!ALLOWED.test(bin.mimeType || '')) continue;\n    if (fromEmail && bin.mimeType.startsWith('image/') && bytes(bin.fileSize) < 15000) continue;\n    out.push({ json: { ...meta, file_name: bin.fileName || 'document', mime_type: bin.mimeType, settings }, binary: { data: bin } });\n  }\n}\nreturn out;"
+      },
+      "name": "Split Files",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "notes": "Email attachments and form uploads become one item each, with the settings attached for the reader."
+    },
+    {
+      "id": "aa0dc411-71d2-40a4-886c-c8879c121bce",
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "={{ $workflow.id }}",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "name": "Read Each File",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        0
+      ],
+      "notes": "Runs \"When File Received\" once per file (this same workflow), so PDFs and photos each take their own path and the results come back here together."
+    },
+    {
+      "id": "883f2675-5983-4806-8652-fcf1d4c10c86",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Transactions",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Transactions",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        960,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "Existing rows, for duplicate detection."
+    },
+    {
+      "id": "577b56b6-bf43-47f3-8e8f-57acb01aaf65",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Validates each extraction, detects duplicates and builds the Transactions row.\nconst cfg = $('Finance Settings').first().json;\nconst cats = String(cfg.categories).split(',').map(s => s.trim());\nconst norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');\nconst seen = new Set($('Read Transactions').all().map(i => i.json['Dedupe Key']).filter(Boolean));\nconst today = DateTime.now().startOf('day');\nconst results = $('Read Each File').all().map(i => i.json);\nconst COLS = ['Txn ID', 'Date', 'Type', 'Document Type', 'Category', 'Party', 'Party Email', 'Invoice No', 'Description', 'Subtotal', 'Tax', 'Total', 'Currency', 'Due Date', 'Payment Status', 'Status', 'Issues', 'Confidence', 'Source', 'File', 'Dedupe Key', 'Recorded At'];\nconst blank = Object.fromEntries(COLS.map(c => [c, '']));\nreturn results.map((r, idx) => {\n  const d = r.extraction;\n  const base = { file: r.file_name, link: r.drive_link, source: r.source };\n  if (!d || typeof d !== 'object') {\n    const issue = 'The AI could not read this file' + (r.ai_error ? ': ' + r.ai_error : '');\n    return { json: { ...base, Status: 'Needs review', Issues: issue, row: { ...blank, 'Txn ID': 'TX-' + DateTime.now().toFormat('yyyyMMdd') + '-' + $execution.id + '-' + (idx + 1), 'Status': 'Needs review', 'Issues': issue, 'Source': r.source, 'File': r.drive_link, 'Recorded At': DateTime.now().toISO() } } };\n  }\n  if (!d.is_financial_document || d.document_type === 'other') return { json: { ...base, Status: 'Ignored', Issues: 'Not an invoice or receipt', row: null } };\n  const party = d.direction === 'income' ? d.customer_name : d.vendor_name;\n  const key = norm(party) + '|' + (d.invoice_number ? norm(d.invoice_number) : d.issue_date) + '|' + Math.round(Number(d.total) || 0);\n  if (seen.has(key)) return { json: { ...base, Status: 'Duplicate', Issues: 'Already recorded (' + party + ', ' + (d.invoice_number || d.issue_date) + ')', row: null } };\n  seen.add(key);\n  const issues = [];\n  const total = Number(d.total) || 0, sub = Number(d.subtotal) || 0, tax = Number(d.tax_amount) || 0;\n  if (total <= 0) issues.push('total missing');\n  if (sub > 0 && Math.abs(sub + tax - total) > Math.max(1, total * 0.01)) issues.push('subtotal + tax does not match total');\n  const date = DateTime.fromISO(d.issue_date || '');\n  if (!date.isValid) issues.push('issue date unreadable');\n  else if (date > today.plus({ days: 1 }) || date < today.minus({ years: 2 })) issues.push('issue date ' + d.issue_date + ' looks wrong');\n  if (!(Number(d.confidence) >= Number(cfg.review_below_confidence))) issues.push('low confidence (' + d.confidence + ')');\n  const category = cats.includes(d.category) ? d.category : 'Other';\n  const status = issues.length ? 'Needs review' : 'Recorded';\n  return { json: { ...base, Status: status, Issues: issues.join('; '), row: {\n    'Txn ID': 'TX-' + DateTime.now().toFormat('yyyyMMdd') + '-' + $execution.id + '-' + (idx + 1),\n    'Date': date.isValid ? date.toISODate() : '',\n    'Type': d.direction === 'income' ? 'Income' : 'Expense',\n    'Document Type': d.document_type,\n    'Category': category,\n    'Party': party || '',\n    'Party Email': d.customer_email || '',\n    'Invoice No': d.invoice_number || '',\n    'Description': d.description || '',\n    'Subtotal': sub,\n    'Tax': tax,\n    'Total': total,\n    'Currency': d.currency || cfg.default_currency,\n    'Due Date': d.due_date || '',\n    'Payment Status': d.payment_status === 'paid' ? 'Paid' : d.payment_status === 'unpaid' ? 'Unpaid' : 'Unknown',\n    'Status': status,\n    'Issues': issues.join('; '),\n    'Confidence': Number(d.confidence) || 0,\n    'Source': r.source,\n    'File': r.drive_link,\n    'Dedupe Key': key,\n    'Recorded At': DateTime.now().toISO(),\n  } } };\n});"
+      },
+      "name": "Check Documents",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        0
+      ],
+      "notes": "Checks that subtotal + tax = total, that the date is plausible and that confidence is high enough. Duplicates (same party, number and total) are skipped."
+    },
+    {
+      "id": "f6df6e44-26f9-416b-9b45-04b9497fffa6",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Only new financial documents become Transactions rows.\nreturn $input.all().filter(i => i.json.row).map(i => ({ json: i.json.row }));"
+      },
+      "name": "Rows to Save",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        0
+      ],
+      "notes": "Duplicates and non-financial files are reported by email but not saved. Unreadable files get a Needs review row with the Drive link."
+    },
+    {
+      "id": "b1c149b5-4bea-499a-a120-e6b3ed00eac9",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Transactions",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Save Transactions",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1632,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "One append for the whole batch. Headers are created on an empty tab."
+    },
+    {
+      "id": "f2275d33-cc29-4879-8b3d-689e1ec07b48",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6515c0da-15ef-4671-b33d-444cd11a6579",
+              "leftValue": "={{ $json.Type === 'Income' && $json['Document Type'] === 'sales_invoice' && $json['Payment Status'] === 'Unpaid' && $json.Status === 'Recorded' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Only Unpaid Sales Invoices",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        224
+      ],
+      "notes": "Your own unpaid invoices go to the Invoices tab, where the daily reminder job picks them up."
+    },
+    {
+      "id": "feb41c09-0069-454f-b319-4e4c639e9627",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Invoices",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice No": "={{ $json['Invoice No'] }}",
+            "Client": "={{ $json.Party }}",
+            "Client Email": "={{ $json['Party Email'] }}",
+            "Issue Date": "={{ $json.Date }}",
+            "Due Date": "={{ $json['Due Date'] }}",
+            "Amount": "={{ $json.Total }}",
+            "Currency": "={{ $json.Currency }}",
+            "Status": "Unpaid",
+            "Reminders Sent": "0",
+            "Last Reminder At": "",
+            "Notes": "={{ $json.File }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Invoice No",
+              "displayName": "Invoice No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Client",
+              "displayName": "Client",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Client Email",
+              "displayName": "Client Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Issue Date",
+              "displayName": "Issue Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminders Sent",
+              "displayName": "Reminders Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Reminder At",
+              "displayName": "Last Reminder At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Add to Invoices",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1856,
+        224
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "The Invoices tab needs its header row (see the overview). Check the client email before the first reminder goes out."
+    },
+    {
+      "id": "470f9607-e1f3-425d-b5ba-9155bb0ed070",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Finance Settings').first().json.owner_email }}",
+        "subject": "={{ (() => { const all = $('Check Documents').all().map(i => i.json); const n = s => all.filter(r => r.Status === s).length; return 'Bookkeeping · ' + n('Recorded') + ' recorded' + (n('Needs review') ? ', ' + n('Needs review') + ' need review' : ''); })() }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const all = $('Check Documents').all().map(i => i.json);\n  const fmt = (n, c) => Number(n || 0).toLocaleString('id-ID') + ' ' + (c || '');\n  const rows = all.map(r => '<tr><td>' + esc(r.Status) + '</td><td>' + (r.link ? '<a href=\"' + r.link + '\">' + esc(r.file) + '</a>' : esc(r.file)) + '</td><td>' +\n    (r.row ? esc(r.row.Type + ' · ' + r.row.Party + ' · ' + fmt(r.row.Total, r.row.Currency) + ' · ' + r.row.Category) : '') + '</td><td>' + esc(r.Issues) + '</td></tr>').join('');\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\"><table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">' +\n    '<tr><th align=\"left\">Status</th><th align=\"left\">File</th><th align=\"left\">Booked as</th><th align=\"left\">Issues</th></tr>' + rows + '</table>' +\n    '<p style=\"color:#666\">Rows marked \"Needs review\" are in the Transactions tab: correct them there and set Status to Recorded.</p></div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        448
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true
+    },
+    {
+      "id": "4500229c-3993-43b2-abf5-cc218c928b96",
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "name": "When File Received",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        864
+      ],
+      "notes": "Entry point of \"Read Each File\": one file per execution."
+    },
+    {
+      "id": "91e11869-84c1-4f11-87e4-d34259aa8308",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "705f056a-f5d1-4889-9c60-2bfdce1e6967",
+              "leftValue": "={{ $json.mime_type === 'application/pdf' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Is PDF?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        864
+      ]
+    },
+    {
+      "id": "e8a8067e-29cc-47b7-8173-56f485aae54d",
+      "parameters": {
+        "resource": "text",
+        "operation": "response",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "type": "file",
+              "role": "user",
+              "fileType": "base64",
+              "binaryPropertyName": "data",
+              "fileName": "={{ $json.file_name }}"
+            },
+            {
+              "type": "text",
+              "role": "user",
+              "content": "={{ 'File: ' + $json.file_name + '\\nSource: ' + $json.source + ($json.subject ? '\\nEmail subject: ' + $json.subject : '') + '\\nType hint from the sender: ' + $json.type_hint + ($json.note ? '\\nNote: ' + $json.note : '') }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {
+          "instructions": "=You are the bookkeeping assistant of {{ $json.settings.business_name }}. Extract the data of the attached document exactly as printed.\n- direction: \"income\" when {{ $json.settings.business_name }} is the seller (a sales invoice we issued), otherwise \"expense\".\n- Amounts are plain numbers in the document currency, without thousand separators. Indonesian \"Rp 1.250.000,00\" is 1250000.\n- Dates as YYYY-MM-DD. Leave due_date empty when none is printed.\n- payment_status \"paid\" for receipts and documents marked paid or lunas, \"unpaid\" for invoices awaiting payment, otherwise \"unknown\".\n- category: exactly one of {{ $json.settings.categories }}.\n- When the file is not an invoice, receipt or payment proof (a logo, a brochure, a contract), set is_financial_document to false.\n- confidence: how sure you are that the amounts, dates and parties are correct (0 to 1). Never guess numbers: use 0 and a low confidence when unreadable.",
+          "maxTokens": 6000,
+          "reasoning": {
+            "reasoningOptions": {
+              "effort": "low",
+              "summary": "none"
+            }
+          },
+          "store": false,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "financial_document",
+              "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"is_financial_document\": {\n      \"type\": \"boolean\"\n    },\n    \"document_type\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"supplier_invoice\",\n        \"receipt\",\n        \"sales_invoice\",\n        \"credit_note\",\n        \"payment_proof\",\n        \"other\"\n      ]\n    },\n    \"direction\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"expense\",\n        \"income\"\n      ]\n    },\n    \"vendor_name\": {\n      \"type\": \"string\"\n    },\n    \"customer_name\": {\n      \"type\": \"string\"\n    },\n    \"customer_email\": {\n      \"type\": \"string\"\n    },\n    \"invoice_number\": {\n      \"type\": \"string\"\n    },\n    \"issue_date\": {\n      \"type\": \"string\",\n      \"description\": \"YYYY-MM-DD\"\n    },\n    \"due_date\": {\n      \"type\": \"string\",\n      \"description\": \"YYYY-MM-DD, or empty\"\n    },\n    \"currency\": {\n      \"type\": \"string\",\n      \"description\": \"ISO 4217 code, e.g. IDR\"\n    },\n    \"subtotal\": {\n      \"type\": \"number\"\n    },\n    \"tax_amount\": {\n      \"type\": \"number\"\n    },\n    \"total\": {\n      \"type\": \"number\"\n    },\n    \"payment_status\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"paid\",\n        \"unpaid\",\n        \"unknown\"\n      ]\n    },\n    \"category\": {\n      \"type\": \"string\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"One line: what was bought or sold\"\n    },\n    \"line_items\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"description\": {\n            \"type\": \"string\"\n          },\n          \"quantity\": {\n            \"type\": \"number\"\n          },\n          \"amount\": {\n            \"type\": \"number\"\n          }\n        },\n        \"required\": [\n          \"description\",\n          \"quantity\",\n          \"amount\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"confidence\": {\n      \"type\": \"number\",\n      \"description\": \"0 to 1\"\n    },\n    \"notes\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"is_financial_document\",\n    \"document_type\",\n    \"direction\",\n    \"vendor_name\",\n    \"customer_name\",\n    \"customer_email\",\n    \"invoice_number\",\n    \"issue_date\",\n    \"due_date\",\n    \"currency\",\n    \"subtotal\",\n    \"tax_amount\",\n    \"total\",\n    \"payment_status\",\n    \"category\",\n    \"description\",\n    \"line_items\",\n    \"confidence\",\n    \"notes\"\n  ],\n  \"additionalProperties\": false\n}",
+              "strict": true,
+              "verbosity": "low"
+            }
+          }
+        }
+      },
+      "name": "Read PDF",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        864
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "OpenAI reads the PDF directly, scanned pages included. The JSON schema fixes the output shape."
+    },
+    {
+      "id": "323451ed-60f1-4cd9-9063-da95f8a47ab0",
+      "parameters": {
+        "resource": "text",
+        "operation": "response",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "type": "image",
+              "role": "user",
+              "imageType": "base64",
+              "binaryPropertyName": "data",
+              "imageDetail": "high"
+            },
+            {
+              "type": "text",
+              "role": "user",
+              "content": "={{ 'File: ' + $json.file_name + '\\nSource: ' + $json.source + ($json.subject ? '\\nEmail subject: ' + $json.subject : '') + '\\nType hint from the sender: ' + $json.type_hint + ($json.note ? '\\nNote: ' + $json.note : '') }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {
+          "instructions": "=You are the bookkeeping assistant of {{ $json.settings.business_name }}. Extract the data of the attached document exactly as printed.\n- direction: \"income\" when {{ $json.settings.business_name }} is the seller (a sales invoice we issued), otherwise \"expense\".\n- Amounts are plain numbers in the document currency, without thousand separators. Indonesian \"Rp 1.250.000,00\" is 1250000.\n- Dates as YYYY-MM-DD. Leave due_date empty when none is printed.\n- payment_status \"paid\" for receipts and documents marked paid or lunas, \"unpaid\" for invoices awaiting payment, otherwise \"unknown\".\n- category: exactly one of {{ $json.settings.categories }}.\n- When the file is not an invoice, receipt or payment proof (a logo, a brochure, a contract), set is_financial_document to false.\n- confidence: how sure you are that the amounts, dates and parties are correct (0 to 1). Never guess numbers: use 0 and a low confidence when unreadable.",
+          "maxTokens": 6000,
+          "reasoning": {
+            "reasoningOptions": {
+              "effort": "low",
+              "summary": "none"
+            }
+          },
+          "store": false,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "name": "financial_document",
+              "schema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"is_financial_document\": {\n      \"type\": \"boolean\"\n    },\n    \"document_type\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"supplier_invoice\",\n        \"receipt\",\n        \"sales_invoice\",\n        \"credit_note\",\n        \"payment_proof\",\n        \"other\"\n      ]\n    },\n    \"direction\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"expense\",\n        \"income\"\n      ]\n    },\n    \"vendor_name\": {\n      \"type\": \"string\"\n    },\n    \"customer_name\": {\n      \"type\": \"string\"\n    },\n    \"customer_email\": {\n      \"type\": \"string\"\n    },\n    \"invoice_number\": {\n      \"type\": \"string\"\n    },\n    \"issue_date\": {\n      \"type\": \"string\",\n      \"description\": \"YYYY-MM-DD\"\n    },\n    \"due_date\": {\n      \"type\": \"string\",\n      \"description\": \"YYYY-MM-DD, or empty\"\n    },\n    \"currency\": {\n      \"type\": \"string\",\n      \"description\": \"ISO 4217 code, e.g. IDR\"\n    },\n    \"subtotal\": {\n      \"type\": \"number\"\n    },\n    \"tax_amount\": {\n      \"type\": \"number\"\n    },\n    \"total\": {\n      \"type\": \"number\"\n    },\n    \"payment_status\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"paid\",\n        \"unpaid\",\n        \"unknown\"\n      ]\n    },\n    \"category\": {\n      \"type\": \"string\"\n    },\n    \"description\": {\n      \"type\": \"string\",\n      \"description\": \"One line: what was bought or sold\"\n    },\n    \"line_items\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"description\": {\n            \"type\": \"string\"\n          },\n          \"quantity\": {\n            \"type\": \"number\"\n          },\n          \"amount\": {\n            \"type\": \"number\"\n          }\n        },\n        \"required\": [\n          \"description\",\n          \"quantity\",\n          \"amount\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"confidence\": {\n      \"type\": \"number\",\n      \"description\": \"0 to 1\"\n    },\n    \"notes\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"is_financial_document\",\n    \"document_type\",\n    \"direction\",\n    \"vendor_name\",\n    \"customer_name\",\n    \"customer_email\",\n    \"invoice_number\",\n    \"issue_date\",\n    \"due_date\",\n    \"currency\",\n    \"subtotal\",\n    \"tax_amount\",\n    \"total\",\n    \"payment_status\",\n    \"category\",\n    \"description\",\n    \"line_items\",\n    \"confidence\",\n    \"notes\"\n  ],\n  \"additionalProperties\": false\n}",
+              "strict": true,
+              "verbosity": "low"
+            }
+          }
+        }
+      },
+      "name": "Read Image",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        1088
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Photos of receipts and invoices. High detail for small print."
+    },
+    {
+      "id": "96794365-a40c-444a-9d62-f01f141285e4",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Keeps the AI result and puts the original file back on the item for the upload.\nconst file = $('When File Received').first();\nconst text = $input.first().json.output?.[0]?.content?.[0]?.text;\nconst extraction = text && typeof text === 'object' ? text : null;\nreturn [{\n  json: { ...file.json, extraction, ai_error: extraction ? '' : 'no valid JSON returned' },\n  binary: file.binary,\n}];"
+      },
+      "name": "Attach File",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        864
+      ],
+      "notes": "The OpenAI node returns only text, so the file is taken from the start of this execution."
+    },
+    {
+      "id": "b6b3d5dc-00a5-4fe1-be17-2452db6cb02a",
+      "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "inputDataFieldName": "data",
+        "name": "={{ (() => { const d = $json.extraction; const parts = d ? [d.issue_date, d.direction === 'income' ? d.customer_name : d.vendor_name, d.invoice_number, d.total] : ['unread']; return parts.filter(Boolean).join(' · ').replace(/[\\\\/:*?\"<>|]/g, '-') + ' · ' + $json.file_name; })() }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "name": "Save to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        896,
+        864
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Pick your bookkeeping folder in \"Parent Folder\". The file name starts with the date and party, so the folder sorts itself."
+    },
+    {
+      "id": "78bd4bc5-4d2d-4ef2-987d-c5200900f5bf",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c8d54339-1773-4fe3-b7ef-61ed510f18fc",
+              "name": "source",
+              "value": "={{ $('Attach File').first().json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "5305e861-57e1-4bcf-b4c2-eda1d6f1ed5e",
+              "name": "file_name",
+              "value": "={{ $('Attach File').first().json.file_name }}",
+              "type": "string"
+            },
+            {
+              "id": "ffa1a924-b7bc-4c8e-9630-77a15ab7b361",
+              "name": "extraction",
+              "value": "={{ $('Attach File').first().json.extraction }}",
+              "type": "object"
+            },
+            {
+              "id": "b62a3fd0-9603-40aa-b8ae-b3547e126241",
+              "name": "ai_error",
+              "value": "={{ $('Attach File').first().json.ai_error }}",
+              "type": "string"
+            },
+            {
+              "id": "2b780e7a-a5d3-4fba-834f-da9f2b081eda",
+              "name": "drive_link",
+              "value": "={{ 'https://drive.google.com/file/d/' + $json.id + '/view' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Return Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        864
+      ],
+      "notes": "What \"Read Each File\" receives back for this file."
+    },
+    {
+      "id": "238a53e8-b9cd-4dad-80b6-a49da315060a",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "name": "Every Day at 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        1504
+      ],
+      "notes": "Uses the workflow time zone."
+    },
+    {
+      "id": "5545ec67-1376-43b1-b61f-44bb475b8fd8",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "74b34bc3-25db-4f84-938e-9a02304d8c5a",
+              "name": "business_name",
+              "value": "Your Business",
+              "type": "string"
+            },
+            {
+              "id": "da381ab7-761b-473b-a6cd-f850d4daefa6",
+              "name": "sender_name",
+              "value": "Your Name",
+              "type": "string"
+            },
+            {
+              "id": "5222c92e-66f5-45b5-afeb-745c0edbdc98",
+              "name": "owner_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "8a0566a2-c194-4f2c-847a-f208611916c3",
+              "name": "payment_details",
+              "value": "Bank transfer to BCA 1234567890 (Your Business), or QRIS on request.",
+              "type": "string"
+            },
+            {
+              "id": "e6d7fb67-1129-4dd5-ac64-39d87cbbc33b",
+              "name": "reminder_days",
+              "value": "1,7,14",
+              "type": "string"
+            },
+            {
+              "id": "64ca8808-49bc-4e0e-859a-c892238d576d",
+              "name": "subject_1",
+              "value": "Friendly reminder: invoice {invoice} is due",
+              "type": "string"
+            },
+            {
+              "id": "f51c85ff-36e7-4515-ab01-a1b321accbe1",
+              "name": "body_1",
+              "value": "Hi {client},\n\nA friendly reminder that invoice {invoice} for {amount} was due on {due_date}. If it is already paid, thank you and please ignore this email.\n\n{payment_details}\n\nBest regards,\n{sender}\n{business}",
+              "type": "string"
+            },
+            {
+              "id": "9f8f4a5f-55de-48f6-b720-06bc4e5d435d",
+              "name": "subject_2",
+              "value": "Invoice {invoice} is {days} days overdue",
+              "type": "string"
+            },
+            {
+              "id": "31b99ed8-d8df-4e88-aad7-996bf4f3ae77",
+              "name": "body_2",
+              "value": "Hi {client},\n\nInvoice {invoice} for {amount} is now {days} days overdue (due {due_date}). Could you let us know when we can expect the payment?\n\n{payment_details}\n\nThank you,\n{sender}\n{business}",
+              "type": "string"
+            },
+            {
+              "id": "5b70bcd7-3af8-404b-8221-39ea1db5ab3e",
+              "name": "subject_3",
+              "value": "Final reminder: invoice {invoice} ({amount})",
+              "type": "string"
+            },
+            {
+              "id": "a34982c9-e398-4d6b-b82e-81114a1089f6",
+              "name": "body_3",
+              "value": "Hi {client},\n\nThis is our final reminder for invoice {invoice} ({amount}), {days} days overdue. Please arrange the payment this week or reply to discuss a schedule.\n\n{payment_details}\n\nRegards,\n{sender}\n{business}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Reminder Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1504
+      ],
+      "notes": "EDIT ME. One reminder per stage: reminder_days are days after the due date. The final reminder is copied to owner_email. Placeholders: {client} {invoice} {amount} {due_date} {days} {payment_details} {sender} {business}."
+    },
+    {
+      "id": "fc2e0ae6-ec82-498b-8990-b31bf5402d61",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Invoices",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Read Invoices",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        1504
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "notes": "Invoices you issued. Set Status to Paid when the money arrives; paid invoices are never chased."
+    },
+    {
+      "id": "7827f5d7-eb30-4718-9205-9864987b30a9",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Picks unpaid invoices that reached their next reminder stage and renders the email.\nconst cfg = $('Reminder Settings').first().json;\nconst stages = String(cfg.reminder_days).split(',').map(Number).filter(n => n >= 0);\nconst today = DateTime.now().startOf('day');\nconst out = [];\nfor (const i of $input.all()) {\n  const inv = i.json;\n  if (!inv['Invoice No'] || !inv['Client Email'] || ['Paid', 'Cancelled'].includes(inv.Status)) continue;\n  const due = DateTime.fromISO(String(inv['Due Date'] || ''));\n  if (!due.isValid) continue;\n  const days = Math.floor(today.diff(due.startOf('day'), 'days').days);\n  const sent = Number(inv['Reminders Sent'] || 0);\n  if (sent >= stages.length || days < stages[sent]) continue;\n  if (inv['Last Reminder At'] && DateTime.fromISO(inv['Last Reminder At']).hasSame(today, 'day')) continue;\n  const stage = sent + 1;\n  const amount = Number(inv.Amount || 0).toLocaleString('id-ID') + ' ' + (inv.Currency || '');\n  const fill = t => String(t).replace(/\\{client\\}/g, inv.Client || 'there').replace(/\\{invoice\\}/g, inv['Invoice No']).replace(/\\{amount\\}/g, amount)\n    .replace(/\\{due_date\\}/g, due.toFormat('d LLL yyyy')).replace(/\\{days\\}/g, String(days)).replace(/\\{payment_details\\}/g, cfg.payment_details)\n    .replace(/\\{sender\\}/g, cfg.sender_name).replace(/\\{business\\}/g, cfg.business_name);\n  out.push({ json: { invoice: inv['Invoice No'], to: inv['Client Email'], cc: stage === stages.length ? cfg.owner_email : '', stage, subject: fill(cfg['subject_' + Math.min(stage, 3)]), body: fill(cfg['body_' + Math.min(stage, 3)]) } });\n}\nreturn out;"
+      },
+      "name": "Plan Reminders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        1504
+      ],
+      "notes": "At most one reminder per invoice per day; each stage is sent once."
+    },
+    {
+      "id": "332b6373-020c-4a00-b69a-49bd9bdccada",
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Loop Reminders",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        960,
+        1504
+      ],
+      "notes": "One email per pass, so a retried send never repeats another client's reminder."
+    },
+    {
+      "id": "283ced3d-ed6a-49b9-ac66-8b4cb9d5fb27",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "={{ $json.cc }}",
+          "senderName": "={{ $('Reminder Settings').first().json.sender_name }}"
+        }
+      },
+      "name": "Send Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        1504
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "7ab875a0-b6e8-4f0f-9151-2f42a67d1fea",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Invoices",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice No": "={{ $('Loop Reminders').item.json.invoice }}",
+            "Reminders Sent": "={{ $('Loop Reminders').item.json.stage }}",
+            "Last Reminder At": "={{ $now.toISO() }}",
+            "Status": "Overdue"
+          },
+          "matchingColumns": [
+            "Invoice No"
+          ],
+          "schema": [
+            {
+              "id": "Invoice No",
+              "displayName": "Invoice No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reminders Sent",
+              "displayName": "Reminders Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last Reminder At",
+              "displayName": "Last Reminder At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "name": "Update Invoice",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1408,
+        1504
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "id": "c6c6fb7a-7fe3-4157-aa37-d577b391f987",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "weeksInterval": 1,
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "name": "Every Monday at 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        1888
+      ],
+      "notes": "Covers the previous Monday to Sunday."
+    },
+    {
+      "id": "afddba4f-3256-4d0f-83c5-3fb8c561c403",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f02b85f9-d85c-4417-a1e9-8a711cc3858a",
+              "name": "owner_email",
+              "value": "you@example.com",
+              "type": "string"
+            },
+            {
+              "id": "ea27b148-67a6-4d1c-9b45-dae298baff54",
+              "name": "currency",
+              "value": "IDR",
+              "type": "string"
+            },
+            {
+              "id": "1c0c95aa-2e97-441c-9672-f5ddd1ba598a",
+              "name": "business_name",
+              "value": "Your Business",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Report Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1888
+      ],
+      "notes": "EDIT ME. Totals are summed in this currency; other currencies are listed separately."
+    },
+    {
+      "id": "dfdbe45d-cf9f-4da3-83d2-8d4d99be220a",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Transactions",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Load Transactions",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        1888
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "cc7051f4-8108-464a-96dd-beb514946067",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Invoices",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "name": "Load Invoices",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        1888
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "id": "faa96e87-f939-4a5d-87b1-ab01aee87393",
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Last week's cash in and out, the week before, bills and receivables.\nconst cfg = $('Report Settings').first().json;\nconst cur = cfg.currency;\nconst tx = $('Load Transactions').all().map(i => i.json).filter(r => r['Txn ID'] && r.Status === 'Recorded' && (r.Currency || cur) === cur);\nconst review = $('Load Transactions').all().filter(i => i.json.Status === 'Needs review').length;\nconst inv = $('Load Invoices').all().map(i => i.json).filter(r => r['Invoice No'] && !['Paid', 'Cancelled'].includes(r.Status));\nconst thisWeek = DateTime.now().startOf('week');\nconst win = (from, to) => r => { const d = DateTime.fromISO(String(r.Date)); return d.isValid && d >= from && d < to; };\nconst lastWeek = win(thisWeek.minus({ weeks: 1 }), thisWeek);\nconst weekBefore = win(thisWeek.minus({ weeks: 2 }), thisWeek.minus({ weeks: 1 }));\nconst sum = rows => rows.reduce((s, r) => s + (Number(r.Total) || 0), 0);\nconst paidIn = f => tx.filter(r => r.Type === 'Income' && r['Payment Status'] === 'Paid' && f(r));\nconst paidOut = f => tx.filter(r => r.Type === 'Expense' && r['Payment Status'] !== 'Unpaid' && f(r));\nconst cashIn = sum(paidIn(lastWeek)), cashOut = sum(paidOut(lastWeek));\nconst prevIn = sum(paidIn(weekBefore)), prevOut = sum(paidOut(weekBefore));\nconst byCat = {};\nfor (const r of paidOut(lastWeek)) byCat[r.Category || 'Other'] = (byCat[r.Category || 'Other'] || 0) + (Number(r.Total) || 0);\nconst today = DateTime.now().startOf('day');\nconst bills = tx.filter(r => r.Type === 'Expense' && r['Payment Status'] === 'Unpaid' && r['Due Date'])\n  .filter(r => { const d = DateTime.fromISO(String(r['Due Date'])); return d.isValid && d <= today.plus({ days: 7 }); })\n  .map(r => ({ party: r.Party, total: Number(r.Total) || 0, due: r['Due Date'], overdue: DateTime.fromISO(String(r['Due Date'])) < today }));\nconst ar = inv.map(r => ({ client: r.Client, total: Number(r.Amount) || 0, due: r['Due Date'], overdue: DateTime.fromISO(String(r['Due Date'])) < today }));\nreturn [{ json: {\n  period: thisWeek.minus({ weeks: 1 }).toFormat('d LLL') + ' – ' + thisWeek.minus({ days: 1 }).toFormat('d LLL yyyy'),\n  currency: cur, cash_in: cashIn, cash_out: cashOut, net: cashIn - cashOut, prev_in: prevIn, prev_out: prevOut, prev_net: prevIn - prevOut,\n  top_expenses: Object.entries(byCat).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([category, total]) => ({ category, total })),\n  bills_due: bills, bills_due_total: bills.reduce((s, b) => s + b.total, 0),\n  receivables_overdue: ar.filter(a => a.overdue), receivables_overdue_total: ar.filter(a => a.overdue).reduce((s, a) => s + a.total, 0),\n  receivables_open_total: ar.reduce((s, a) => s + a.total, 0), needs_review: review,\n} }];"
+      },
+      "name": "Compute Cash Flow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        1888
+      ],
+      "notes": "Only rows with Status Recorded count. Receipts count as paid on their date; unpaid supplier invoices count when marked Paid."
+    },
+    {
+      "id": "6e8c3605-e3ac-46b4-841c-419d3157eae9",
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json, null, 1) }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "=You write a short weekly cash-flow note for the owner of {{ $('Report Settings').first().json.business_name }}, a small business. Use only the numbers given (currency {{ $json.currency }}).\nWrite 3 to 5 plain sentences: what happened compared with the week before, what needs attention (overdue receivables, bills due, documents to review) and one practical action. No greeting, no markdown."
+            }
+          ]
+        }
+      },
+      "name": "Write CFO Note",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1184,
+        1888
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "If the AI call fails, the report is sent with the numbers only."
+    },
+    {
+      "id": "dda587fd-0a08-4055-83f0-99c3a41830f6",
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {
+          "reasoningEffort": "low",
+          "maxRetries": 3,
+          "timeout": 60000
+        }
+      },
+      "name": "OpenAI · Report Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        2112
+      ]
+    },
+    {
+      "id": "7b339267-b3c4-49e4-afa5-29141394f017",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Report Settings').first().json.owner_email }}",
+        "subject": "={{ 'Cash flow ' + $('Compute Cash Flow').first().json.period + ': net ' + Number($('Compute Cash Flow').first().json.net).toLocaleString('id-ID') + ' ' + $('Compute Cash Flow').first().json.currency }}",
+        "emailType": "html",
+        "message": "={{ (() => {\n  const c = $('Compute Cash Flow').first().json;\n  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n  const m = n => Number(n || 0).toLocaleString('id-ID');\n  const delta = (a, b) => b ? ' <span style=\"color:#666\">(' + (a >= b ? '+' : '') + Math.round((a - b) / Math.abs(b) * 100) + '% vs week before)</span>' : '';\n  const note = $json.text ? '<p style=\"background:#f6f6f6;padding:10px\">' + esc($json.text) + '</p>' : '';\n  return '<div style=\"font-family:Arial,sans-serif;font-size:14px\"><h3 style=\"margin:0\">' + esc(c.period) + '</h3>' + note +\n    '<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">' +\n    '<tr><td>Cash in</td><td align=\"right\">' + m(c.cash_in) + '</td><td>' + delta(c.cash_in, c.prev_in) + '</td></tr>' +\n    '<tr><td>Cash out</td><td align=\"right\">' + m(c.cash_out) + '</td><td>' + delta(c.cash_out, c.prev_out) + '</td></tr>' +\n    '<tr><td><b>Net</b></td><td align=\"right\"><b>' + m(c.net) + '</b></td><td>' + esc(c.currency) + '</td></tr></table>' +\n    (c.top_expenses.length ? '<h4>Top expenses</h4><ul>' + c.top_expenses.map(e => '<li>' + esc(e.category) + ': ' + m(e.total) + '</li>').join('') + '</ul>' : '') +\n    '<h4>Bills due within 7 days: ' + m(c.bills_due_total) + '</h4><ul>' + c.bills_due.map(b => '<li>' + esc(b.party) + ' · ' + m(b.total) + ' · ' + esc(b.due) + (b.overdue ? ' <b style=\"color:#b00020\">overdue</b>' : '') + '</li>').join('') + '</ul>' +\n    '<h4>Receivables: ' + m(c.receivables_open_total) + ' open, ' + m(c.receivables_overdue_total) + ' overdue</h4><ul>' + c.receivables_overdue.map(a => '<li>' + esc(a.client) + ' · ' + m(a.total) + ' · due ' + esc(a.due) + '</li>').join('') + '</ul>' +\n    (c.needs_review ? '<p><b>' + c.needs_review + ' documents need review</b> in the Transactions tab.</p>' : '') + '</div>';\n})() }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Weekly Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1536,
+        1888
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "executeOnce": true
+    },
+    {
+      "id": "c2d8222f-392c-4af2-9f01-07609bc89c5e",
+      "parameters": {},
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2496
+      ],
+      "notes": "Internal error workflow: n8n starts here when any production execution of THIS workflow fails (and Settings → Error workflow is empty)."
+    },
+    {
+      "id": "33f577ba-7c5d-452f-8769-067b58016c68",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cdc82556-016d-4926-b53b-d149b68ca8d4",
+              "name": "alert_email_to",
+              "value": "you@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Alert Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        2496
+      ],
+      "notes": "EDIT ME. Who gets incident alerts. Comma-separate multiple emails."
+    },
+    {
+      "id": "c47b56fd-8f86-404c-a623-9b16e5eb694a",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "da1c25c8-9384-4dc4-b937-a11462e5bfb7",
+              "name": "incident_id",
+              "value": "={{ 'INC-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + ($('On Workflow Error').first().json.execution?.id ?? 'trigger') }}",
+              "type": "string"
+            },
+            {
+              "id": "02234ae8-cd86-498d-a58b-08b78784c220",
+              "name": "severity",
+              "value": "={{ (() => {\n  const t = $('On Workflow Error').first().json;\n  const msg = t.execution?.error?.message ?? t.trigger?.error?.message ?? '';\n  if (msg.includes('[CRITICAL]')) return 'CRITICAL';\n  if (msg.includes('[WARNING]')) return 'WARNING';\n  return 'ERROR';\n})() }}",
+              "type": "string"
+            },
+            {
+              "id": "35f16d56-21aa-4c74-9909-d7908b729642",
+              "name": "workflow_name",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.name ?? 'Unknown workflow' }}",
+              "type": "string"
+            },
+            {
+              "id": "9a5cc9f4-64d2-48c2-807b-61a868a6d830",
+              "name": "workflow_id",
+              "value": "={{ $('On Workflow Error').first().json.workflow?.id ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "18e94a1f-4612-4fde-a13b-f1ee41272663",
+              "name": "failed_node",
+              "value": "={{ $('On Workflow Error').first().json.execution?.lastNodeExecuted ?? ($('On Workflow Error').first().json.trigger ? 'Trigger node' : 'unknown') }}",
+              "type": "string"
+            },
+            {
+              "id": "b6310847-d312-4062-808a-7a5f2f3f05f6",
+              "name": "error_message",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.message ?? $('On Workflow Error').first().json.trigger?.error?.message ?? 'No error message provided').slice(0, 2000) }}",
+              "type": "string"
+            },
+            {
+              "id": "13e02901-6cd2-410a-b425-1330f68a2902",
+              "name": "error_description",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.error?.description ?? $('On Workflow Error').first().json.trigger?.error?.description ?? '').slice(0, 1000) }}",
+              "type": "string"
+            },
+            {
+              "id": "100d282d-6ae4-467b-8b93-338fac022a9b",
+              "name": "execution_id",
+              "value": "={{ String($('On Workflow Error').first().json.execution?.id ?? 'n/a') }}",
+              "type": "string"
+            },
+            {
+              "id": "5933b666-1b8f-4128-8ae0-623d2cc23c1d",
+              "name": "execution_url",
+              "value": "={{ $('On Workflow Error').first().json.execution?.url ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "750be205-abc1-41d5-9c26-87713a9c89c6",
+              "name": "editor_url",
+              "value": "={{ ($('On Workflow Error').first().json.execution?.url ?? '').split('/executions/')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "7ce29bdf-528c-4786-adbd-0f3c2bfa23e4",
+              "name": "mode",
+              "value": "={{ $('On Workflow Error').first().json.execution?.mode ?? $('On Workflow Error').first().json.trigger?.mode ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a3d6e22c-6372-4c35-b43b-864ac58a00e1",
+              "name": "is_retry",
+              "value": "={{ Boolean($('On Workflow Error').first().json.execution?.retryOf) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "52ad546c-4320-4b02-bc3b-212e9372698f",
+              "name": "occurred_at",
+              "value": "={{ $('On Workflow Error').first().json.execution?.error?.timestamp ? DateTime.fromMillis($('On Workflow Error').first().json.execution.error.timestamp).toISO() : $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Build Incident Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        2496
+      ],
+      "notes": "Normalises the Error Trigger payload (execution errors and trigger errors have different shapes) into one incident record."
+    },
+    {
+      "id": "52fc5a3a-c6e5-463d-8351-79e49bff973a",
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Alert Settings').first().json.alert_email_to }}",
+        "subject": "=[{{ $json.severity }}] n8n · {{ $json.workflow_name }} failed at \"{{ $json.failed_node }}\"",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222\">\n<h2 style=\"margin:0 0 4px 0;color:{{ $json.severity === 'CRITICAL' ? '#b00020' : ($json.severity === 'WARNING' ? '#b26a00' : '#333') }}\">{{ $json.severity }} · {{ $json.workflow_name }}</h2>\n<p style=\"margin:0 0 16px 0;color:#666\">Incident {{ $json.incident_id }} · {{ $json.occurred_at }}</p>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;border:1px solid #ddd\">\n<tr><td><b>Failed node</b></td><td><code>{{ $json.failed_node }}</code></td></tr>\n<tr><td><b>Error</b></td><td>{{ $json.error_message }}</td></tr>\n<tr><td><b>Details</b></td><td>{{ $json.error_description || '—' }}</td></tr>\n<tr><td><b>Execution</b></td><td>{{ $json.execution_url ? '<a href=\"' + $json.execution_url + '\">Open failed execution #' + $json.execution_id + '</a>' : $json.execution_id }}</td></tr>\n<tr><td><b>Workflow</b></td><td>{{ $json.editor_url ? '<a href=\"' + $json.editor_url + '\">Open in editor</a>' : $json.workflow_id }}</td></tr>\n<tr><td><b>Mode</b></td><td>{{ $json.mode }}{{ $json.is_retry ? ' (retry)' : '' }}</td></tr>\n</table>\n<p style=\"color:#666;font-size:12px;margin-top:16px\">Next step: open the failed execution, check the input of the failed node, fix the cause, then use <i>Retry → From failed node</i> in the Executions list.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Email Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        2496
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput",
+      "notes": "Primary alert. Email is independent of the services this workflow calls, so their outage cannot silence the alert. Retries 3× / 5 s, then the fallback runs."
+    },
+    {
+      "id": "f35e0f93-0dfd-429e-8786-b0b1c6ebcd64",
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "483c6066-6644-4c31-a7eb-dfcad52f1eb3",
+              "name": "Incident ID",
+              "value": "={{ $json.incident_id }}",
+              "type": "string"
+            },
+            {
+              "id": "9978b2e6-616a-45ed-bee4-f7acc79a3151",
+              "name": "Occurred At",
+              "value": "={{ $json.occurred_at }}",
+              "type": "string"
+            },
+            {
+              "id": "cc9f07b6-a97f-4615-9d6a-68245e8f4d87",
+              "name": "Severity",
+              "value": "={{ $json.severity }}",
+              "type": "string"
+            },
+            {
+              "id": "91cbb5be-61b0-4d57-a0cc-ba65e2bb6e45",
+              "name": "Workflow",
+              "value": "={{ $json.workflow_name }}",
+              "type": "string"
+            },
+            {
+              "id": "1c715782-00c8-4d4b-8b69-3a9e4e5d7436",
+              "name": "Failed Node",
+              "value": "={{ $json.failed_node }}",
+              "type": "string"
+            },
+            {
+              "id": "18af2497-eacf-4ad4-8139-9e2248365f7a",
+              "name": "Error",
+              "value": "={{ $json.error_message }}",
+              "type": "string"
+            },
+            {
+              "id": "21f82b6e-d235-42e3-8587-747efdc58d62",
+              "name": "Execution URL",
+              "value": "={{ $json.execution_url }}",
+              "type": "string"
+            },
+            {
+              "id": "c034e7ef-8b5b-431a-8cae-a78794939910",
+              "name": "Alert Email Error",
+              "value": "={{ String($json.error ?? '').slice(0, 500) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Error Log Row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        2496
+      ],
+      "notes": "Shapes the Error Log columns and renames the email failure reason. Keeps a field called 'error' away from the Sheets node: Retry On Fail treats an output item with 'error' as a failed try and would append the row again."
+    },
+    {
+      "id": "111cae79-0a95-49dd-8818-eaeb88ef1221",
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Error Log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "RAW",
+          "useAppend": true
+        }
+      },
+      "name": "Fallback · Log to Error Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        2496
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Only runs when the email alert failed after 3 tries. Appends the incident to the 'Error Log' tab; the header row is created on first use. If this fails too, the error run shows as failed in Executions."
+    }
+  ],
+  "connections": {
+    "New Finance Email": {
+      "main": [
+        [
+          {
+            "node": "Finance Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Form": {
+      "main": [
+        [
+          {
+            "node": "Finance Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance Settings": {
+      "main": [
+        [
+          {
+            "node": "Split Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Files": {
+      "main": [
+        [
+          {
+            "node": "Read Each File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Each File": {
+      "main": [
+        [
+          {
+            "node": "Read Transactions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Transactions": {
+      "main": [
+        [
+          {
+            "node": "Check Documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Documents": {
+      "main": [
+        [
+          {
+            "node": "Rows to Save",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rows to Save": {
+      "main": [
+        [
+          {
+            "node": "Save Transactions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Only Unpaid Sales Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only Unpaid Sales Invoices": {
+      "main": [
+        [
+          {
+            "node": "Add to Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When File Received": {
+      "main": [
+        [
+          {
+            "node": "Is PDF?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is PDF?": {
+      "main": [
+        [
+          {
+            "node": "Read PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read PDF": {
+      "main": [
+        [
+          {
+            "node": "Attach File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Image": {
+      "main": [
+        [
+          {
+            "node": "Attach File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach File": {
+      "main": [
+        [
+          {
+            "node": "Save to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Drive": {
+      "main": [
+        [
+          {
+            "node": "Return Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Day at 09:00": {
+      "main": [
+        [
+          {
+            "node": "Reminder Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reminder Settings": {
+      "main": [
+        [
+          {
+            "node": "Read Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Invoices": {
+      "main": [
+        [
+          {
+            "node": "Plan Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Reminders": {
+      "main": [
+        [
+          {
+            "node": "Loop Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Reminders": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder": {
+      "main": [
+        [
+          {
+            "node": "Update Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Invoice": {
+      "main": [
+        [
+          {
+            "node": "Loop Reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Monday at 08:00": {
+      "main": [
+        [
+          {
+            "node": "Report Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Settings": {
+      "main": [
+        [
+          {
+            "node": "Load Transactions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Transactions": {
+      "main": [
+        [
+          {
+            "node": "Load Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Invoices": {
+      "main": [
+        [
+          {
+            "node": "Compute Cash Flow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Cash Flow": {
+      "main": [
+        [
+          {
+            "node": "Write CFO Note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write CFO Note": {
+      "main": [
+        [
+          {
+            "node": "Email Weekly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI · Report Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write CFO Note",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Alert Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Settings": {
+      "main": [
+        [
+          {
+            "node": "Build Incident Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Incident Report": {
+      "main": [
+        [
+          {
+            "node": "Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Error Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Log Row": {
+      "main": [
+        [
+          {
+            "node": "Fallback · Log to Error Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}
