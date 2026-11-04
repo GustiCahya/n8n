@@ -42,7 +42,7 @@ Teams that receive order, payment or sign-up webhooks and keep them in Google Sh
 
 ## What it does
 - Validates each payload and assigns a request ID (from `X-Request-ID` or generated). Bad payloads get `400` with per-field details.
-- Upserts the row by request ID, so resends never create duplicates. Values are written as plain text, so something like `=HYPERLINK(...)` never runs as a formula.
+- Upserts the row by request ID, so a resend with the same `X-Request-ID` updates its row instead of adding a duplicate. Values are written as plain text, so something like `=HYPERLINK(...)` never runs as a formula.
 - Retries a failed write in-request (2 s, then 4 s). If Sheets is still down, the request is parked in an n8n Data Table, the caller gets `202`, and the queue is replayed every 15 minutes. If even the queue fails, the caller gets `503` with `Retry-After`.
 - Lets callers check any request with `GET /webhook/ingest-status?request_id=…`.
 - Emails a daily health report: stored, queued and rejected counts, the most common validation errors and requests stuck in the queue.

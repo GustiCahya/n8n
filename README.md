@@ -150,16 +150,19 @@ n8n finds a Data Table by name with a case-insensitive *contains* match and take
 
 ## 6. Before posting to the n8n community
 
-Rules from n8n's *Template submission guidelines* and *Sticky note guidelines for templates* (Creator Hub pages on n8n.notion.site, checked 2026-10-21 and 2026-10-24):
+Rules from n8n's *Template submission guidelines* and *Sticky note guidelines for templates* (Creator Hub pages on n8n.notion.site, checked 2026-10-21, 2026-10-24 and 2026-11-03):
 - Low-effort templates are not published; a template should show "thoughtful design, utility, and real-world value". This is why the first version of 02 was rejected as "too basic"; 03–05 were then given concrete use cases too.
 - Title: sentence case, action verb + what + where, name the main apps, no emojis or hype (e.g. "Sync contacts from Pipedrive to HubSpot").
-- Exactly one yellow overview sticky at the top left, 100–300 words, with **How it works** and **Setup** (optional **Customization**).
-- White section stickies for workflows with 4+ nodes, **under 50 words each**: a `##` title of 3–6 words in sentence case plus at most one short line. Each one wraps a small cluster of 2–4 nodes tightly, without large empty areas. Put longer explanations in node notes.
+- Exactly one yellow overview sticky at the top left, 100–300 words, with **How it works** and **Setup** (optional **Customization**). It must also say who the workflow helps, what result it produces and any limitations.
+- White section stickies for workflows with 4+ nodes, **under 50 words each**: a `##` title of 3–6 words in sentence case plus up to two short lines that explain the section's purpose (why it exists, which records qualify for a branch) instead of repeating node names. Each one covers a cluster of related nodes without large empty areas. Put implementation detail in node notes.
+- Optional red warning sticky over the single node a critical setup step or risk concerns. Use it sparingly.
 - n8n's official [Auto-generate sticky notes](https://n8n.io/workflows/13868-auto-generate-sticky-notes-and-rename-nodes/) template shows the expected result: overview with a numbered **How it works** (one sentence per step), **Setup steps** as `- [ ]` checkboxes, optional **Customization**; about one section sticky per 3 nodes.
 - No credentials, API keys, pinned data or real contact details. Only placeholders such as `you@example.com`, `6281200000000` and `REPLACE_WITH_…`.
 - Description: about 200 words, Markdown, no HTML.
 
-On 2026-10-24 n8n returned 03 because its stickies did not meet their quality standards: six large section stickies with 25–40 words of implementation detail, and a dense overview with a `curl` block. 02–05 now follow the official template's layout: 9–13 tight section stickies each and a 200–236-word overview, with the `curl` tests moved to the webhook node notes. **01 still has the old style** (section stickies of 86–161 words); restyle it before submitting. 06–13 were built in this layout from the start (9–20 section stickies, 179–226-word overviews). Ready-to-paste titles and descriptions for 02–13 are in [`TEMPLATE-SUBMISSIONS.md`](TEMPLATE-SUBMISSIONS.md).
+On 2026-10-24 n8n returned 03 because its stickies did not meet their quality standards: six large section stickies with 25–40 words of implementation detail, and a dense overview with a `curl` block. 02–05 now follow the official template's layout: 9–13 tight section stickies each and a 200–236-word overview, with the `curl` tests moved to the webhook node notes. **01 still has the old style** (section stickies of 86–161 words); restyle it before submitting. 06–13 were built in this layout from the start (9–20 section stickies, 179–226-word overviews).
+
+On 2026-11-03 03 was reworked against the current guideline page and 112 recently approved templates of 25–50 nodes (middle half: 23–32 words per section sticky, 3.5–5.6 nodes per section, 228–285-word overview). Its overview (294 words) now states the audience, the result and the limitations, its 10 white section stickies (28–36 words) explain purpose, one red sticky warns about `X-Request-ID`, and node names follow the official rename rules. Only stickies, positions and node names changed. Ready-to-paste titles and descriptions for 02–13 are in [`TEMPLATE-SUBMISSIONS.md`](TEMPLATE-SUBMISSIONS.md).
 
 If you re-export a workflow after testing it on your own instance, check the export for your credential names, real email addresses, phone numbers or Slack IDs, and remove any pinned data before submitting. The safest option is to submit the files in this folder.
 
