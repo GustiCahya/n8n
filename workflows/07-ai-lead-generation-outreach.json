@@ -2,179 +2,179 @@
   "name": "Find Google Maps leads with SerpAPI, score them with OpenAI and send personal emails with Gmail",
   "nodes": [
     {
-      "id": "ab7ac87b-3590-44fc-9cb5-d1e899b31a38",
       "parameters": {
-        "content": "## Find Google Maps leads with SerpAPI, score them with OpenAI and send personal emails with Gmail\n\n### How it works\n1. Every morning, each \"keyword | location\" line becomes a Google Maps search through SerpAPI.\n2. New businesses are deduplicated against the sheet, and their websites are read for emails, Instagram and what they do.\n3. OpenAI scores each lead against your ideal customer and finds a personal opening line. Leads are saved to Google Sheets and you get a summary.\n4. On weekdays, a few emails per hour go out from Gmail: first emails to the best new leads, follow-ups in the same thread.\n5. Replies stop the sequence, and \"stop\" replies mark the lead as opted out.\n\n### Setup steps\n- [ ] Add **SerpAPI**, **OpenAI**, **Google Sheets** and **Gmail** credentials.\n- [ ] Create a spreadsheet with empty `Leads` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Prospecting Settings** (searches, ideal customer, offer) and **Outreach Settings** (sender, volume).\n- [ ] Set the workflow time zone, then activate.\n\n### Customization\nChange the scoring rules in **Score Lead** and the email style in **Write Email**.",
-        "height": 704,
-        "width": 480
+        "content": "## Find Google Maps leads with SerpAPI, score them with OpenAI and send personal emails with Gmail\n\n### How it works\n\n1. Every morning, each \"keyword | location\" line becomes a Google Maps search through SerpAPI.\n2. New businesses are deduplicated against the sheet, and their websites are read for emails, Instagram and what they do.\n3. OpenAI scores each lead against your ideal customer and finds a personal opening line. Leads are saved to Google Sheets and you get a summary.\n4. On weekdays, a few emails per hour go out from Gmail: first emails to the best new leads, follow-ups in the same thread.\n5. Replies stop the sequence, and \"stop\" replies mark the lead as opted out.\n\n### Setup steps\n\n- [ ] Add **SerpAPI**, **OpenAI**, **Google Sheets** and **Gmail** credentials.\n- [ ] Create a spreadsheet with empty `Leads` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Prospecting Settings** (searches, ideal customer, offer) and **Outreach Settings** (sender, volume).\n- [ ] Set the workflow time zone, then activate.\n\n### Customization\n\nChange the scoring rules in **Score Lead** and the email style in **Write Email**.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
         -112
-      ]
+      ],
+      "id": "efd1c005-136e-4813-848e-5950b3e91778",
+      "name": "Sticky Note"
     },
     {
-      "id": "80d07eb4-8bbd-4dfe-abad-5b9f9e8ec156",
       "parameters": {
-        "content": "## Plan the searches\nKnown leads are loaded so nobody is found twice.",
-        "height": 272,
+        "content": "## Plan the searches\n\nKnown leads are loaded so nobody is found twice.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "880af67c-b190-4929-9420-f6f848adcc33",
+      "name": "Sticky Note1"
     },
     {
-      "id": "f8052efe-172e-4ff2-9774-8faf512ddc18",
       "parameters": {
-        "content": "## Find new businesses\nGoogle Maps via SerpAPI, then each website.",
-        "height": 272,
+        "content": "## Find new businesses\n\nGoogle Maps via SerpAPI, then each website.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
         -112
-      ]
+      ],
+      "id": "7ee6c272-1c33-4254-a606-d551d90e9aeb",
+      "name": "Sticky Note2"
     },
     {
-      "id": "c92896f9-b68a-46ad-9e08-713cc43a4219",
       "parameters": {
-        "content": "## Score each lead with AI\nFit score, summary and an opening hook.",
-        "height": 672,
-        "width": 480,
+        "content": "## Score each lead with AI\n\nFit score, summary and an opening hook.",
+        "width": 352,
+        "height": 480,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1872,
         -112
-      ]
+      ],
+      "id": "9cbe1d55-6220-47f5-8dc4-00294d9856de",
+      "name": "Sticky Note3"
     },
     {
-      "id": "8c4ff27a-7d12-4cc8-98a3-825492a3c27d",
       "parameters": {
-        "content": "## Save and report\nAppends the leads and emails a summary.",
-        "height": 272,
+        "content": "## Save and report\n\nAppends the leads and emails a summary.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2384,
         -112
-      ]
+      ],
+      "id": "d72578f1-b019-492e-a87b-e72344a9d642",
+      "name": "Sticky Note4"
     },
     {
-      "id": "b4fbcdc9-7f89-4f8b-8f70-d89397e543c5",
       "parameters": {
-        "content": "## Plan the hourly outreach\nReplies first, then follow-ups and new leads.",
-        "height": 272,
+        "content": "## Plan the hourly outreach\n\nReplies first, then follow-ups and new leads.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         720
-      ]
+      ],
+      "id": "17b4927c-d37e-4fc8-91b2-b2f5bae10a6f",
+      "name": "Sticky Note5"
     },
     {
-      "id": "e99e9c6a-3b21-46d1-b2ff-d25e1ec16347",
       "parameters": {
-        "content": "## Record replies\nStops the sequence for leads who answered.",
-        "height": 272,
+        "content": "## Record replies\n\nStops the sequence for leads who answered.",
         "width": 416,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1136,
         720
-      ]
+      ],
+      "id": "7775c677-f516-4eb3-a099-6ecb3b03ace0",
+      "name": "Sticky Note6"
     },
     {
-      "id": "8835da71-f3b4-4dda-b70f-28d86c0bef83",
       "parameters": {
-        "content": "## Write the email with AI\nOne lead at a time, in the lead’s language.",
-        "height": 672,
-        "width": 768,
+        "content": "## Write the email with AI\n\nOne lead at a time, in the lead’s language.",
+        "width": 640,
+        "height": 480,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1360,
         1040
-      ]
+      ],
+      "id": "80a5507b-cc9f-47b2-8e94-cb4aeb685a98",
+      "name": "Sticky Note7"
     },
     {
-      "id": "180c6547-2e6f-42b1-9599-c2348c7f6b64",
       "parameters": {
-        "content": "## Send and track\nFollow-ups reply in the same thread.",
-        "height": 496,
+        "content": "## Send and track\n\nFollow-ups reply in the same thread.",
         "width": 864,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2160,
         1040
-      ]
+      ],
+      "id": "9ffdd6cb-d298-4c61-a18e-95e013e43384",
+      "name": "Sticky Note8"
     },
     {
-      "id": "d70b8005-2330-44de-bf01-3b170ceaf59e",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1872
-      ]
+      ],
+      "id": "5103ded2-fda1-49e0-9f34-7b87d567ed21",
+      "name": "Sticky Note9"
     },
     {
-      "id": "9262f439-521a-46d1-837f-adb92853dc98",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note10",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         1872
-      ]
+      ],
+      "id": "5f4ddf91-e173-4389-94d4-500100a21732",
+      "name": "Sticky Note10"
     },
     {
       "id": "21801434-de55-4c3e-8264-0261ca5f88d3",

@@ -2,339 +2,339 @@
   "name": "Answer WhatsApp sales chats with an AI agent, a Google Sheets catalog and lead capture",
   "nodes": [
     {
-      "id": "65f72156-ff8f-47ca-a9ba-a50fdb93e7c9",
       "parameters": {
-        "content": "## Answer WhatsApp sales chats with an AI agent, a Google Sheets catalog and lead capture\n\n### How it works\n1. The WhatsApp trigger receives each customer message. Repeats are skipped and voice notes are transcribed.\n2. Messages sent in quick succession are grouped, so the customer gets one answer.\n3. An OpenAI agent reads the chat history, searches your Google Sheets catalog and replies like a sales assistant.\n4. Every reply updates the lead row in Google Sheets. Confirmed orders go to an Orders tab and to your team by email.\n5. Complaints or requests for a person hand the chat to your team, who reply from a protected n8n form.\n6. Quiet warm leads get one follow-up before the 24-hour WhatsApp window closes.\n\n### Setup steps\n- [ ] Add **WhatsApp OAuth** (trigger), **WhatsApp API**, **OpenAI**, **Google Sheets**, **Gmail** and **Basic Auth** credentials.\n- [ ] Create Data Tables `wa_messages` (phone, message_id, direction, text, status, received_at) and `wa_contacts` (phone, name, phone_number_id, stage, mode, human_until, last_inbound_at, followup_sent), all *String*.\n- [ ] Create a spreadsheet with a `Products` tab (SKU, Name, Category, Price, Stock, Description, Link) and empty `Leads`, `Orders` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Edit **Sales Settings**, save, then activate.\n\n### Customization\nChange the selling rules in the **Sales Agent** system message.",
-        "height": 736,
-        "width": 480
+        "content": "## Answer WhatsApp sales chats with an AI agent, a Google Sheets catalog and lead capture\n\n### How it works\n\n1. The WhatsApp trigger receives each customer message. Repeats are skipped and voice notes are transcribed.\n2. Messages sent in quick succession are grouped, so the customer gets one answer.\n3. An OpenAI agent reads the chat history, searches your Google Sheets catalog and replies like a sales assistant.\n4. Every reply updates the lead row in Google Sheets. Confirmed orders go to an Orders tab and to your team by email.\n5. Complaints or requests for a person hand the chat to your team, who reply from a protected n8n form.\n6. Quiet warm leads get one follow-up before the 24-hour WhatsApp window closes.\n\n### Setup steps\n\n- [ ] Add **WhatsApp OAuth** (trigger), **WhatsApp API**, **OpenAI**, **Google Sheets**, **Gmail** and **Basic Auth** credentials.\n- [ ] Create Data Tables `wa_messages` (phone, message_id, direction, text, status, received_at) and `wa_contacts` (phone, name, phone_number_id, stage, mode, human_until, last_inbound_at, followup_sent), all *String*.\n- [ ] Create a spreadsheet with a `Products` tab (SKU, Name, Category, Price, Stock, Description, Link) and empty `Leads`, `Orders` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Edit **Sales Settings**, save, then activate.\n\n### Customization\n\nChange the selling rules in the **Sales Agent** system message.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
-        -112
-      ]
+        -128
+      ],
+      "id": "b766c0a4-1982-4d91-b431-b5f0df5ceecd",
+      "name": "Sticky Note"
     },
     {
-      "id": "00e96a2f-bf14-43d6-8684-bb26039fdf0f",
       "parameters": {
-        "content": "## Receive WhatsApp messages\nDrops status updates and repeated deliveries.",
-        "height": 272,
+        "content": "## Receive WhatsApp messages\n\nDrops status updates and repeated deliveries.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "2b989ac7-f1d9-4e8a-a987-fb1f88142cc7",
+      "name": "Sticky Note1"
     },
     {
-      "id": "1b42ae61-8763-48b1-abfa-95158337d8e8",
       "parameters": {
-        "content": "## Route by message type\nText goes on, voice notes get transcribed.",
-        "height": 272,
+        "content": "## Route by message type\n\nText goes on, voice notes get transcribed.",
         "width": 416,
+        "height": 304,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
         -112
-      ]
+      ],
+      "id": "4ce4c867-4ef0-4363-ba39-9f2486cd47f5",
+      "name": "Sticky Note2"
     },
     {
-      "id": "8816a914-6fff-420f-8487-92cfea077150",
       "parameters": {
-        "content": "## Transcribe voice notes\nOther media gets a polite text reply.",
-        "height": 496,
+        "content": "## Transcribe voice notes\n\nOther media gets a polite text reply.",
         "width": 640,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1424,
         176
-      ]
+      ],
+      "id": "e0675096-222e-4ccf-971f-399423c4af42",
+      "name": "Sticky Note3"
     },
     {
-      "id": "af90fcdc-82d2-4120-a4a9-f6f724066de2",
       "parameters": {
-        "content": "## Wait for message bursts\nSeveral quick messages get one answer.",
-        "height": 272,
+        "content": "## Wait for message bursts\n\nSeveral quick messages get one answer.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2288,
         -112
-      ]
+      ],
+      "id": "496ad3ae-f072-4251-9159-04eb6a0fac81",
+      "name": "Sticky Note4"
     },
     {
-      "id": "86f68f05-c5ef-4edb-9f12-d47bd2692a72",
       "parameters": {
-        "content": "## Claim the waiting messages\nSkips the AI while a person handles the chat.",
-        "height": 272,
+        "content": "## Claim the waiting messages\n\nSkips the AI while a person handles the chat.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         3248,
         -112
-      ]
+      ],
+      "id": "bff276e5-d5b6-47a0-8f7e-4e453c0ae6dc",
+      "name": "Sticky Note5"
     },
     {
-      "id": "f6a2fb20-0b86-4bfd-a476-64e759d12ee7",
       "parameters": {
-        "content": "## Alert staff in human mode\nForwards new messages by email.",
-        "height": 336,
+        "content": "## Alert staff in human mode\n\nForwards new messages by email.",
         "width": 240,
+        "height": 336,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         4144,
         224
-      ]
+      ],
+      "id": "b7ae5cd6-7a99-4a06-8dbc-3efc61b4d850",
+      "name": "Sticky Note6"
     },
     {
-      "id": "cd634b40-73b7-473a-a730-34677ec0fff1",
       "parameters": {
-        "content": "## Load the chat history\nEarlier turns from the Data Table.",
-        "height": 272,
+        "content": "## Load the chat history\n\nEarlier turns from the Data Table.",
         "width": 416,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         4208,
         -112
-      ]
+      ],
+      "id": "bc2d7ccb-34a2-4274-ade0-2be4ef4de77a",
+      "name": "Sticky Note7"
     },
     {
-      "id": "9a39c2cf-c3d8-4364-b06d-971949f9c401",
       "parameters": {
-        "content": "## Reply with the AI agent\nSearches the catalog and returns a reply plus lead data.",
-        "height": 672,
-        "width": 624,
+        "content": "## Reply with the AI agent\n\nSearches the catalog and returns a reply plus lead data.",
+        "width": 464,
+        "height": 512,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         4704,
-        -112
-      ]
+        -128
+      ],
+      "id": "699368ed-b160-4e89-8f77-8c0f6e87a8eb",
+      "name": "Sticky Note8"
     },
     {
-      "id": "6eefc781-ec2c-415b-bc3e-cdc674e4857e",
       "parameters": {
-        "content": "## Send the reply\nFalls back to a safe reply if the AI fails.",
-        "height": 496,
+        "content": "## Send the reply\n\nFalls back to a safe reply if the AI fails.",
         "width": 640,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         5360,
         -112
-      ]
+      ],
+      "id": "6d457368-a3fd-48e9-8ff9-cfa55044b146",
+      "name": "Sticky Note9"
     },
     {
-      "id": "d545fbed-252c-4677-80a7-5a577bb36a64",
       "parameters": {
-        "content": "## Save the conversation\nLogs the reply and updates the chat state.",
-        "height": 272,
+        "content": "## Save the conversation\n\nLogs the reply and updates the chat state.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note10",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         6096,
         -112
-      ]
+      ],
+      "id": "f4d7116b-4593-487e-99cd-84efe145a0b8",
+      "name": "Sticky Note10"
     },
     {
-      "id": "d5c3d1bf-a41e-4f29-b7c9-17a6c565d19a",
       "parameters": {
-        "content": "## Update the lead sheet\nOne row per customer in Google Sheets.",
-        "height": 272,
+        "content": "## Update the lead sheet\n\nOne row per customer in Google Sheets.",
         "width": 416,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note11",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         6832,
         -112
-      ]
+      ],
+      "id": "f6b67846-5921-4c2d-a375-fde9b72a4e2a",
+      "name": "Sticky Note11"
     },
     {
-      "id": "07580448-d3b6-45d0-90f9-2da5556f3ee9",
       "parameters": {
-        "content": "## Notify staff\nEmails handoffs and new orders.",
-        "height": 272,
+        "content": "## Notify staff\n\nEmails handoffs and new orders.",
         "width": 416,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note12",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         7344,
         -112
-      ]
+      ],
+      "id": "ab481cef-762e-4f86-8d4f-10986163d626",
+      "name": "Sticky Note12"
     },
     {
-      "id": "14614287-b37d-4412-81c7-7d961431cc2e",
       "parameters": {
-        "content": "## Record confirmed orders\nAdds the order to the Orders sheet.",
-        "height": 272,
+        "content": "## Record confirmed orders\n\nAdds the order to the Orders sheet.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note13",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         7344,
         208
-      ]
+      ],
+      "id": "9774ef40-2b25-453d-a2a9-9325aef81e50",
+      "name": "Sticky Note13"
     },
     {
-      "id": "b13b5994-8b17-43c1-9343-ec3322189564",
       "parameters": {
-        "content": "## Staff replies from a form\nLinked from every staff email.",
-        "height": 272,
+        "content": "## Staff replies from a form\n\nLinked from every staff email.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note14",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         848
-      ]
+      ],
+      "id": "844fa99b-eca7-46c2-96fc-ab78fa94d495",
+      "name": "Sticky Note14"
     },
     {
-      "id": "e579df00-c847-44ce-bdf7-92d1b3c8366c",
       "parameters": {
-        "content": "## Send the staff reply\nPauses the AI or hands the chat back.",
-        "height": 720,
+        "content": "## Send the staff reply\n\nPauses the AI or hands the chat back.",
         "width": 864,
+        "height": 720,
         "color": 7
       },
-      "name": "Sticky Note15",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         848
-      ]
+      ],
+      "id": "5520c198-839f-49f7-b8b2-2e8174ce1b04",
+      "name": "Sticky Note15"
     },
     {
-      "id": "0342ffd3-cd2a-4432-a769-24b75f646767",
       "parameters": {
-        "content": "## Find chats to follow up\nWarm leads quiet for 20 hours.",
-        "height": 272,
+        "content": "## Find chats to follow up\n\nWarm leads quiet for 20 hours.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note16",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1744
-      ]
+      ],
+      "id": "9c5701c1-0293-41fa-a575-aa1c84a1c042",
+      "name": "Sticky Note16"
     },
     {
-      "id": "3dc3d038-50e9-43d2-a5e1-df083bc637f2",
       "parameters": {
-        "content": "## Send one follow-up\nBefore the 24-hour window closes.",
-        "height": 272,
+        "content": "## Send one follow-up\n\nBefore the 24-hour window closes.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note17",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
         1744
-      ]
+      ],
+      "id": "f86fe546-1757-400e-a23c-1966ae40b3b3",
+      "name": "Sticky Note17"
     },
     {
-      "id": "35fe5fb0-56f5-451b-885a-7236da9a7556",
       "parameters": {
-        "content": "## Search the product catalog\nThe tool the agent calls for products.",
-        "height": 272,
+        "content": "## Search the product catalog\n\nThe tool the agent calls for products.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note18",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         2128
-      ]
+      ],
+      "id": "126c1284-5181-46a7-a61e-c736a0d0c316",
+      "name": "Sticky Note18"
     },
     {
-      "id": "7dfe9099-6454-432c-a1f4-a04490088c77",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note19",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         2512
-      ]
+      ],
+      "id": "9808d39b-8e92-45a3-801c-52b231dc4bcc",
+      "name": "Sticky Note19"
     },
     {
-      "id": "f7b4aef1-2e35-490b-b03e-7c8bdecc199f",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note20",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         2512
-      ]
+      ],
+      "id": "8f7d2a10-5f5e-4dfc-b5a2-225ac80041b5",
+      "name": "Sticky Note20"
     },
     {
       "id": "a0931f3d-7fc6-452f-9426-c28e6a7c91a4",

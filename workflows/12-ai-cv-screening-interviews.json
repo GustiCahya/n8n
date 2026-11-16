@@ -2,211 +2,211 @@
   "name": "Screen CVs with OpenAI, rank candidates in Google Sheets and book interviews with Google Calendar",
   "nodes": [
     {
-      "id": "f38f6e45-93b0-4ecf-a9bb-bfc2957f26ed",
       "parameters": {
-        "content": "## Screen CVs with OpenAI, rank candidates in Google Sheets and book interviews with Google Calendar\n\n### How it works\n1. Candidates apply through an n8n form with a PDF CV. Repeat applications are skipped.\n2. OpenAI turns the CV into a profile without name, age, gender, photo, schools or employers. A second call scores only that profile against the job's must-haves.\n3. Each candidate lands in the Candidates tab with score, strengths, gaps and interview questions, and the CV goes to Google Drive.\n4. Strong matches get an email to pick a free time from your Google Calendar. The booking sends a Google Meet invite and briefs the interviewer.\n5. Every morning HR gets a ranked digest. Set Status to Invite or Rejected and the next run sends the invite or a polite rejection.\n\n### Setup steps\n- [ ] Add **OpenAI**, **Google Sheets**, **Google Drive**, **Google Calendar** and **Gmail** credentials.\n- [ ] Create a spreadsheet with a `Jobs` tab (Job ID, Title, Status, Description, Must Have, Nice to Have, Interviewer Email) and empty `Candidates` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Match the Position options in the form to your job titles, pick a Drive folder in **Upload CV** and edit **Hiring Settings**.\n\n### Customization\nChange the score thresholds, working hours and email texts in **Hiring Settings**. The AI only suggests: no rejection is sent before HR confirms it.",
-        "height": 720,
-        "width": 480
+        "content": "## Screen CVs with OpenAI, rank candidates in Google Sheets and book interviews with Google Calendar\n\n### How it works\n\n1. Candidates apply through an n8n form with a PDF CV. Repeat applications are skipped.\n2. OpenAI turns the CV into a profile without name, age, gender, photo, schools or employers. A second call scores only that profile against the job's must-haves.\n3. Each candidate lands in the Candidates tab with score, strengths, gaps and interview questions, and the CV goes to Google Drive.\n4. Strong matches get an email to pick a free time from your Google Calendar. The booking sends a Google Meet invite and briefs the interviewer.\n5. Every morning HR gets a ranked digest. Set Status to Invite or Rejected and the next run sends the invite or a polite rejection.\n\n### Setup steps\n\n- [ ] Add **OpenAI**, **Google Sheets**, **Google Drive**, **Google Calendar** and **Gmail** credentials.\n- [ ] Create a spreadsheet with a `Jobs` tab (Job ID, Title, Status, Description, Must Have, Nice to Have, Interviewer Email) and empty `Candidates` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Match the Position options in the form to your job titles, pick a Drive folder in **Upload CV** and edit **Hiring Settings**.\n\n### Customization\n\nChange the score thresholds, working hours and email texts in **Hiring Settings**. The AI only suggests: no rejection is sent before HR confirms it.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
         -112
-      ]
+      ],
+      "id": "c95e7961-e8f2-42cf-8cba-5b37f03b2a2e",
+      "name": "Sticky Note"
     },
     {
-      "id": "dc9647a2-4b8e-41fb-85cc-2166fa1e0200",
       "parameters": {
-        "content": "## Receive applications\nThe public form, and the daily HR run.",
-        "height": 496,
+        "content": "## Receive applications\n\nThe public form, and the daily HR run.",
         "width": 640,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "1425874b-46df-4af8-92e7-6ec8858011ad",
+      "name": "Sticky Note1"
     },
     {
-      "id": "ee408de2-1fb6-4abd-bbc8-35850f1e6994",
       "parameters": {
-        "content": "## Match the job, skip repeats\nOpen jobs from the Jobs tab.",
-        "height": 272,
+        "content": "## Match the job, skip repeats\n\nOpen jobs from the Jobs tab.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         -112
-      ]
+      ],
+      "id": "5a4e43cd-d975-4369-8040-5e0420f454e6",
+      "name": "Sticky Note2"
     },
     {
-      "id": "1b3b48b5-b5e6-4af4-8a06-faafba735f56",
       "parameters": {
-        "content": "## Blind AI screening\nA profile without personal details, then a score.",
-        "height": 448,
+        "content": "## Blind AI screening\n\nA profile without personal details, then a score.",
         "width": 864,
+        "height": 448,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1648,
         -112
-      ]
+      ],
+      "id": "1a783629-92c9-4ecb-90e4-1123d65a3227",
+      "name": "Sticky Note3"
     },
     {
-      "id": "6fc5c97c-3706-4320-8d56-7db12407b943",
       "parameters": {
-        "content": "## Save and rank the candidate\nCV to Drive, row to Candidates, strong matches invited.",
-        "height": 272,
+        "content": "## Save and rank the candidate\n\nCV to Drive, row to Candidates, strong matches invited.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2608,
         -112
-      ]
+      ],
+      "id": "bc285251-88da-4144-82f5-f54c0781a6ab",
+      "name": "Sticky Note4"
     },
     {
-      "id": "365af940-a52b-48b2-a679-9d9f696130ce",
       "parameters": {
-        "content": "## Plan the daily HR actions\nReads the decisions HR made in the sheet.",
-        "height": 272,
+        "content": "## Plan the daily HR actions\n\nReads the decisions HR made in the sheet.",
         "width": 640,
+        "height": 304,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         416
-      ]
+      ],
+      "id": "210e4b24-43bb-4789-bbc2-61265d095230",
+      "name": "Sticky Note5"
     },
     {
-      "id": "45fbf1bf-eee0-41a0-bc25-732929bc6cc0",
       "parameters": {
-        "content": "## Act on HR decisions\nApproved invites, confirmed rejections and the digest.",
-        "height": 720,
+        "content": "## Act on HR decisions\n\nApproved invites, confirmed rejections and the digest.",
         "width": 640,
+        "height": 720,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1424,
         416
-      ]
+      ],
+      "id": "fd870efb-6112-4af6-a440-1b4f9c5551c3",
+      "name": "Sticky Note6"
     },
     {
-      "id": "5221333f-ca84-49f9-9a0d-648e1479da5e",
       "parameters": {
-        "content": "## Find free interview times\nFree/busy from Google Calendar.",
-        "height": 272,
+        "content": "## Find free interview times\n\nFree/busy from Google Calendar.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1296
-      ]
+      ],
+      "id": "c08a81f4-c0f9-4a3a-9e5a-2e18c13d84b3",
+      "name": "Sticky Note7"
     },
     {
-      "id": "2472fbe8-289f-4680-ab28-b9c978bb15a6",
       "parameters": {
-        "content": "## Let the candidate pick\nAn email with a form, then the wait.",
-        "height": 272,
+        "content": "## Let the candidate pick\n\nAn email with a form, then the wait.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1136,
         1296
-      ]
+      ],
+      "id": "15f099cb-c0b2-4ce2-a1ab-87f4570955b6",
+      "name": "Sticky Note8"
     },
     {
-      "id": "953c1dac-3930-4315-bdf4-623edc50ca4d",
       "parameters": {
-        "content": "## Book the interview\nRe-checked, then a Google Meet invite.",
-        "height": 272,
+        "content": "## Book the interview\n\nRe-checked, then a Google Meet invite.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1872,
         1296
-      ]
+      ],
+      "id": "e9fa464b-c20b-4400-b82d-50f6b24534f5",
+      "name": "Sticky Note9"
     },
     {
-      "id": "907fa158-bdac-49cb-8d87-0be5ca7d82f9",
       "parameters": {
-        "content": "## Hand over to HR\nNo free time, another time or no answer.",
-        "height": 272,
+        "content": "## Hand over to HR\n\nNo free time, another time or no answer.",
         "width": 416,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note10",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1872,
         1616
-      ]
+      ],
+      "id": "8d87728a-e1a3-4488-bb85-bb958e99cd37",
+      "name": "Sticky Note10"
     },
     {
-      "id": "f0d645ea-0cc3-44fe-a6bd-4b6a33d3b50b",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note11",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1952
-      ]
+      ],
+      "id": "5aeb2595-c99c-42d4-913b-d6e1c9513894",
+      "name": "Sticky Note11"
     },
     {
-      "id": "975f53bd-d671-4dd5-a445-d6741b66b7bf",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note12",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         1952
-      ]
+      ],
+      "id": "6454ca23-e702-47d6-9892-d21f3fb4adc1",
+      "name": "Sticky Note12"
     },
     {
       "id": "232b09f4-9adf-4459-8971-dbee2db9547f",

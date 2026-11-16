@@ -2,179 +2,179 @@
   "name": "Pre-screen refund requests with an AI agent and approve risky ones in Slack",
   "nodes": [
     {
-      "id": "69477e1f-d1f0-44f8-9940-d59e985a7fbe",
       "parameters": {
-        "content": "## Pre-screen refund requests with an AI agent and approve risky ones in Slack\n\n### How it works\n1. A header-protected webhook takes 1–100 refund, cancellation or dispute requests and answers `202` with a `batch_id`.\n2. Hard rules in code send risk keywords and large amounts to a person.\n3. An AI agent (OpenAI) reviews each request, can look up the customer's earlier decisions, and returns schema-checked JSON. If it fails, a person decides.\n4. Every decision is logged to the `Review Log` sheet.\n5. Each risky request starts its own run: a Slack message with **Approve / Decline** buttons that waits up to 48 hours. The answer, or `expired`, is written back to the log.\n6. A built-in error handler emails you about failures, with a Slack fallback.\n\n### Setup steps\n- [ ] Add **Header Auth**, **OpenAI**, **Google Sheets**, **Slack** and **Gmail** credentials.\n- [ ] Create an empty `Review Log` tab and select the spreadsheet in the three Sheets nodes.\n- [ ] Edit **Config** (approval channel, thresholds, keywords) and **Alert Settings**, and invite the Slack bot to both channels.\n- [ ] Leave *Settings → Error workflow* empty, activate, and send the test request from the **Records Webhook** node notes.\n\n### Customization\nConnect your payment provider after **Record Human Decision** to issue approved refunds automatically.",
-        "height": 704,
-        "width": 480
+        "content": "## Pre-screen refund requests with an AI agent and approve risky ones in Slack\n\n### How it works\n\n1. A header-protected webhook takes 1–100 refund, cancellation or dispute requests and answers `202` with a `batch_id`.\n2. Hard rules in code send risk keywords and large amounts to a person.\n3. An AI agent (OpenAI) reviews each request, can look up the customer's earlier decisions, and returns schema-checked JSON. If it fails, a person decides.\n4. Every decision is logged to the `Review Log` sheet.\n5. Each risky request starts its own run: a Slack message with **Approve / Decline** buttons that waits up to 48 hours. The answer, or `expired`, is written back to the log.\n6. A built-in error handler emails you about failures, with a Slack fallback.\n\n### Setup steps\n\n- [ ] Add **Header Auth**, **OpenAI**, **Google Sheets**, **Slack** and **Gmail** credentials.\n- [ ] Create an empty `Review Log` tab and select the spreadsheet in the three Sheets nodes.\n- [ ] Edit **Config** (approval channel, thresholds, keywords) and **Alert Settings**, and invite the Slack bot to both channels.\n- [ ] Leave *Settings → Error workflow* empty, activate, and send the test request from the **Records Webhook** node notes.\n\n### Customization\n\nConnect your payment provider after **Record Human Decision** to issue approved refunds automatically.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
-        -144
-      ]
+        -128
+      ],
+      "id": "0242503a-7364-4642-a49c-203413d3208c",
+      "name": "Sticky Note"
     },
     {
-      "id": "31b4baf6-0008-488f-a389-51ce43c37003",
       "parameters": {
-        "content": "## Receive and validate batch\nAccepts 1–100 refund requests and checks every field.",
-        "height": 304,
+        "content": "## Receive and validate batch\n\nAccepts 1–100 refund requests and checks every field.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
-        -144
-      ]
+        -112
+      ],
+      "id": "340ce861-c9d5-4c89-a6cd-e9c233341299",
+      "name": "Sticky Note1"
     },
     {
-      "id": "0e60e0b4-834b-4b6e-bd10-6f54c4af0ef8",
       "parameters": {
-        "content": "## Reject invalid batches\nReturns `400`. A validator crash returns `500` and raises an alert.",
-        "height": 272,
+        "content": "## Reject invalid batches\n\nReturns `400`. A validator crash returns `500` and raises an alert.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
         288
-      ]
+      ],
+      "id": "91b7ce60-8950-402e-87f1-765de200f000",
+      "name": "Sticky Note2"
     },
     {
-      "id": "5ae8f7e6-619c-49d8-87cf-98993d41e6ae",
       "parameters": {
-        "content": "## Accept and apply hard rules\nReturns `202` at once. Risk keywords and large amounts always need a person.",
-        "height": 304,
+        "content": "## Accept and apply hard rules\n\nReturns `202` at once. Risk keywords and large amounts always need a person.",
         "width": 640,
+        "height": 304,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
-        -144
-      ]
+        -128
+      ],
+      "id": "1759c64b-80c5-4537-8535-d709907ec263",
+      "name": "Sticky Note3"
     },
     {
-      "id": "af1f4299-245b-4eb1-8c61-871a98bdfe21",
       "parameters": {
-        "content": "## Review with an AI agent\nChecks the customer's past decisions and returns schema-checked JSON.",
-        "height": 704,
-        "width": 816,
+        "content": "## Review with an AI agent\n\nChecks the customer's past decisions and returns schema-checked JSON.",
+        "width": 656,
+        "height": 480,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1632,
-        -144
-      ]
+        -112
+      ],
+      "id": "9e801ace-000a-46c2-b4c3-b2f3af1734d3",
+      "name": "Sticky Note4"
     },
     {
-      "id": "4f41a618-ee6f-4d7a-8d81-b76ce54ec62a",
       "parameters": {
-        "content": "## Log every decision\nWrites each verdict to the `Review Log` sheet first.",
-        "height": 304,
+        "content": "## Log every decision\n\nWrites each verdict to the `Review Log` sheet first.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2512,
-        -144
-      ]
+        -112
+      ],
+      "id": "e3cd5ddf-7740-4b51-94d1-f9ba801b2552",
+      "name": "Sticky Note5"
     },
     {
-      "id": "e4333bf6-6ca6-4ab8-91ed-8d3a4d53c21d",
       "parameters": {
-        "content": "## Route to a person\nStarts one approval run per risky request. The rest are auto-approved.",
-        "height": 528,
+        "content": "## Route to a person\n\nStarts one approval run per risky request. The rest are auto-approved.",
         "width": 640,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         3248,
-        -144
-      ]
+        -112
+      ],
+      "id": "251d2e61-0e6f-4680-9fe8-f6379bc30363",
+      "name": "Sticky Note6"
     },
     {
-      "id": "0f80fefd-60db-4c37-a1ff-824d59985244",
       "parameters": {
-        "content": "## Ask for approval in Slack\nPosts Approve / Decline buttons and waits up to 48 hours.",
-        "height": 304,
+        "content": "## Ask for approval in Slack\n\nPosts Approve / Decline buttons and waits up to 48 hours.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
-        656
-      ]
+        688
+      ],
+      "id": "8bcb09fd-5221-4f73-86df-951141353e6c",
+      "name": "Sticky Note7"
     },
     {
-      "id": "e466d768-2545-4a2e-b362-c0fab41d17d3",
       "parameters": {
-        "content": "## Record the answer\nWrites it back to the log, or alerts you if Slack refused the message.",
+        "content": "## Record the answer\n\nWrites it back to the log, or alerts you if Slack refused the message.",
+        "width": 416,
         "height": 528,
-        "width": 416,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
-        656
-      ]
+        672
+      ],
+      "id": "4f1fb8fc-334e-48ed-bba1-3d80b8371eb3",
+      "name": "Sticky Note8"
     },
     {
-      "id": "0cd084bb-3175-46d3-8ee8-8a57fadeda86",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 304,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
-        1280
-      ]
+        1312
+      ],
+      "id": "0a52d1a7-87be-4bcb-a24d-ae741041d33c",
+      "name": "Sticky Note9"
     },
     {
-      "id": "cf43d113-ba24-4f8d-8dc5-a0416b6d6d87",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or posts to the Slack ops channel if Gmail fails.",
-        "height": 304,
+        "content": "## Send the alert\n\nEmails it, or posts to the Slack ops channel if Gmail fails.",
         "width": 416,
+        "height": 304,
         "color": 7
       },
-      "name": "Sticky Note10",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
-        1280
-      ]
+        1296
+      ],
+      "id": "c0cc4129-d589-4c28-bddd-c55b22b70e77",
+      "name": "Sticky Note10"
     },
     {
       "id": "145f2992-c15b-4bab-b1ca-1d8312326137",

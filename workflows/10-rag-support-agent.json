@@ -2,163 +2,163 @@
   "name": "Answer customer questions from your own docs with an OpenAI agent, Pinecone and automatic support tickets",
   "nodes": [
     {
-      "id": "982af5de-7b7d-444d-9971-e8d60c1922cb",
       "parameters": {
-        "content": "## Answer customer questions from your own docs with an OpenAI agent, Pinecone and automatic support tickets\n\n### How it works\n1. Customers chat on a hosted n8n chat page or widget. The agent answers only from your documents in Pinecone and streams the reply.\n2. When it cannot answer, it logs a knowledge gap. Problems that need a person become a ticket in Google Sheets and an email to your team.\n3. Every hour, the Google Drive docs folder is checked; after any edit the whole knowledge base is rebuilt.\n4. Every Monday, AI groups the week's questions, complaints and gaps into an insights email.\n\n### Setup steps\n- [ ] Add **OpenAI**, **Pinecone**, **Google Drive**, **Google Sheets** and **Gmail** credentials.\n- [ ] Create a Pinecone index `support-kb` (1536 dimensions, cosine) and the Data Table `support_log` (session_id, kind, question, answer, created_at, all *String*).\n- [ ] Put your SOPs and FAQ in a Drive folder and set its ID in **List Knowledge Files**.\n- [ ] Create a spreadsheet with empty `Tickets` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit the two settings nodes, activate, and wait for the first hourly sync.\n\n### Customization\nAdjust tone and ticket rules in the **Support Agent** system message.",
-        "height": 784,
-        "width": 480
+        "content": "## Answer customer questions from your own docs with an OpenAI agent, Pinecone and automatic support tickets\n\n### How it works\n\n1. Customers chat on a hosted n8n chat page or widget. The agent answers only from your documents in Pinecone and streams the reply.\n2. When it cannot answer, it logs a knowledge gap. Problems that need a person become a ticket in Google Sheets and an email to your team.\n3. Every hour, the Google Drive docs folder is checked; after any edit the whole knowledge base is rebuilt.\n4. Every Monday, AI groups the week's questions, complaints and gaps into an insights email.\n\n### Setup steps\n\n- [ ] Add **OpenAI**, **Pinecone**, **Google Drive**, **Google Sheets** and **Gmail** credentials.\n- [ ] Create a Pinecone index `support-kb` (1536 dimensions, cosine) and the Data Table `support_log` (session_id, kind, question, answer, created_at, all *String*).\n- [ ] Put your SOPs and FAQ in a Drive folder and set its ID in **List Knowledge Files**.\n- [ ] Create a spreadsheet with empty `Tickets` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit the two settings nodes, activate, and wait for the first hourly sync.\n\n### Customization\n\nAdjust tone and ticket rules in the **Support Agent** system message.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
         -112
-      ]
+      ],
+      "id": "9b074851-06ca-4c7a-92cd-f04ba55b0f4f",
+      "name": "Sticky Note"
     },
     {
-      "id": "701aef4a-a56c-458f-89db-7c913309d0d6",
       "parameters": {
-        "content": "## Answer from your docs\nSearches the knowledge base, opens tickets, logs gaps.",
-        "height": 704,
+        "content": "## Answer from your docs\n\nSearches the knowledge base, opens tickets, logs gaps.",
         "width": 1472,
+        "height": 720,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "dddece76-a0af-475c-b2ea-3f23b6e60182",
+      "name": "Sticky Note1"
     },
     {
-      "id": "89253074-fe54-46dd-b1cf-aca967355b31",
       "parameters": {
-        "content": "## Log the conversation\nFor the weekly insights.",
-        "height": 272,
+        "content": "## Log the conversation\n\nFor the weekly insights.",
         "width": 240,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1552,
         -112
-      ]
+      ],
+      "id": "6eca5523-fabc-4bda-97a7-dad8903de786",
+      "name": "Sticky Note2"
     },
     {
-      "id": "0a8631e9-3be9-498d-ae72-4784a1283f05",
       "parameters": {
-        "content": "## Ticket and gap tools\nRun when the agent calls them.",
-        "height": 496,
+        "content": "## Ticket and gap tools\n\nRun when the agent calls them.",
         "width": 1376,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         720
-      ]
+      ],
+      "id": "233cc7b5-ae01-42de-b62d-b3b14f9902b6",
+      "name": "Sticky Note3"
     },
     {
-      "id": "f1b8b27d-e800-4ef5-bdee-a8e073368cd7",
       "parameters": {
-        "content": "## Watch the docs folder\nHourly, re-indexes only after a change.",
-        "height": 272,
+        "content": "## Watch the docs folder\n\nHourly, re-indexes only after a change.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1360
-      ]
+      ],
+      "id": "d83b99a3-f82a-4391-b63a-6fd81daba202",
+      "name": "Sticky Note4"
     },
     {
-      "id": "add1a367-9f8a-4f15-bd13-ae1596b0d805",
       "parameters": {
-        "content": "## Rebuild the knowledge base\nAll docs into Pinecone, then remember the state.",
-        "height": 480,
+        "content": "## Rebuild the knowledge base\n\nAll docs into Pinecone, then remember the state.",
         "width": 832,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         1360
-      ]
+      ],
+      "id": "4f064a20-6669-4cb4-8692-e343f77ba432",
+      "name": "Sticky Note5"
     },
     {
-      "id": "8fbe3951-2a56-42df-bb46-0ca1902ef83d",
       "parameters": {
-        "content": "## Collect the week\nQuestions, gaps and tickets of the last 7 days.",
-        "height": 272,
+        "content": "## Collect the week\n\nQuestions, gaps and tickets of the last 7 days.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         2000
-      ]
+      ],
+      "id": "6d8598bb-ba8d-4773-b65f-1e05fe37790a",
+      "name": "Sticky Note6"
     },
     {
-      "id": "87b710a9-4d62-43c7-b5a6-99b7ce4d1e75",
       "parameters": {
-        "content": "## Weekly insights by AI\nTopics, complaints and doc updates by email.",
-        "height": 672,
+        "content": "## Weekly insights by AI\n\nTopics, complaints and doc updates by email.",
         "width": 704,
+        "height": 480,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1136,
         2000
-      ]
+      ],
+      "id": "2898eb2d-e2c9-4544-bfb8-154ec6690d9c",
+      "name": "Sticky Note7"
     },
     {
-      "id": "1d230441-a849-420d-b967-263781796d14",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         2832
-      ]
+      ],
+      "id": "dbb2277f-e532-415b-9c36-a65dc0e22fc2",
+      "name": "Sticky Note8"
     },
     {
-      "id": "b55794f5-369b-4cab-8589-27eec92d36b7",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         2832
-      ]
+      ],
+      "id": "487db234-27b6-437f-b321-79b179f9a789",
+      "name": "Sticky Note9"
     },
     {
       "id": "39ccb515-99f1-472b-ab04-9b88258ae9e3",

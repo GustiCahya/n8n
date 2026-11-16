@@ -2,163 +2,163 @@
   "name": "Read invoices and receipts with OpenAI, track them in Google Sheets and send payment reminders with Gmail",
   "nodes": [
     {
-      "id": "f7608fdf-d17b-4e9b-ab9b-169126d07b8f",
       "parameters": {
-        "content": "## Read invoices and receipts with OpenAI, track them in Google Sheets and send payment reminders with Gmail\n\n### How it works\n1. Invoices and receipts arrive as labelled Gmail attachments or through a protected upload form.\n2. OpenAI reads each PDF or photo into structured data, and the file is archived in Google Drive.\n3. Totals, dates and confidence are checked, duplicates are skipped, and rows go to the Transactions tab. You get a summary by email.\n4. Your own unpaid sales invoices join the Invoices tab, and clients get up to three polite reminders after the due date.\n5. Every Monday you receive a cash-flow report with an AI note.\n\n### Setup steps\n- [ ] Add **Gmail**, **OpenAI**, **Google Drive**, **Google Sheets** and **Basic Auth** credentials.\n- [ ] Create a spreadsheet with empty `Transactions` and `Error Log` tabs and an `Invoices` tab with the headers Invoice No, Client, Client Email, Issue Date, Due Date, Amount, Currency, Status, Reminders Sent, Last Reminder At, Notes. Select it in every Google Sheets node.\n- [ ] Create the Gmail label `Finance`, pick a Drive folder in **Save to Drive** and edit the three settings nodes.\n\n### Customization\nChange the categories in **Finance Settings** and the reminder texts in **Reminder Settings**.",
-        "height": 752,
-        "width": 480
+        "content": "## Read invoices and receipts with OpenAI, track them in Google Sheets and send payment reminders with Gmail\n\n### How it works\n\n1. Invoices and receipts arrive as labelled Gmail attachments or through a protected upload form.\n2. OpenAI reads each PDF or photo into structured data, and the file is archived in Google Drive.\n3. Totals, dates and confidence are checked, duplicates are skipped, and rows go to the Transactions tab. You get a summary by email.\n4. Your own unpaid sales invoices join the Invoices tab, and clients get up to three polite reminders after the due date.\n5. Every Monday you receive a cash-flow report with an AI note.\n\n### Setup steps\n\n- [ ] Add **Gmail**, **OpenAI**, **Google Drive**, **Google Sheets** and **Basic Auth** credentials.\n- [ ] Create a spreadsheet with empty `Transactions` and `Error Log` tabs and an `Invoices` tab with the headers Invoice No, Client, Client Email, Issue Date, Due Date, Amount, Currency, Status, Reminders Sent, Last Reminder At, Notes. Select it in every Google Sheets node.\n- [ ] Create the Gmail label `Finance`, pick a Drive folder in **Save to Drive** and edit the three settings nodes.\n\n### Customization\n\nChange the categories in **Finance Settings** and the reminder texts in **Reminder Settings**.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
         -112
-      ]
+      ],
+      "id": "45d1023e-507c-4f19-a079-ea0a2f0f8cc9",
+      "name": "Sticky Note"
     },
     {
-      "id": "845d3b24-f375-4ca9-9f71-c0f10306883f",
       "parameters": {
-        "content": "## Collect invoices and receipts\nGmail attachments or the upload form.",
-        "height": 496,
+        "content": "## Collect invoices and receipts\n\nGmail attachments or the upload form.",
         "width": 864,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "203cdb94-b767-4aad-aa3f-dac45020a764",
+      "name": "Sticky Note1"
     },
     {
-      "id": "2485c9a1-de9c-4237-957e-e5be4ed6c9b8",
       "parameters": {
-        "content": "## Check and save\nValidation, duplicates, then Google Sheets.",
-        "height": 720,
+        "content": "## Check and save\n\nValidation, duplicates, then Google Sheets.",
         "width": 1088,
+        "height": 720,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
         -112
-      ]
+      ],
+      "id": "673f072c-d4a7-4f4a-9437-d1f2dd834a9c",
+      "name": "Sticky Note2"
     },
     {
-      "id": "b903e722-28f9-4203-8bf4-2573f06ffd99",
       "parameters": {
-        "content": "## Read one file with AI\nPDF or photo, then archived in Google Drive.",
-        "height": 496,
+        "content": "## Read one file with AI\n\nPDF or photo, then archived in Google Drive.",
         "width": 1312,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         752
-      ]
+      ],
+      "id": "1de9e8e5-dfb9-4f52-93f3-2cdc99177790",
+      "name": "Sticky Note3"
     },
     {
-      "id": "6d9bcafa-863f-4219-a93f-e3008d8a8228",
       "parameters": {
-        "content": "## Chase late payments\nThree polite stages after the due date.",
-        "height": 272,
+        "content": "## Chase late payments\n\nThree polite stages after the due date.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1392
-      ]
+      ],
+      "id": "d60c2d82-9a13-4f09-b92e-f12d8d6df44f",
+      "name": "Sticky Note4"
     },
     {
-      "id": "6e39f8b7-38f8-4a03-aecf-74d5dd79aa3a",
       "parameters": {
-        "content": "## Send the reminders\nOne email at a time.",
-        "height": 272,
+        "content": "## Send the reminders\n\nOne email at a time.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
         1392
-      ]
+      ],
+      "id": "fb2622a4-24f4-4f51-a253-d26b5d7b7b5a",
+      "name": "Sticky Note5"
     },
     {
-      "id": "5cd9a179-90e3-4425-9ccc-a98850262679",
       "parameters": {
-        "content": "## Weekly cash flow report\nLast week vs the week before.",
-        "height": 272,
+        "content": "## Weekly cash flow report\n\nLast week vs the week before.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1776
-      ]
+      ],
+      "id": "52a5e21d-2828-4c68-8db7-eebea267e809",
+      "name": "Sticky Note6"
     },
     {
-      "id": "12eeeaaa-1ed5-4523-afcd-afd4eebd6495",
       "parameters": {
-        "content": "## Write and send the report\nA short AI note on top of the numbers.",
-        "height": 480,
+        "content": "## Write and send the report\n\nA short AI note on top of the numbers.",
         "width": 544,
+        "height": 480,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1136,
         1776
-      ]
+      ],
+      "id": "17abab6f-e8e1-4c0f-a2e2-41b0c38e2604",
+      "name": "Sticky Note7"
     },
     {
-      "id": "ac0a5ccd-afbc-4669-8c35-d85a79740b51",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         2384
-      ]
+      ],
+      "id": "904eeb33-19c0-40d0-8e15-d03a83f8f3c0",
+      "name": "Sticky Note8"
     },
     {
-      "id": "dd55d734-00f3-4cb1-a745-9061ef5d14b4",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         2384
-      ]
+      ],
+      "id": "0c9c2fc3-a8d9-4467-b0c7-13911bb3faf6",
+      "name": "Sticky Note9"
     },
     {
       "id": "082dabf0-397e-4095-90a9-538aab2a8c33",

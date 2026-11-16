@@ -2,195 +2,195 @@
   "name": "Onboard paying clients with Stripe, Google Drive, a Docs contract, Trello and Gmail",
   "nodes": [
     {
-      "id": "eb274c56-69e1-4c4e-b25d-1bc6a4ee317d",
       "parameters": {
-        "content": "## Onboard paying clients with Stripe, Google Drive, a Docs contract, Trello and Gmail\n\n### How it works\n1. A paid Stripe Checkout (or the internal form for bank transfers) starts the onboarding, once per payment.\n2. A client folder with subfolders is created in Google Drive, and your contract template is copied and filled in.\n3. The contract is shared for comments, and the assets subfolder is shared so the client can upload files.\n4. A Trello board is copied from your template, the client is logged in Google Sheets, and the client gets a welcome email with every next step.\n5. The brief form saves answers as a Google Doc in the client folder. Clients who have not sent it get up to two reminders.\n\n### Setup steps\n- [ ] Add **Stripe** (with the webhook signing secret), **Google Drive**, **Google Docs**, **Google Sheets**, **Trello**, **Gmail** and **Basic Auth** credentials.\n- [ ] Create a contract template in Google Docs with placeholders like `[[client_company]]` and `[[amount]]` (see **Fill Contract**), and a Trello template board.\n- [ ] Create a spreadsheet with empty `Clients` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Onboarding Settings**: folder, template IDs and texts.\n\n### Customization\nChange the subfolders, packages and reminder timing in **Onboarding Settings**.",
-        "height": 720,
-        "width": 480
+        "content": "## Onboard paying clients with Stripe, Google Drive, a Docs contract, Trello and Gmail\n\n### How it works\n\n1. A paid Stripe Checkout (or the internal form for bank transfers) starts the onboarding, once per payment.\n2. A client folder with subfolders is created in Google Drive, and your contract template is copied and filled in.\n3. The contract is shared for comments, and the assets subfolder is shared so the client can upload files.\n4. A Trello board is copied from your template, the client is logged in Google Sheets, and the client gets a welcome email with every next step.\n5. The brief form saves answers as a Google Doc in the client folder. Clients who have not sent it get up to two reminders.\n\n### Setup steps\n\n- [ ] Add **Stripe** (with the webhook signing secret), **Google Drive**, **Google Docs**, **Google Sheets**, **Trello**, **Gmail** and **Basic Auth** credentials.\n- [ ] Create a contract template in Google Docs with placeholders like `[[client_company]]` and `[[amount]]` (see **Fill Contract**), and a Trello template board.\n- [ ] Create a spreadsheet with empty `Clients` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Onboarding Settings**: folder, template IDs and texts.\n\n### Customization\n\nChange the subfolders, packages and reminder timing in **Onboarding Settings**.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
         -112
-      ]
+      ],
+      "id": "3bf65023-c94a-4506-9364-0eb2c87482af",
+      "name": "Sticky Note"
     },
     {
-      "id": "b20de01b-9bcf-408c-9243-c889a9cb8947",
       "parameters": {
-        "content": "## Receive payments and briefs\nStripe, a transfer form, the brief form and the daily run.",
-        "height": 944,
+        "content": "## Receive payments and briefs\n\nStripe, a transfer form, the brief form and the daily run.",
         "width": 704,
+        "height": 944,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "1717bf00-35e4-449b-9c39-dce2fae266ba",
+      "name": "Sticky Note1"
     },
     {
-      "id": "9e0c26b2-70e5-450e-a05d-3ec2c0777842",
       "parameters": {
-        "content": "## Check the payment\nPaid, and only once per payment.",
-        "height": 272,
+        "content": "## Check the payment\n\nPaid, and only once per payment.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         752,
         -112
-      ]
+      ],
+      "id": "980ef85e-b194-4265-adbb-0cdbced5c72a",
+      "name": "Sticky Note2"
     },
     {
-      "id": "e18d5c63-ac6a-4fed-a1c9-9a79a64a843b",
       "parameters": {
-        "content": "## Create the client folders\nA client folder with your subfolders.",
-        "height": 272,
+        "content": "## Create the client folders\n\nA client folder with your subfolders.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1488,
         -112
-      ]
+      ],
+      "id": "5a3dcd4e-e0c1-4bd4-a296-73e1841be4d7",
+      "name": "Sticky Note3"
     },
     {
-      "id": "e6e8787d-c111-4990-b390-c61103b56a2f",
       "parameters": {
-        "content": "## Prepare and share the contract\nTemplate copy, filled in, shared for comments.",
-        "height": 272,
+        "content": "## Prepare and share the contract\n\nTemplate copy, filled in, shared for comments.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2448,
         -112
-      ]
+      ],
+      "id": "d601c40b-1f9d-4240-9603-68e4f5a6e3f0",
+      "name": "Sticky Note4"
     },
     {
-      "id": "0104aa1c-2875-4ef5-8af0-65d8f4871a55",
       "parameters": {
-        "content": "## Set up the project\nTrello board from your template, row in Clients.",
-        "height": 272,
+        "content": "## Set up the project\n\nTrello board from your template, row in Clients.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         3408,
         -112
-      ]
+      ],
+      "id": "ba04bfe9-73b7-4bc5-aa7d-f000a0944ccd",
+      "name": "Sticky Note5"
     },
     {
-      "id": "094dc846-ebb3-45d5-a69d-f355f4c8f63f",
       "parameters": {
-        "content": "## Welcome the client\nNext steps for the client, links for the team.",
-        "height": 272,
+        "content": "## Welcome the client\n\nNext steps for the client, links for the team.",
         "width": 416,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         4144,
         -112
-      ]
+      ],
+      "id": "a3bf0797-ccce-40f4-a572-586bb60cb688",
+      "name": "Sticky Note6"
     },
     {
-      "id": "eccc21d7-a5a2-4290-b4c9-3732386be275",
       "parameters": {
-        "content": "## Match the brief to a client\nThe hidden client ID from the email link.",
-        "height": 272,
+        "content": "## Match the brief to a client\n\nThe hidden client ID from the email link.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         752,
         336
-      ]
+      ],
+      "id": "e7a8a180-0b8f-4b66-97dd-b7a38208af17",
+      "name": "Sticky Note7"
     },
     {
-      "id": "64227c59-6a9c-4f32-8c3b-6369144bcde7",
       "parameters": {
-        "content": "## Save the brief\nA Google Doc in the client folder.",
-        "height": 272,
+        "content": "## Save the brief\n\nA Google Doc in the client folder.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1488,
         336
-      ]
+      ],
+      "id": "6d6f7deb-f98e-44a8-84d5-23d4326b3282",
+      "name": "Sticky Note8"
     },
     {
-      "id": "608eb6d1-0102-4e4f-9092-8553e394e368",
       "parameters": {
-        "content": "## Remind about the brief\nUp to two reminders, the last one copies the team.",
-        "height": 272,
+        "content": "## Remind about the brief\n\nUp to two reminders, the last one copies the team.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         752,
         656
-      ]
+      ],
+      "id": "b33f717c-515e-4d02-8e75-51aa15cc0a17",
+      "name": "Sticky Note9"
     },
     {
-      "id": "2f18937d-b2f2-488f-98f8-8153c3f2f38d",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note10",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1040
-      ]
+      ],
+      "id": "c45fa59e-c354-4784-b16d-bce1fa2bc3d5",
+      "name": "Sticky Note10"
     },
     {
-      "id": "b16dd980-ac80-43ae-b52f-cb5371c4e10c",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note11",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         1040
-      ]
+      ],
+      "id": "09f7e051-4b14-475b-baac-fb7ee123654f",
+      "name": "Sticky Note11"
     },
     {
       "id": "10e1da65-857c-45e0-b685-e6acefa98e6a",

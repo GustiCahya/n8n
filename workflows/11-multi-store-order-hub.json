@@ -2,163 +2,163 @@
   "name": "Sync orders and stock across Shopify, WooCommerce and marketplaces with Google Sheets and WhatsApp reports",
   "nodes": [
     {
-      "id": "19310b4f-6254-457b-a307-255c64c95bc0",
       "parameters": {
-        "content": "## Sync orders and stock across Shopify, WooCommerce and marketplaces with Google Sheets and WhatsApp reports\n\n### How it works\n1. New orders arrive from Shopify, WooCommerce and a secured webhook for marketplaces, POS or aggregators.\n2. Each order is normalized, checked for SKUs, logged once in the Orders tab and written to a stock ledger.\n3. Current stock (start stock plus every movement) is pushed back to Shopify and WooCommerce, so all shops show the same quantity.\n4. When a SKU drops to its alert level you get an email and a WhatsApp message.\n5. Every evening a sales report goes out by email and as a WhatsApp summary.\n\n### Setup steps\n- [ ] Add **Shopify** (access token), **WooCommerce**, **Header Auth**, **Google Sheets**, **Gmail** and **WhatsApp** credentials.\n- [ ] Create the Data Table `hub_stock_moves` (sku, qty, order_key, channel, created_at, all *String*).\n- [ ] Create a spreadsheet with an `Inventory` tab (SKU, Name, Start Stock, Counted At, Low Stock At, Shopify Inventory Item ID, WooCommerce Product ID) and empty `Orders` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Get two WhatsApp templates approved and edit **Hub Settings** and **Report Settings**.\n\n### Customization\nAfter a stock count, update Start Stock and Counted At.",
-        "height": 768,
-        "width": 480
+        "content": "## Sync orders and stock across Shopify, WooCommerce and marketplaces with Google Sheets and WhatsApp reports\n\n### How it works\n\n1. New orders arrive from Shopify, WooCommerce and a secured webhook for marketplaces, POS or aggregators.\n2. Each order is normalized, checked for SKUs, logged once in the Orders tab and written to a stock ledger.\n3. Current stock (start stock plus every movement) is pushed back to Shopify and WooCommerce, so all shops show the same quantity.\n4. When a SKU drops to its alert level you get an email and a WhatsApp message.\n5. Every evening a sales report goes out by email and as a WhatsApp summary.\n\n### Setup steps\n\n- [ ] Add **Shopify** (access token), **WooCommerce**, **Header Auth**, **Google Sheets**, **Gmail** and **WhatsApp** credentials.\n- [ ] Create the Data Table `hub_stock_moves` (sku, qty, order_key, channel, created_at, all *String*).\n- [ ] Create a spreadsheet with an `Inventory` tab (SKU, Name, Start Stock, Counted At, Low Stock At, Shopify Inventory Item ID, WooCommerce Product ID) and empty `Orders` and `Error Log` tabs. Select it in every Google Sheets node.\n- [ ] Get two WhatsApp templates approved and edit **Hub Settings** and **Report Settings**.\n\n### Customization\n\nAfter a stock count, update Start Stock and Counted At.",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
         -112
-      ]
+      ],
+      "id": "3cb37281-176e-4908-ad52-ef43b51da470",
+      "name": "Sticky Note"
     },
     {
-      "id": "aff4b270-abf3-4320-8ce0-2434496384ae",
       "parameters": {
-        "content": "## Receive orders from every channel\nShopify, WooCommerce and a webhook for marketplaces.",
-        "height": 720,
+        "content": "## Receive orders from every channel\n\nShopify, WooCommerce and a webhook for marketplaces.",
         "width": 1152,
+        "height": 720,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "bcbfcb4a-f234-4941-a4c6-7fe036dbeb86",
+      "name": "Sticky Note1"
     },
     {
-      "id": "7bc8e652-5998-4b9a-9039-c185469e474d",
       "parameters": {
-        "content": "## Log each order once\nRepeated webhooks are skipped.",
-        "height": 272,
+        "content": "## Log each order once\n\nRepeated webhooks are skipped.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1200,
         112
-      ]
+      ],
+      "id": "ddf1783e-7590-4862-a877-33be8d0d0df2",
+      "name": "Sticky Note2"
     },
     {
-      "id": "8a81a69c-b2ea-4ece-8b4c-a88e90a2f80b",
       "parameters": {
-        "content": "## Update the stock ledger\nOne movement per order line.",
-        "height": 272,
+        "content": "## Update the stock ledger\n\nOne movement per order line.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1424,
         464
-      ]
+      ],
+      "id": "5d9413ad-c22a-4dd5-8e40-d58b830a9a2d",
+      "name": "Sticky Note3"
     },
     {
-      "id": "cdc08689-587d-4ce1-9021-7565cdab6a9a",
       "parameters": {
-        "content": "## Sync stock to the shops\nSets the new quantity everywhere.",
-        "height": 528,
+        "content": "## Sync stock to the shops\n\nSets the new quantity everywhere.",
         "width": 416,
+        "height": 528,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2608,
         208
-      ]
+      ],
+      "id": "6b041d2f-11bf-455b-9e4d-243e6839db06",
+      "name": "Sticky Note4"
     },
     {
-      "id": "54d4638b-5724-4d7c-b2d6-300c0d196520",
       "parameters": {
-        "content": "## Alert on low stock\nEmail and WhatsApp when a SKU crosses its level.",
-        "height": 272,
+        "content": "## Alert on low stock\n\nEmail and WhatsApp when a SKU crosses its level.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2608,
         784
-      ]
+      ],
+      "id": "e27b1b56-382b-483c-921e-341735085bfa",
+      "name": "Sticky Note5"
     },
     {
-      "id": "e113782e-0962-4893-9800-7186aaf987fb",
       "parameters": {
-        "content": "## Build the daily report\nSales, best sellers and low stock.",
-        "height": 272,
+        "content": "## Build the daily report\n\nSales, best sellers and low stock.",
         "width": 1312,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1200
-      ]
+      ],
+      "id": "66668d71-d0c4-4610-8772-c12748157c7d",
+      "name": "Sticky Note6"
     },
     {
-      "id": "2171f2ce-ea34-424c-8c58-ee117b9aafb7",
       "parameters": {
-        "content": "## Send the report\nEmail first, then a WhatsApp summary.",
-        "height": 272,
+        "content": "## Send the report\n\nEmail first, then a WhatsApp summary.",
         "width": 416,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1360,
         1200
-      ]
+      ],
+      "id": "b01d47b1-33b2-4744-9f0c-915c5e009994",
+      "name": "Sticky Note7"
     },
     {
-      "id": "4223ff85-b316-497f-9252-147eb477d546",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1584
-      ]
+      ],
+      "id": "bdc267d8-a15b-4898-a497-e9feec4fe1d8",
+      "name": "Sticky Note8"
     },
     {
-      "id": "6b71ecad-ee5c-43e6-b2ea-d41099221ec8",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         1584
-      ]
+      ],
+      "id": "636682b4-c0a5-4067-baa6-a2a0f4eec885",
+      "name": "Sticky Note9"
     },
     {
       "id": "40b72fd4-111b-4eb1-8fa4-96499f7dd17f",

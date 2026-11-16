@@ -2,163 +2,163 @@
   "name": "Turn YouTube videos and podcasts into 30 posts with OpenAI, Google Docs and a Sheets content calendar",
   "nodes": [
     {
-      "id": "7dcedc98-96a7-46f7-88b3-625893af778c",
       "parameters": {
-        "content": "## Turn YouTube videos and podcasts into 30 posts with OpenAI, Google Docs and a Sheets content calendar\n\n### How it works\n1. Submit a YouTube, TikTok or podcast link in the form, or let new uploads from your YouTube feed start a pack.\n2. Supadata returns the transcript; long videos are polled until the job is done.\n3. OpenAI writes a content brief first, then a blog article and 30 social pieces from that brief.\n4. The article becomes a Google Doc, every piece gets a row and a publish slot in the Sheets content calendar, and you get an email.\n5. Approved LinkedIn posts publish at their slot; the other platforms get a morning reminder.\n\n### Setup steps\n- [ ] Add **Supadata** (Header Auth, name `x-api-key`), **OpenAI**, **Google Drive**, **Google Sheets**, **Gmail** and **LinkedIn** credentials.\n- [ ] Create a spreadsheet with empty `Content Calendar` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Repurpose Settings** and **Publishing Settings**, select your LinkedIn profile, then activate.\n- [ ] Optional: enable **New YouTube Video** with your channel ID.\n\n### Customization\nChange the publish cadence in **Build Calendar Rows** (SLOTS).",
-        "height": 720,
-        "width": 480
+        "content": "## Turn YouTube videos and podcasts into 30 posts with OpenAI, Google Docs and a Sheets content calendar\n\n### How it works\n\n1. Submit a YouTube, TikTok or podcast link in the form, or let new uploads from your YouTube feed start a pack.\n2. Supadata returns the transcript; long videos are polled until the job is done.\n3. OpenAI writes a content brief first, then a blog article and 30 social pieces from that brief.\n4. The article becomes a Google Doc, every piece gets a row and a publish slot in the Sheets content calendar, and you get an email.\n5. Approved LinkedIn posts publish at their slot; the other platforms get a morning reminder.\n\n### Setup steps\n\n- [ ] Add **Supadata** (Header Auth, name `x-api-key`), **OpenAI**, **Google Drive**, **Google Sheets**, **Gmail** and **LinkedIn** credentials.\n- [ ] Create a spreadsheet with empty `Content Calendar` and `Error Log` tabs and select it in every Google Sheets node.\n- [ ] Edit **Repurpose Settings** and **Publishing Settings**, select your LinkedIn profile, then activate.\n- [ ] Optional: enable **New YouTube Video** with your channel ID.\n\n### Customization\n\nChange the publish cadence in **Build Calendar Rows** (SLOTS).",
+        "width": 480,
+        "height": 896
       },
-      "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -608,
         -112
-      ]
+      ],
+      "id": "1c8733b2-33a3-4d3b-8798-2bcb63859bc5",
+      "name": "Sticky Note"
     },
     {
-      "id": "daa0959c-aba5-4cdf-842c-7cdeda14f07c",
       "parameters": {
-        "content": "## Receive a video or podcast\nA form, or new uploads from a YouTube feed.",
-        "height": 496,
+        "content": "## Receive a video or podcast\n\nA form, or new uploads from a YouTube feed.",
         "width": 864,
+        "height": 496,
         "color": 7
       },
-      "name": "Sticky Note1",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         -112
-      ]
+      ],
+      "id": "30e3424e-0afb-4158-a0d1-8aff26f97d42",
+      "name": "Sticky Note1"
     },
     {
-      "id": "d49c4356-c58d-4ce3-84fd-831a24895b65",
       "parameters": {
-        "content": "## Get the transcript\nSupadata, with polling for long videos.",
-        "height": 720,
+        "content": "## Get the transcript\n\nSupadata, with polling for long videos.",
         "width": 1088,
+        "height": 720,
         "color": 7
       },
-      "name": "Sticky Note2",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         912,
         176
-      ]
+      ],
+      "id": "6cbcb435-d031-4378-8003-f5373c8c66c4",
+      "name": "Sticky Note2"
     },
     {
-      "id": "46d7a4a1-ecff-4e50-954e-b6148e8a351b",
       "parameters": {
-        "content": "## Write the content pack\nA brief first, then the article and 30 posts.",
-        "height": 672,
-        "width": 1536,
+        "content": "## Write the content pack\n\nA brief first, then the article and 30 posts.",
+        "width": 1408,
+        "height": 480,
         "color": 7
       },
-      "name": "Sticky Note3",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         2128,
         -112
-      ]
+      ],
+      "id": "832e6d9c-f5d5-4753-a44c-d63000aa7aa6",
+      "name": "Sticky Note3"
     },
     {
-      "id": "be60d93c-e053-4b91-b8e4-3d97d7ce37f6",
       "parameters": {
-        "content": "## Save and schedule\nGoogle Doc, calendar rows and an email.",
-        "height": 272,
+        "content": "## Save and schedule\n\nGoogle Doc, calendar rows and an email.",
         "width": 864,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note4",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         3696,
         -112
-      ]
+      ],
+      "id": "7e1a60ae-096f-448d-9d13-bf25cbcc16b1",
+      "name": "Sticky Note4"
     },
     {
-      "id": "d0e84301-5c33-4116-a2dc-18c1f5919f8a",
       "parameters": {
-        "content": "## Find approved posts\nHourly check of the content calendar.",
-        "height": 272,
+        "content": "## Find approved posts\n\nHourly check of the content calendar.",
         "width": 1088,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note5",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1040
-      ]
+      ],
+      "id": "45b4652c-82d0-46ab-8dd8-4c25b8576a4e",
+      "name": "Sticky Note5"
     },
     {
-      "id": "87719dae-14db-434b-95fc-acc5628fec98",
       "parameters": {
-        "content": "## Publish to LinkedIn\nOne post at a time, then mark it published.",
-        "height": 272,
+        "content": "## Publish to LinkedIn\n\nOne post at a time, then mark it published.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note6",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1136,
         1040
-      ]
+      ],
+      "id": "951b2101-2238-47d8-9d92-2f4bb379b85d",
+      "name": "Sticky Note6"
     },
     {
-      "id": "90f40c7d-7c14-4bd5-a965-6588f9f6b0ac",
       "parameters": {
-        "content": "## Remind about manual posts\nDaily email for the other platforms.",
-        "height": 336,
+        "content": "## Remind about manual posts\n\nDaily email for the other platforms.",
         "width": 240,
+        "height": 336,
         "color": 7
       },
-      "name": "Sticky Note7",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         1136,
         1360
-      ]
+      ],
+      "id": "62032a1d-9cbc-4a01-96f7-e9adf89f1114",
+      "name": "Sticky Note7"
     },
     {
-      "id": "766f87e5-a178-4eb5-b7ce-4263eae3d699",
       "parameters": {
-        "content": "## Catch workflow errors\nBuilds an incident report from any failed execution.",
-        "height": 272,
+        "content": "## Catch workflow errors\n\nBuilds an incident report from any failed execution.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note8",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -48,
         1872
-      ]
+      ],
+      "id": "f3a70eb7-c067-45a8-9bca-b9eed78d4406",
+      "name": "Sticky Note8"
     },
     {
-      "id": "c317f872-f880-4c11-b3b4-82bdeb33418f",
       "parameters": {
-        "content": "## Send the alert\nEmails it, or logs it to the Error Log tab.",
-        "height": 272,
+        "content": "## Send the alert\n\nEmails it, or logs it to the Error Log tab.",
         "width": 640,
+        "height": 272,
         "color": 7
       },
-      "name": "Sticky Note9",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         688,
         1872
-      ]
+      ],
+      "id": "b84d7959-f95b-440b-bf36-73c6068f3985",
+      "name": "Sticky Note9"
     },
     {
       "id": "6b187899-66bc-4765-8a5e-40aa382a71f3",
